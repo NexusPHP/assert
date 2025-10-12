@@ -19,7 +19,10 @@
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.88",
         "kubawerlos/php-cs-fixer-custom-fixers": "^3.35",
-        "nexusphp/cs-config": "^3.26"
+        "nexusphp/cs-config": "^3.26",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-strict-rules": "^2.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -34,16 +37,23 @@
         }
     },
     "config": {
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        },
         "optimize-autoloader": true,
         "preferred-install": "dist",
         "sort-packages": true
     },
     "scripts": {
         "cs:check": "php-cs-fixer check --verbose --ansi --diff",
-        "cs:fix": "php-cs-fixer fix --verbose --ansi --diff"
+        "cs:fix": "php-cs-fixer fix --verbose --ansi --diff",
+        "phpstan:baseline": "phpstan analyse --verbose --ansi --generate-baseline=phpstan-baseline.php",
+        "phpstan:check": "phpstan analyse --verbose --ansi"
     },
     "scripts-descriptions": {
         "cs:check": "Checks for coding style violations",
-        "cs:fix": "Fixes coding style violations"
+        "cs:fix": "Fixes coding style violations",
+        "phpstan:baseline": "Runs PHPStan and dumps resulting errors to baseline",
+        "phpstan:check": "Runs PHPStan with identifiers support"
     }
 }
