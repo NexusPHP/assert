@@ -45,6 +45,9 @@
         "sort-packages": true
     },
     "scripts": {
+        "post-autoload-dump": [
+            "Nexus\\Assert\\ComposerScripts::postUpdate"
+        ],
         "cs:check": "php-cs-fixer check --verbose --ansi --diff",
         "cs:fix": "php-cs-fixer fix --verbose --ansi --diff",
         "phpstan:baseline": "phpstan analyse --verbose --ansi --generate-baseline=phpstan-baseline.php",
