@@ -76,6 +76,28 @@ final class Expectation
     /**
      * @param null|non-empty-string $message
      *
+     * @return self<false&TValue>
+     *
+     * @throws ExpectationFailedException
+     */
+    public function isFalse(?string $message = null): self
+    {
+        if (false !== $this->value) {
+            throw new ExpectationFailedException(
+                $message ?? 'Value "{value}" is expected to be false but got {type} instead.',
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'type' => $this->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param null|non-empty-string $message
+     *
      * @return self<float&TValue>
      *
      * @throws ExpectationFailedException
@@ -239,6 +261,28 @@ final class Expectation
         if (! \is_string($this->value)) {
             throw new ExpectationFailedException(
                 $message ?? 'Value "{value}" is expected to be a string but got {type} instead.',
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'type' => $this->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param null|non-empty-string $message
+     *
+     * @return self<true&TValue>
+     *
+     * @throws ExpectationFailedException
+     */
+    public function isTrue(?string $message = null): self
+    {
+        if (true !== $this->value) {
+            throw new ExpectationFailedException(
+                $message ?? 'Value "{value}" is expected to be true but got {type} instead.',
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),

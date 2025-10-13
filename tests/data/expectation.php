@@ -31,6 +31,13 @@ function test_is_bool(mixed $value): void
     assertType('bool', $value);
 }
 
+function test_is_false(mixed $value): void
+{
+    $assert = Assert::that($value)->isFalse();
+    assertType('Nexus\\Assert\\Expectation<false>', $assert);
+    assertType('false', $value);
+}
+
 function test_is_float(mixed $value): void
 {
     $assert = Assert::that($value)->isFloat();
@@ -85,4 +92,11 @@ function test_is_string(mixed $value): void
     $assert = Assert::that($value)->isString();
     assertType('Nexus\\Assert\\Expectation<string>', $assert);
     assertType('string', $value);
+}
+
+function test_is_true(mixed $value): void
+{
+    $assert = Assert::that($value)->isTrue();
+    assertType('Nexus\\Assert\\Expectation<true>', $assert);
+    assertType('true', $value);
 }
