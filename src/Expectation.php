@@ -32,6 +32,28 @@ final class Expectation
     /**
      * @param null|non-empty-string $message
      *
+     * @return self<array&TValue>
+     *
+     * @throws ExpectationFailedException
+     */
+    public function isArray(?string $message = null): self
+    {
+        if (! \is_array($this->value)) {
+            throw new ExpectationFailedException(
+                $message ?? 'Value "{value}" is expected to be an array but got {type} instead.',
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'type' => $this->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param null|non-empty-string $message
+     *
      * @return self<bool&TValue>
      *
      * @throws ExpectationFailedException
@@ -85,6 +107,28 @@ final class Expectation
         if (! \is_int($this->value)) {
             throw new ExpectationFailedException(
                 $message ?? 'Value "{value}" is expected to be an int but got {type} instead.',
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'type' => $this->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param null|non-empty-string $message
+     *
+     * @return self<iterable&TValue>
+     *
+     * @throws ExpectationFailedException
+     */
+    public function isIterable(?string $message = null): self
+    {
+        if (! is_iterable($this->value)) {
+            throw new ExpectationFailedException(
+                $message ?? 'Value "{value}" is expected to be iterable but got {type} instead.',
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),

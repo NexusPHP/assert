@@ -17,6 +17,13 @@ use Nexus\Assert\Assert;
 
 use function PHPStan\Testing\assertType;
 
+function test_is_array(mixed $value): void
+{
+    $assert = Assert::that($value)->isArray();
+    assertType('Nexus\\Assert\\Expectation<array>', $assert);
+    assertType('array', $value);
+}
+
 function test_is_bool(mixed $value): void
 {
     $assert = Assert::that($value)->isBool();
@@ -36,6 +43,13 @@ function test_is_int(mixed $value): void
     $assert = Assert::that($value)->isInt();
     assertType('Nexus\\Assert\\Expectation<int>', $assert);
     assertType('int', $value);
+}
+
+function test_is_iterable(mixed $value): void
+{
+    $assert = Assert::that($value)->isIterable();
+    assertType('Nexus\\Assert\\Expectation<iterable>', $assert);
+    assertType('iterable', $value);
 }
 
 function test_is_null(mixed $value): void

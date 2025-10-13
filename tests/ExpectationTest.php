@@ -28,6 +28,19 @@ use PHPUnit\Framework\TestCase;
 #[Group('unit')]
 final class ExpectationTest extends TestCase
 {
+    public function testIsArray(): void
+    {
+        $expectation = Assert::that([]);
+        self::assertSame($expectation, $expectation->isArray());
+
+        $expectation = Assert::that([1, 2, 3]);
+        self::assertSame($expectation, $expectation->isArray());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "42" is expected to be an array but got int instead.');
+        Assert::that(42)->isArray(); // @phpstan-ignore method.unresolvableReturnType
+    }
+
     public function testIsBool(): void
     {
         $expectation = Assert::that(true);
@@ -65,6 +78,19 @@ final class ExpectationTest extends TestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "true" is expected to be an int but got bool instead.');
         Assert::that(true)->isInt(); // @phpstan-ignore method.unresolvableReturnType
+    }
+
+    public function testIsIterable(): void
+    {
+        $expectation = Assert::that([]);
+        self::assertSame($expectation, $expectation->isIterable());
+
+        $expectation = Assert::that(new \ArrayIterator([1, 2, 3]));
+        self::assertSame($expectation, $expectation->isIterable());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "42" is expected to be iterable but got int instead.');
+        Assert::that(42)->isIterable(); // @phpstan-ignore method.unresolvableReturnType
     }
 
     public function testIsNull(): void
