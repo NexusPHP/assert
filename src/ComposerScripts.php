@@ -18,7 +18,7 @@ namespace Nexus\Assert;
  */
 final class ComposerScripts
 {
-    public const string VSCODE_SETTINGS_JSON = __DIR__.'/../.vscode/settings.json';
+    public const VSCODE_SETTINGS_JSON = __DIR__.'/../.vscode/settings.json';
 
     public static function postUpdate(): void
     {

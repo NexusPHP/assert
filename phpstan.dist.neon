@@ -9,7 +9,7 @@ parameters:
   tmpDir: build/phpstan
   paths:
     - src
-    - tools
+    - tests
   bootstrapFiles:
     - vendor/autoload.php
   exceptions:
