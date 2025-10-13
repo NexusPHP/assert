@@ -37,7 +37,10 @@
     "autoload-dev": {
         "psr-4": {
             "Nexus\\Assert\\Tests\\": "tests/"
-        }
+        },
+        "exclude-from-classmap": [
+            "tests/data/**"
+        ]
     },
     "config": {
         "allow-plugins": {
@@ -55,7 +58,12 @@
         "cs:fix": "php-cs-fixer fix --verbose --ansi --diff",
         "phpstan:baseline": "phpstan analyse --verbose --ansi --generate-baseline=phpstan-baseline.php",
         "phpstan:check": "phpstan analyse --verbose --ansi",
-        "test:auto-review": "phpunit --colors=always --group=auto-review",
+        "test:all": [
+            "@cs:check",
+            "@phpstan:check",
+            "@test:unit",
+            "@test:stan"
+        ],
         "test:stan": "phpunit --colors=always --group=static-analysis",
         "test:unit": "phpunit --colors=always --group=unit --coverage-html=build/phpunit/html"
     },
@@ -64,7 +72,7 @@
         "cs:fix": "Fixes coding style violations",
         "phpstan:baseline": "Runs PHPStan and dumps resulting errors to baseline",
         "phpstan:check": "Runs PHPStan with identifiers support",
-        "test:auto-review": "Runs the Auto-Review Tests",
+        "test:all": "Runs all tests",
         "test:stan": "Runs the Static Analysis Tests",
         "test:unit": "Runs the Unit Tests"
     }

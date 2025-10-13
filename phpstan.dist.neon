@@ -10,6 +10,9 @@ parameters:
   paths:
     - src
     - tests
+  excludePaths:
+    analyseAndScan:
+      - tests/data/**
   bootstrapFiles:
     - vendor/autoload.php
   exceptions:
