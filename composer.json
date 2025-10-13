@@ -50,6 +50,13 @@
         "preferred-install": "dist",
         "sort-packages": true
     },
+    "extra": {
+        "phpstan": {
+            "includes": [
+                "extension.neon"
+            ]
+        }
+    },
     "scripts": {
         "post-autoload-dump": [
             "Nexus\\Assert\\ComposerScripts::postUpdate"

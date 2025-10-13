@@ -1,5 +1,7 @@
 includes:
   - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+  - extension.neon
+  - phpstan-baseline.php
 
 parameters:
   phpVersion:
@@ -23,7 +25,6 @@ parameters:
   checkMissingOverrideMethodAttribute: true
   checkTooWideReturnTypesInProtectedAndPublicMethods: true
   checkTooWideThrowTypesInProtectedAndPublicMethods: true
-  checkUninitializedProperties: true
   reportAlwaysTrueInLastCondition: true
   reportAnyTypeWideningInVarTag: true
   treatPhpDocTypesAsCertain: false

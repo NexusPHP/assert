@@ -1,0 +1,15 @@
+services:
+  -
+    class: Nexus\Assert\Type\AssertDynamicStaticMethodReturnTypeExtension
+    tags:
+      - phpstan.broker.dynamicStaticMethodReturnTypeExtension
+
+  -
+    class: Nexus\Assert\Type\ExpectationDynamicMethodReturnTypeExtension
+    tags:
+      - phpstan.broker.dynamicMethodReturnTypeExtension
+
+  -
+    class: Nexus\Assert\Type\ExpectationMethodTypeSpecifyingExtension
+    tags:
+      - phpstan.typeSpecifier.methodTypeSpecifyingExtension

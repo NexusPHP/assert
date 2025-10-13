@@ -39,4 +39,9 @@ final class ExpectationTypeInferenceTest extends TypeInferenceTestCase
         // @phpstan-ignore generator.valueType
         yield from self::gatherAssertTypesFromDirectory(__DIR__.'/data');
     }
+
+    public static function getAdditionalConfigFiles(): array
+    {
+        return [__DIR__.'/../extension.neon'];
+    }
 }

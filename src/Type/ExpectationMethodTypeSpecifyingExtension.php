@@ -1,0 +1,76 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * This file is part of the Nexus Assert library.
+ *
+ * (c) 2025 John Paul E. Balandan, CPA <paulbalandan@gmail.com>
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
+namespace Nexus\Assert\Type;
+
+use Nexus\Assert\Expectation;
+use PhpParser\Node\Expr\MethodCall;
+use PHPStan\Analyser\Scope;
+use PHPStan\Analyser\SpecifiedTypes;
+use PHPStan\Analyser\TypeSpecifier;
+use PHPStan\Analyser\TypeSpecifierAwareExtension;
+use PHPStan\Analyser\TypeSpecifierContext;
+use PHPStan\Reflection\MethodReflection;
+use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\MethodTypeSpecifyingExtension;
+
+final class ExpectationMethodTypeSpecifyingExtension implements MethodTypeSpecifyingExtension, TypeSpecifierAwareExtension
+{
+    private TypeSpecifier $typeSpecifier;
+
+    public function setTypeSpecifier(TypeSpecifier $typeSpecifier): void
+    {
+        $this->typeSpecifier = $typeSpecifier;
+    }
+
+    public function getClass(): string
+    {
+        return Expectation::class;
+    }
+
+    public function isMethodSupported(MethodReflection $methodReflection, MethodCall $node, TypeSpecifierContext $context): bool
+    {
+        return true;
+    }
+
+    public function specifyTypes(
+        MethodReflection $methodReflection,
+        MethodCall $node,
+        Scope $scope,
+        TypeSpecifierContext $context,
+    ): SpecifiedTypes {
+        $calledOnType = $scope->getType($node->var);
+
+        if (! $calledOnType instanceof ExpectationObjectType) {
+            return new SpecifiedTypes();
+        }
+
+        $returnType = ParametersAcceptorSelector::selectFromArgs(
+            $scope,
+            $node->getArgs(),
+            $methodReflection->getVariants(),
+        )->getReturnType();
+
+        if (! $returnType instanceof GenericObjectType || [] === $returnType->getTypes()) {
+            return new SpecifiedTypes();
+        }
+
+        return $this->typeSpecifier->create(
+            $calledOnType->getValueExpr(),
+            current($returnType->getTypes()),
+            TypeSpecifierContext::createTruthy(),
+            $scope,
+        );
+    }
+}

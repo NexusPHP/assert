@@ -21,46 +21,54 @@ function test_is_bool(mixed $value): void
 {
     $assert = Assert::that($value)->isBool();
     assertType('Nexus\\Assert\\Expectation<bool>', $assert);
+    assertType('bool', $value);
 }
 
 function test_is_float(mixed $value): void
 {
     $assert = Assert::that($value)->isFloat();
     assertType('Nexus\\Assert\\Expectation<float>', $assert);
+    assertType('float', $value);
 }
 
 function test_is_int(mixed $value): void
 {
     $assert = Assert::that($value)->isInt();
     assertType('Nexus\\Assert\\Expectation<int>', $assert);
+    assertType('int', $value);
 }
 
 function test_is_null(mixed $value): void
 {
     $assert = Assert::that($value)->isNull();
     assertType('Nexus\\Assert\\Expectation<null>', $assert);
+    assertType('null', $value);
 }
 
 function test_is_numeric(mixed $value): void
 {
     $assert = Assert::that($value)->isNumeric();
     assertType('Nexus\\Assert\\Expectation<float|int|numeric-string>', $assert);
+    assertType('float|int|numeric-string', $value);
 }
 
 function test_is_object(mixed $value): void
 {
     $assert = Assert::that($value)->isObject();
     assertType('Nexus\\Assert\\Expectation<object>', $assert);
+    assertType('object', $value);
 }
 
 function test_is_scalar(mixed $value): void
 {
     $assert = Assert::that($value)->isScalar();
     assertType('Nexus\\Assert\\Expectation<bool|float|int|string>', $assert);
+    assertType('bool|float|int|string', $value);
 }
 
 function test_is_string(mixed $value): void
 {
     $assert = Assert::that($value)->isString();
     assertType('Nexus\\Assert\\Expectation<string>', $assert);
+    assertType('string', $value);
 }
