@@ -32,7 +32,7 @@ final class Expectation
     /**
      * @param null|non-empty-string $message
      *
-     * @return self<array&TValue>
+     * @return self<array<array-key, mixed>&TValue>
      *
      * @throws ExpectationFailedException
      */
