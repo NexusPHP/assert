@@ -24,7 +24,6 @@
         </include>
         <exclude>
             <directory>src/Type/</directory>
-            <file>src/ComposerScripts.php</file>
         </exclude>
     </source>
 

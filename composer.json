@@ -36,7 +36,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Nexus\\Assert\\Tests\\": "tests/"
+            "Nexus\\Assert\\Tests\\": "tests/",
+            "Nexus\\Assert\\Tools\\": "tools/src/"
         },
         "exclude-from-classmap": [
             "tests/data/**"
@@ -59,7 +60,7 @@
     },
     "scripts": {
         "post-autoload-dump": [
-            "Nexus\\Assert\\ComposerScripts::postUpdate"
+            "Nexus\\Assert\\Tools\\ComposerScripts::postUpdate"
         ],
         "cs:check": "php-cs-fixer check --verbose --ansi --diff",
         "cs:fix": "php-cs-fixer fix --verbose --ansi --diff",

@@ -11,19 +11,19 @@ declare(strict_types=1);
  * the LICENSE file that was distributed with this source code.
  */
 
-namespace Nexus\Assert;
+namespace Nexus\Assert\Tools;
 
 /**
  * @internal
  */
 final class ComposerScripts
 {
-    public const VSCODE_SETTINGS_JSON = __DIR__.'/../.vscode/settings.json';
+    public const VSCODE_SETTINGS_JSON = __DIR__.'/../../.vscode/settings.json';
 
     public static function postUpdate(): void
     {
         if (is_file(self::VSCODE_SETTINGS_JSON)) {
-            self::recursiveDelete(__DIR__.'/../vendor/phpstan/phpstan-phar');
+            self::recursiveDelete(__DIR__.'/../../vendor/phpstan/phpstan-phar');
             self::extractPhpstanPhar();
             self::updateVscodeIntelephenseEnvironmentIncludePaths();
         }
@@ -55,7 +55,7 @@ final class ComposerScripts
     private static function extractPhpstanPhar(): void
     {
         try {
-            (new \Phar(__DIR__.'/../vendor/phpstan/phpstan/phpstan.phar'))->extractTo(__DIR__.'/../vendor/phpstan/phpstan-phar', null, true);
+            (new \Phar(__DIR__.'/../../vendor/phpstan/phpstan/phpstan.phar'))->extractTo(__DIR__.'/../../vendor/phpstan/phpstan-phar', null, true);
             echo "\033[42m OK \033[0m PHPStan successfully extracted for IDE completion.\n";
         } catch (\PharException|\UnexpectedValueException $e) {
             echo \sprintf("\033[41m FAIL \033[0m %s\n", $e->getMessage());
