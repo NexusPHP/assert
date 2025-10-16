@@ -1,0 +1,88 @@
+name: Unit Tests
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  pull_request:
+  push:
+    branches:
+      - 1.x
+    paths:
+      - .github/workflows/unit-tests.yml
+      - src/**
+      - tests/**
+      - composer.json
+      - phpunit.dist.xml
+
+concurrency:
+  group: unit-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version:
+          - '8.2'
+          - '8.3'
+          - '8.4'
+
+    name: Unit Tests
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: xdebug
+          ini-values: display_errors=On, display_startup_errors=On, error_reporting=-1, zend.assertions=1, assert.exception=1, memory_limit=2048M
+
+      - name: Setup global variables
+        id: globals
+        shell: bash
+        run: |
+          echo "COMPOSER_CACHE_DIR=$(composer config cache-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.globals.outputs.COMPOSER_CACHE_DIR }}
+          key: ${{ github.workflow }}-PHP_${{ matrix.php-version }}-${{ hashFiles('**/composer.json') }}
+          restore-keys: |
+            ${{ github.workflow }}-PHP_${{ matrix.php-version }}-
+
+      - name: Install dependencies
+        run: composer update --ansi
+
+      - name: Run Unit Tests
+        run: composer test:unit
+        env:
+          TACHYCARDIA_MONITOR_GA: enabled
+
+      - name: Upload coverage to Coveralls
+        run: |
+          composer global require php-coveralls/php-coveralls --ansi
+          php-coveralls --verbose --exclude-no-stmt --ansi --coverage_clover build/phpunit/clover.xml --json_path build/phpunit/coveralls-upload.json
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+          COVERALLS_PARALLEL: true
+          COVERALLS_FLAG_NAME: ${{ format('PHP_{0}_coverage', matrix.php-version) }}
+
+  coveralls-finish:
+    name: Notify Coveralls API
+    runs-on: ubuntu-24.04
+    needs: tests
+
+    steps:
+      - name: Complete parallel builds
+        uses: coverallsapp/github-action@v2
+        with:
+          parallel-finished: true
