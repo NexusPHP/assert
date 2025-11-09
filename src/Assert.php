@@ -15,7 +15,13 @@ namespace Nexus\Assert;
 
 final class Assert
 {
-    private function __construct() {} // @codeCoverageIgnore
+    /**
+     * @codeCoverageIgnore
+     */
+    private function __construct()
+    {
+        // Explicitly prevent instantiation.
+    }
 
     /**
      * Starts an expectation on a given `$value`.
