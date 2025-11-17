@@ -32,11 +32,10 @@ final class ExpectationTypeInferenceTest extends TypeInferenceTestCase
     }
 
     /**
-     * @return iterable<string, list<mixed>>
+     * @return iterable<string, array{string, string, mixed}>
      */
     public static function provideFileAssertsCases(): iterable
     {
-        // @phpstan-ignore generator.valueType
         yield from self::gatherAssertTypesFromDirectory(__DIR__.'/data');
     }
 
