@@ -25,7 +25,7 @@ final class Exporter
             if (array_is_list($value)) {
                 return \sprintf(
                     '[%s]',
-                    implode(', ', array_map(fn(mixed $v): string => $this->exportValue($v), $value)),
+                    implode(', ', array_map($this->exportValue(...), $value)),
                 );
             }
 
