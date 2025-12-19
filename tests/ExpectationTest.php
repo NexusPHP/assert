@@ -38,7 +38,7 @@ final class ExpectationTest extends TestCase
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "42" is expected to be an array but got int instead.');
-        Assert::that(42)->isArray(); // @phpstan-ignore method.unresolvableReturnType
+        Assert::that(42)->isArray();
     }
 
     public function testIsBool(): void
@@ -51,7 +51,7 @@ final class ExpectationTest extends TestCase
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "1" is expected to be a bool but got int instead.');
-        Assert::that(1)->isBool(); // @phpstan-ignore method.unresolvableReturnType
+        Assert::that(1)->isBool();
     }
 
     public function testIsFalse(): void
@@ -61,7 +61,7 @@ final class ExpectationTest extends TestCase
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "\'\'" is expected to be false but got string instead.');
-        Assert::that('')->isFalse(); // @phpstan-ignore method.unresolvableReturnType
+        Assert::that('')->isFalse();
     }
 
     public function testIsFloat(): void
@@ -74,7 +74,7 @@ final class ExpectationTest extends TestCase
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "\'hello\'" is expected to be a float but got string instead.');
-        Assert::that('hello')->isFloat(); // @phpstan-ignore method.unresolvableReturnType
+        Assert::that('hello')->isFloat();
     }
 
     public function testIsInt(): void
@@ -87,7 +87,7 @@ final class ExpectationTest extends TestCase
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "true" is expected to be an int but got bool instead.');
-        Assert::that(true)->isInt(); // @phpstan-ignore method.unresolvableReturnType
+        Assert::that(true)->isInt();
     }
 
     public function testIsIterable(): void
@@ -100,7 +100,7 @@ final class ExpectationTest extends TestCase
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "42" is expected to be iterable but got int instead.');
-        Assert::that(42)->isIterable(); // @phpstan-ignore method.unresolvableReturnType
+        Assert::that(42)->isIterable();
     }
 
     public function testIsNull(): void
@@ -110,7 +110,7 @@ final class ExpectationTest extends TestCase
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "0" is expected to be null but got int instead.');
-        Assert::that(0)->isNull(); // @phpstan-ignore method.unresolvableReturnType
+        Assert::that(0)->isNull();
     }
 
     public function testIsNumeric(): void
@@ -129,7 +129,7 @@ final class ExpectationTest extends TestCase
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "true" is expected to be numeric but got bool instead.');
-        Assert::that(true)->isNumeric(); // @phpstan-ignore method.unresolvableReturnType
+        Assert::that(true)->isNumeric();
     }
 
     public function testIsObject(): void
@@ -139,7 +139,7 @@ final class ExpectationTest extends TestCase
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "42" is expected to be an object but got int instead.');
-        Assert::that(42)->isObject(); // @phpstan-ignore method.unresolvableReturnType
+        Assert::that(42)->isObject();
     }
 
     public function testIsScalar(): void
@@ -158,7 +158,7 @@ final class ExpectationTest extends TestCase
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "[]" is expected to be a scalar but got array instead.');
-        Assert::that([])->isScalar(); // @phpstan-ignore method.unresolvableReturnType
+        Assert::that([])->isScalar();
     }
 
     public function testIsTrue(): void
@@ -168,7 +168,7 @@ final class ExpectationTest extends TestCase
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "12" is expected to be true but got int instead.');
-        Assert::that(12)->isTrue(); // @phpstan-ignore method.unresolvableReturnType
+        Assert::that(12)->isTrue();
     }
 
     public function testIsString(): void
@@ -181,7 +181,7 @@ final class ExpectationTest extends TestCase
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "3.14" is expected to be a string but got float instead.');
-        Assert::that(3.14)->isString(); // @phpstan-ignore method.unresolvableReturnType
+        Assert::that(3.14)->isString();
     }
 
     public function testExpectationMethodsAreArrangedInOrder(): void
@@ -196,6 +196,14 @@ final class ExpectationTest extends TestCase
             }
 
             if ($b->isConstructor()) {
+                return 1;
+            }
+
+            if (\in_array($a->getName(), ['not'], true)) {
+                return -1;
+            }
+
+            if (\in_array($b->getName(), ['not'], true)) {
                 return 1;
             }
 

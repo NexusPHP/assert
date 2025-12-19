@@ -13,12 +13,12 @@ declare(strict_types=1);
 
 namespace Nexus\Assert\Type;
 
-use Nexus\Assert\Expectation;
+use Nexus\Assert\NegatedExpectation;
 use PhpParser\Node;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\Type;
 
-final class ExpectationObjectType extends GenericObjectType implements ExpectableObjectType
+final class NegatedExpectationObjectType extends GenericObjectType implements ExpectableObjectType
 {
     /**
      * @param array<int, Type> $types
@@ -27,7 +27,7 @@ final class ExpectationObjectType extends GenericObjectType implements Expectabl
         array $types,
         private readonly Node\Expr $expr,
     ) {
-        parent::__construct(Expectation::class, $types);
+        parent::__construct(NegatedExpectation::class, $types);
     }
 
     public function getValueExpr(): Node\Expr

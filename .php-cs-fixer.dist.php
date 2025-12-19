@@ -22,9 +22,11 @@ $finder = Finder::create()
     ->in([
         __DIR__.'/src',
         __DIR__.'/tests',
+        __DIR__.'/tools',
     ])
     ->append([
         __FILE__,
+        __DIR__.'/bin/generate',
     ])
 ;
 

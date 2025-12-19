@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Nexus\Assert\Type;
 
-use Nexus\Assert\Expectation;
+use Nexus\Assert\Expectable;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Analyser\SpecifiedTypes;
@@ -21,9 +21,8 @@ use PHPStan\Analyser\TypeSpecifier;
 use PHPStan\Analyser\TypeSpecifierAwareExtension;
 use PHPStan\Analyser\TypeSpecifierContext;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\ParametersAcceptorSelector;
-use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\MethodTypeSpecifyingExtension;
+use PHPStan\Type\TypeCombinator;
 
 final class ExpectationMethodTypeSpecifyingExtension implements MethodTypeSpecifyingExtension, TypeSpecifierAwareExtension
 {
@@ -36,7 +35,7 @@ final class ExpectationMethodTypeSpecifyingExtension implements MethodTypeSpecif
 
     public function getClass(): string
     {
-        return Expectation::class;
+        return Expectable::class;
     }
 
     public function isMethodSupported(MethodReflection $methodReflection, MethodCall $node, TypeSpecifierContext $context): bool
@@ -52,23 +51,32 @@ final class ExpectationMethodTypeSpecifyingExtension implements MethodTypeSpecif
     ): SpecifiedTypes {
         $calledOnType = $scope->getType($node->var);
 
-        if (! $calledOnType instanceof ExpectationObjectType) {
+        if (! $calledOnType instanceof ExpectableObjectType) {
             return new SpecifiedTypes();
         }
 
-        $returnType = ParametersAcceptorSelector::selectFromArgs(
-            $scope,
-            $node->getArgs(),
-            $methodReflection->getVariants(),
-        )->getReturnType();
-
-        if (! $returnType instanceof GenericObjectType || [] === $returnType->getTypes()) {
+        if ([] === $calledOnType->getTypes()) {
             return new SpecifiedTypes();
+        }
+
+        $returnType = ExpectationMethodResolver::create()->resolve($methodReflection->getName());
+
+        if (null === $returnType) {
+            return new SpecifiedTypes();
+        }
+
+        if ($calledOnType instanceof NegatedExpectationObjectType) {
+            return $this->typeSpecifier->create(
+                $calledOnType->getValueExpr(),
+                TypeCombinator::remove(TypeCombinator::union(...$calledOnType->getTypes()), $returnType),
+                TypeSpecifierContext::createTruthy(),
+                $scope,
+            );
         }
 
         return $this->typeSpecifier->create(
             $calledOnType->getValueExpr(),
-            current($returnType->getTypes()),
+            TypeCombinator::intersect(...$calledOnType->getTypes(), ...[$returnType]),
             TypeSpecifierContext::createTruthy(),
             $scope,
         );

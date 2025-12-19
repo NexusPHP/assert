@@ -15,26 +15,32 @@ namespace Nexus\Assert;
 
 /**
  * @template TValue
+ *
+ * @implements Expectable<TValue>
  */
-final class Expectation
+final readonly class Expectation implements Expectable
 {
-    private readonly Exporter $exporter;
+    private Exporter $exporter;
 
     /**
      * @param TValue $value
      */
     public function __construct(
-        private mixed $value,
+        public mixed $value,
     ) {
         $this->exporter = new Exporter();
     }
 
     /**
-     * @param null|non-empty-string $message
-     *
-     * @return self<array<array-key, mixed>&TValue>
-     *
-     * @throws ExpectationFailedException
+     * @return NegatedExpectation<TValue>
+     */
+    public function not(): NegatedExpectation
+    {
+        return new NegatedExpectation($this);
+    }
+
+    /**
+     * @return self<TValue>
      */
     public function isArray(?string $message = null): self
     {
@@ -52,11 +58,7 @@ final class Expectation
     }
 
     /**
-     * @param null|non-empty-string $message
-     *
-     * @return self<bool&TValue>
-     *
-     * @throws ExpectationFailedException
+     * @return self<TValue>
      */
     public function isBool(?string $message = null): self
     {
@@ -74,11 +76,7 @@ final class Expectation
     }
 
     /**
-     * @param null|non-empty-string $message
-     *
-     * @return self<false&TValue>
-     *
-     * @throws ExpectationFailedException
+     * @return self<TValue>
      */
     public function isFalse(?string $message = null): self
     {
@@ -96,11 +94,7 @@ final class Expectation
     }
 
     /**
-     * @param null|non-empty-string $message
-     *
-     * @return self<float&TValue>
-     *
-     * @throws ExpectationFailedException
+     * @return self<TValue>
      */
     public function isFloat(?string $message = null): self
     {
@@ -118,11 +112,7 @@ final class Expectation
     }
 
     /**
-     * @param null|non-empty-string $message
-     *
-     * @return self<int&TValue>
-     *
-     * @throws ExpectationFailedException
+     * @return self<TValue>
      */
     public function isInt(?string $message = null): self
     {
@@ -140,11 +130,7 @@ final class Expectation
     }
 
     /**
-     * @param null|non-empty-string $message
-     *
-     * @return self<iterable&TValue>
-     *
-     * @throws ExpectationFailedException
+     * @return self<TValue>
      */
     public function isIterable(?string $message = null): self
     {
@@ -162,11 +148,7 @@ final class Expectation
     }
 
     /**
-     * @param null|non-empty-string $message
-     *
-     * @return self<null&TValue>
-     *
-     * @throws ExpectationFailedException
+     * @return self<TValue>
      */
     public function isNull(?string $message = null): self
     {
@@ -184,11 +166,7 @@ final class Expectation
     }
 
     /**
-     * @param null|non-empty-string $message
-     *
-     * @return self<(float|int|numeric-string)&TValue>
-     *
-     * @throws ExpectationFailedException
+     * @return self<TValue>
      */
     public function isNumeric(?string $message = null): self
     {
@@ -206,11 +184,7 @@ final class Expectation
     }
 
     /**
-     * @param null|non-empty-string $message
-     *
-     * @return self<object&TValue>
-     *
-     * @throws ExpectationFailedException
+     * @return self<TValue>
      */
     public function isObject(?string $message = null): self
     {
@@ -228,11 +202,7 @@ final class Expectation
     }
 
     /**
-     * @param null|non-empty-string $message
-     *
-     * @return self<scalar&TValue>
-     *
-     * @throws ExpectationFailedException
+     * @return self<TValue>
      */
     public function isScalar(?string $message = null): self
     {
@@ -250,11 +220,7 @@ final class Expectation
     }
 
     /**
-     * @param null|non-empty-string $message
-     *
-     * @return self<string&TValue>
-     *
-     * @throws ExpectationFailedException
+     * @return self<TValue>
      */
     public function isString(?string $message = null): self
     {
@@ -272,11 +238,7 @@ final class Expectation
     }
 
     /**
-     * @param null|non-empty-string $message
-     *
-     * @return self<true&TValue>
-     *
-     * @throws ExpectationFailedException
+     * @return self<TValue>
      */
     public function isTrue(?string $message = null): self
     {
