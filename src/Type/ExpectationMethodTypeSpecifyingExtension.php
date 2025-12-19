@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace Nexus\Assert\Type;
 
 use Nexus\Assert\Expectable;
+use Nexus\Assert\NegatedExpectation;
+use Nexus\Assert\NullableExpectation;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Analyser\SpecifiedTypes;
@@ -51,7 +53,7 @@ final class ExpectationMethodTypeSpecifyingExtension implements MethodTypeSpecif
     ): SpecifiedTypes {
         $calledOnType = $scope->getType($node->var);
 
-        if (! $calledOnType instanceof ExpectableObjectType) {
+        if (! $calledOnType instanceof ExpectationObjectType) {
             return new SpecifiedTypes();
         }
 
@@ -65,10 +67,19 @@ final class ExpectationMethodTypeSpecifyingExtension implements MethodTypeSpecif
             return new SpecifiedTypes();
         }
 
-        if ($calledOnType instanceof NegatedExpectationObjectType) {
+        if ($calledOnType->getClassName() === NegatedExpectation::class) {
             return $this->typeSpecifier->create(
                 $calledOnType->getValueExpr(),
                 TypeCombinator::remove(TypeCombinator::union(...$calledOnType->getTypes()), $returnType),
+                TypeSpecifierContext::createTruthy(),
+                $scope,
+            );
+        }
+
+        if ($calledOnType->getClassName() === NullableExpectation::class) {
+            return $this->typeSpecifier->create(
+                $calledOnType->getValueExpr(),
+                TypeCombinator::addNull(TypeCombinator::intersect(...$calledOnType->getTypes(), ...[$returnType])),
                 TypeSpecifierContext::createTruthy(),
                 $scope,
             );

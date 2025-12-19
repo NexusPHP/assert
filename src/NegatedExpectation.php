@@ -24,7 +24,10 @@ namespace Nexus\Assert;
  */
 final readonly class NegatedExpectation implements Expectable
 {
-    private Exporter $exporter;
+    /**
+     * @var TValue
+     */
+    public mixed $value;
 
     /**
      * @param Expectation<TValue> $expectation
@@ -32,7 +35,7 @@ final readonly class NegatedExpectation implements Expectable
     public function __construct(
         public Expectation $expectation,
     ) {
-        $this->exporter = new Exporter();
+        $this->value = $expectation->value;
     }
 
     /**
@@ -48,7 +51,7 @@ final readonly class NegatedExpectation implements Expectable
 
         throw new ExpectationFailedException(
             $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isArray".',
-            ['value' => $this->exporter->exportValue($this->expectation->value)],
+            ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }
 
@@ -65,7 +68,7 @@ final readonly class NegatedExpectation implements Expectable
 
         throw new ExpectationFailedException(
             $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isBool".',
-            ['value' => $this->exporter->exportValue($this->expectation->value)],
+            ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }
 
@@ -82,7 +85,7 @@ final readonly class NegatedExpectation implements Expectable
 
         throw new ExpectationFailedException(
             $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isFalse".',
-            ['value' => $this->exporter->exportValue($this->expectation->value)],
+            ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }
 
@@ -99,7 +102,7 @@ final readonly class NegatedExpectation implements Expectable
 
         throw new ExpectationFailedException(
             $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isFloat".',
-            ['value' => $this->exporter->exportValue($this->expectation->value)],
+            ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }
 
@@ -116,7 +119,7 @@ final readonly class NegatedExpectation implements Expectable
 
         throw new ExpectationFailedException(
             $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isInt".',
-            ['value' => $this->exporter->exportValue($this->expectation->value)],
+            ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }
 
@@ -133,7 +136,7 @@ final readonly class NegatedExpectation implements Expectable
 
         throw new ExpectationFailedException(
             $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isIterable".',
-            ['value' => $this->exporter->exportValue($this->expectation->value)],
+            ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }
 
@@ -150,7 +153,7 @@ final readonly class NegatedExpectation implements Expectable
 
         throw new ExpectationFailedException(
             $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isNull".',
-            ['value' => $this->exporter->exportValue($this->expectation->value)],
+            ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }
 
@@ -167,7 +170,7 @@ final readonly class NegatedExpectation implements Expectable
 
         throw new ExpectationFailedException(
             $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isNumeric".',
-            ['value' => $this->exporter->exportValue($this->expectation->value)],
+            ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }
 
@@ -184,7 +187,7 @@ final readonly class NegatedExpectation implements Expectable
 
         throw new ExpectationFailedException(
             $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isObject".',
-            ['value' => $this->exporter->exportValue($this->expectation->value)],
+            ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }
 
@@ -201,7 +204,7 @@ final readonly class NegatedExpectation implements Expectable
 
         throw new ExpectationFailedException(
             $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isScalar".',
-            ['value' => $this->exporter->exportValue($this->expectation->value)],
+            ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }
 
@@ -218,7 +221,7 @@ final readonly class NegatedExpectation implements Expectable
 
         throw new ExpectationFailedException(
             $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isString".',
-            ['value' => $this->exporter->exportValue($this->expectation->value)],
+            ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }
 
@@ -235,7 +238,7 @@ final readonly class NegatedExpectation implements Expectable
 
         throw new ExpectationFailedException(
             $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isTrue".',
-            ['value' => $this->exporter->exportValue($this->expectation->value)],
+            ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }
 }

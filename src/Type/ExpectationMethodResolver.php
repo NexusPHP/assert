@@ -31,6 +31,7 @@ final class ExpectationMethodResolver
 {
     private const UNSUPPORTED_EXPECTATION_METHODS = [
         'not',
+        'nullOr',
     ];
 
     /**
@@ -81,7 +82,7 @@ final class ExpectationMethodResolver
         }
 
         if (! isset($resolvers[$methodName])) {
-            throw new \LogicException(\sprintf('No expression resolver found for method %s()', $methodName));
+            throw new \LogicException(\sprintf('No type resolver found for method %s()', $methodName));
         }
 
         return $resolvers[$methodName];

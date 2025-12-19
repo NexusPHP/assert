@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Nexus\Assert\Type;
 
 use Nexus\Assert\Assert;
+use Nexus\Assert\Expectation;
 use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
@@ -42,6 +43,6 @@ final class AssertDynamicStaticMethodReturnTypeExtension implements DynamicStati
 
         $valueExpr = $args[0]->value;
 
-        return new ExpectationObjectType([$scope->getType($valueExpr)], $valueExpr);
+        return new ExpectationObjectType(Expectation::class, [$scope->getType($valueExpr)], $valueExpr);
     }
 }
