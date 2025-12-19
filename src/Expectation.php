@@ -20,7 +20,7 @@ namespace Nexus\Assert;
  */
 final readonly class Expectation implements Expectable
 {
-    private Exporter $exporter;
+    public Exporter $exporter;
 
     /**
      * @param TValue $value
@@ -37,6 +37,14 @@ final readonly class Expectation implements Expectable
     public function not(): NegatedExpectation
     {
         return new NegatedExpectation($this);
+    }
+
+    /**
+     * @return NullableExpectation<TValue>
+     */
+    public function nullOr(): NullableExpectation
+    {
+        return new NullableExpectation($this);
     }
 
     /**

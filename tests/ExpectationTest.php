@@ -28,6 +28,18 @@ use PHPUnit\Framework\TestCase;
 #[Group('unit')]
 final class ExpectationTest extends TestCase
 {
+    public function testExpectationVariantReturns(): void
+    {
+        $expectation = Assert::that(42);
+        self::assertSame($expectation, $expectation->isInt());
+
+        $negatedExpectation = Assert::that(42)->not();
+        self::assertSame($negatedExpectation, $negatedExpectation->isString());
+
+        $nullableExpectation = Assert::that(null)->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->isArray());
+    }
+
     public function testIsArray(): void
     {
         $expectation = Assert::that([]);
@@ -199,11 +211,11 @@ final class ExpectationTest extends TestCase
                 return 1;
             }
 
-            if (\in_array($a->getName(), ['not'], true)) {
+            if (\in_array($a->getName(), ['not', 'nullOr'], true)) {
                 return -1;
             }
 
-            if (\in_array($b->getName(), ['not'], true)) {
+            if (\in_array($b->getName(), ['not', 'nullOr'], true)) {
                 return 1;
             }
 
