@@ -79,6 +79,19 @@ final class NullableExpectationTest extends TestCase
         Assert::that(42)->nullOr()->isFloat();
     }
 
+    public function testIsInstanceOf(): void
+    {
+        $nullableExpectation = Assert::that(null)->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->isInstanceOf(\stdClass::class));
+
+        $nullableExpectation = Assert::that(new \stdClass())->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->isInstanceOf(\stdClass::class));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "object(stdClass)" is expected to be null or pass the expectation for method "isInstanceOf".');
+        Assert::that(new \stdClass())->nullOr()->isInstanceOf(\Generator::class);
+    }
+
     public function testIsInt(): void
     {
         $nullableExpectation = Assert::that(null)->nullOr();

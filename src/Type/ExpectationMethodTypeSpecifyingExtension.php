@@ -16,6 +16,7 @@ namespace Nexus\Assert\Type;
 use Nexus\Assert\Expectable;
 use Nexus\Assert\NegatedExpectation;
 use Nexus\Assert\NullableExpectation;
+use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Analyser\SpecifiedTypes;
@@ -61,7 +62,12 @@ final class ExpectationMethodTypeSpecifyingExtension implements MethodTypeSpecif
             return new SpecifiedTypes();
         }
 
-        $returnType = ExpectationMethodResolver::create()->resolve($methodReflection->getName());
+        $args = [
+            new Node\Arg($calledOnType->getValueExpr()),
+            ...$node->getArgs(),
+        ];
+
+        $returnType = ExpectationMethodResolver::create()->resolve($methodReflection->getName(), $scope, ...$args);
 
         if (null === $returnType) {
             return new SpecifiedTypes();

@@ -17,6 +17,7 @@ use Nexus\Assert\Expectable;
 use Nexus\Assert\Expectation;
 use Nexus\Assert\NegatedExpectation;
 use Nexus\Assert\NullableExpectation;
+use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
@@ -55,12 +56,18 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
 
         if ($returnType instanceof GenericObjectType) {
             $expectationClass = $returnType->getClassName();
+            $args = [
+                new Node\Arg($calledOnType->getValueExpr()),
+                ...$methodCall->getArgs(),
+            ];
 
             if (NegatedExpectation::class === $expectationClass) {
                 return self::getTypeFromNegatedExpectationMethodCall(
                     $methodReflection,
                     $returnType,
                     $calledOnType,
+                    $scope,
+                    ...$args,
                 );
             }
 
@@ -69,6 +76,8 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
                     $methodReflection,
                     $returnType,
                     $calledOnType,
+                    $scope,
+                    ...$args,
                 );
             }
 
@@ -76,16 +85,23 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
                 $methodReflection,
                 $returnType,
                 $calledOnType,
+                $scope,
+                ...$args,
             );
         }
 
         return $returnType;
     }
 
-    private static function getTypeFromNegatedExpectationMethodCall(MethodReflection $methodReflection, GenericObjectType $returnType, ExpectationObjectType $calledOnType): Type
-    {
+    private static function getTypeFromNegatedExpectationMethodCall(
+        MethodReflection $methodReflection,
+        GenericObjectType $returnType,
+        ExpectationObjectType $calledOnType,
+        Scope $scope,
+        Node\Arg ...$args,
+    ): Type {
         $methodName = $methodReflection->getName();
-        $subtractedType = ExpectationMethodResolver::create()->resolve($methodName);
+        $subtractedType = ExpectationMethodResolver::create()->resolve($methodName, $scope, ...$args);
 
         if (null === $subtractedType) {
             return new ExpectationObjectType(
@@ -107,10 +123,15 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
         return new ExpectationObjectType(NegatedExpectation::class, [$newType], $calledOnType->getValueExpr());
     }
 
-    private static function getTypeFromNullableExpectationMethodCall(MethodReflection $methodReflection, GenericObjectType $returnType, ExpectationObjectType $calledOnType): Type
-    {
+    private static function getTypeFromNullableExpectationMethodCall(
+        MethodReflection $methodReflection,
+        GenericObjectType $returnType,
+        ExpectationObjectType $calledOnType,
+        Scope $scope,
+        Node\Arg ...$args,
+    ): Type {
         $methodName = $methodReflection->getName();
-        $unionedType = ExpectationMethodResolver::create()->resolve($methodName);
+        $unionedType = ExpectationMethodResolver::create()->resolve($methodName, $scope, ...$args);
 
         if (null === $unionedType) {
             return new ExpectationObjectType(
@@ -134,10 +155,15 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
         return new ExpectationObjectType(NullableExpectation::class, [$newTypeWithNull], $calledOnType->getValueExpr());
     }
 
-    private static function getTypeFromRegularExpectationMethodCall(MethodReflection $methodReflection, GenericObjectType $returnType, ExpectationObjectType $calledOnType): Type
-    {
+    private static function getTypeFromRegularExpectationMethodCall(
+        MethodReflection $methodReflection,
+        GenericObjectType $returnType,
+        ExpectationObjectType $calledOnType,
+        Scope $scope,
+        Node\Arg ...$args,
+    ): Type {
         $methodName = $methodReflection->getName();
-        $intersectedType = ExpectationMethodResolver::create()->resolve($methodName);
+        $intersectedType = ExpectationMethodResolver::create()->resolve($methodName, $scope, ...$args);
 
         if (null === $intersectedType) {
             return new ExpectationObjectType(

@@ -67,6 +67,16 @@ final class NegatedExpectationTest extends TestCase
         Assert::that(3.14)->not()->isFloat();
     }
 
+    public function testIsInstanceOf(): void
+    {
+        $negatedExpectation = Assert::that(new \stdClass())->not();
+        self::assertSame($negatedExpectation, $negatedExpectation->isInstanceOf(\Generator::class));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "object(stdClass)" is not expected to pass the negated expectation for method "isInstanceOf".');
+        Assert::that(new \stdClass())->not()->isInstanceOf(\stdClass::class);
+    }
+
     public function testIsInt(): void
     {
         $negatedExpectation = Assert::that(3.14)->not();

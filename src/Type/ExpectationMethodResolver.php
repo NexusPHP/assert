@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Nexus\Assert\Type;
 
+use PhpParser\Node;
+use PHPStan\Analyser\Scope;
 use PHPStan\Type\Accessory\AccessoryNumericStringType;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\BooleanType;
@@ -35,7 +37,7 @@ final class ExpectationMethodResolver
     ];
 
     /**
-     * @var array<string, Type>
+     * @var array<string, \Closure(Scope, Node\Arg, Node\Arg): Type>
      */
     private static array $resolvers = [];
 
@@ -43,14 +45,15 @@ final class ExpectationMethodResolver
     {
         if ([] === self::$resolvers) {
             self::$resolvers = [
-                'isArray' => new ArrayType(new MixedType(), new MixedType()),
-                'isBool' => new BooleanType(),
-                'isFalse' => new ConstantBooleanType(false),
-                'isFloat' => new FloatType(),
-                'isInt' => new IntegerType(),
-                'isIterable' => new IterableType(new MixedType(), new MixedType()),
-                'isNull' => new NullType(),
-                'isNumeric' => TypeCombinator::union(
+                'isArray' => static fn(Scope $scope, Node\Arg $arg): Type => new ArrayType(new MixedType(), new MixedType()),
+                'isBool' => static fn(Scope $scope, Node\Arg $arg): Type => new BooleanType(),
+                'isFalse' => static fn(Scope $scope, Node\Arg $arg): Type => new ConstantBooleanType(false),
+                'isFloat' => static fn(Scope $scope, Node\Arg $arg): Type => new FloatType(),
+                'isInstanceOf' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $class): Type => $scope->getType($class->value)->getClassStringObjectType(),
+                'isInt' => static fn(Scope $scope, Node\Arg $arg): Type => new IntegerType(),
+                'isIterable' => static fn(Scope $scope, Node\Arg $arg): Type => new IterableType(new MixedType(), new MixedType()),
+                'isNull' => static fn(Scope $scope, Node\Arg $arg): Type => new NullType(),
+                'isNumeric' => static fn(Scope $scope, Node\Arg $arg): Type => TypeCombinator::union(
                     new IntegerType(),
                     new FloatType(),
                     TypeCombinator::intersect(
@@ -58,22 +61,22 @@ final class ExpectationMethodResolver
                         new AccessoryNumericStringType(),
                     ),
                 ),
-                'isObject' => new ObjectWithoutClassType(),
-                'isScalar' => TypeCombinator::union(
+                'isObject' => static fn(Scope $scope, Node\Arg $arg): Type => new ObjectWithoutClassType(),
+                'isScalar' => static fn(Scope $scope, Node\Arg $arg): Type => TypeCombinator::union(
                     new BooleanType(),
                     new IntegerType(),
                     new FloatType(),
                     new StringType(),
                 ),
-                'isString' => new StringType(),
-                'isTrue' => new ConstantBooleanType(true),
+                'isString' => static fn(Scope $scope, Node\Arg $arg): Type => new StringType(),
+                'isTrue' => static fn(Scope $scope, Node\Arg $arg): Type => new ConstantBooleanType(true),
             ];
         }
 
         return new self();
     }
 
-    public function resolve(string $methodName): ?Type
+    public function resolve(string $methodName, Scope $scope, Node\Arg $arg, Node\Arg ...$args): ?Type
     {
         $resolvers = self::$resolvers;
 
@@ -85,6 +88,6 @@ final class ExpectationMethodResolver
             throw new \LogicException(\sprintf('No type resolver found for method %s()', $methodName));
         }
 
-        return $resolvers[$methodName];
+        return $resolvers[$methodName]($scope, $arg, ...$args);
     }
 }

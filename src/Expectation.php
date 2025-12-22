@@ -122,6 +122,25 @@ final readonly class Expectation implements Expectable
     /**
      * @return self<TValue>
      */
+    public function isInstanceOf(string $expectedClass, ?string $message = null): self
+    {
+        if (! $this->value instanceof $expectedClass) {
+            throw new ExpectationFailedException(
+                $message ?? 'Value "{value}" is expected to be an instance of {expectedClass} but got {type} instead.',
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'expectedClass' => $expectedClass,
+                    'type' => $this->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
     public function isInt(?string $message = null): self
     {
         if (! \is_int($this->value)) {

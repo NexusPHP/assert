@@ -60,6 +60,18 @@ interface Expectable
     public function isFloat(?string $message = null): self;
 
     /**
+     * @template T of object
+     *
+     * @param class-string<T>       $expectedClass
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
+    public function isInstanceOf(string $expectedClass, ?string $message = null): self;
+
+    /**
      * @param null|non-empty-string $message
      *
      * @return self<TValue>

@@ -89,6 +89,16 @@ final class ExpectationTest extends TestCase
         Assert::that('hello')->isFloat();
     }
 
+    public function testIsInstanceOf(): void
+    {
+        $expectation = Assert::that(new \DateTimeImmutable());
+        self::assertSame($expectation, $expectation->isInstanceOf(\DateTimeInterface::class));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "object(stdClass)" is expected to be an instance of DateTimeInterface but got stdClass instead.');
+        Assert::that(new \stdClass())->isInstanceOf(\DateTimeInterface::class);
+    }
+
     public function testIsInt(): void
     {
         $expectation = Assert::that(1);

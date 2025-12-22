@@ -109,6 +109,23 @@ final readonly class NegatedExpectation implements Expectable
     /**
      * @return self<TValue>
      */
+    public function isInstanceOf(string $expectedClass, ?string $message = null): self
+    {
+        try {
+            $this->expectation->isInstanceOf($expectedClass, $message);
+        } catch (ExpectationFailedException) {
+            return $this;
+        }
+
+        throw new ExpectationFailedException(
+            $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isInstanceOf".',
+            ['value' => $this->expectation->exporter->exportValue($this->value)],
+        );
+    }
+
+    /**
+     * @return self<TValue>
+     */
     public function isInt(?string $message = null): self
     {
         try {
