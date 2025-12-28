@@ -20,8 +20,8 @@ use function PHPStan\Testing\assertType;
 function test_is_array(mixed $value): void
 {
     $assert = Assert::that($value)->isArray();
-    assertType('Nexus\\Assert\\Expectation<array>', $assert);
-    assertType('array', $value);
+    assertType('Nexus\\Assert\\Expectation<array<mixed, mixed>>', $assert);
+    assertType('array<mixed, mixed>', $value);
 }
 
 function test_is_bool(mixed $value): void

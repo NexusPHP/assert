@@ -47,7 +47,7 @@ final class ExpectationMethodResolver
     {
         if ([] === self::$resolvers) {
             self::$resolvers = [
-                'isArray' => static fn(Scope $scope, Node\Arg $arg): Type => new ArrayType(new MixedType(), new MixedType()),
+                'isArray' => static fn(Scope $scope, Node\Arg $arg): Type => new ArrayType(new MixedType(true), new MixedType(true)),
                 'isBool' => static fn(Scope $scope, Node\Arg $arg): Type => new BooleanType(),
                 'isCallable' => static fn(Scope $scope, Node\Arg $arg): Type => new CallableType(),
                 'isFalse' => static fn(Scope $scope, Node\Arg $arg): Type => new ConstantBooleanType(false),
