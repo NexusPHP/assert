@@ -83,6 +83,27 @@ final readonly class NullableExpectation implements Expectable
     /**
      * @return self<null|TValue>
      */
+    public function isCallable(?string $message = null): self
+    {
+        if (null === $this->value) {
+            return $this;
+        }
+
+        try {
+            $this->expectation->isCallable($message);
+        } catch (ExpectationFailedException) {
+            throw new ExpectationFailedException(
+                $message ?? 'Value "{value}" is expected to be null or pass the expectation for method "isCallable".',
+                ['value' => $this->expectation->exporter->exportValue($this->value)],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<null|TValue>
+     */
     public function isFalse(?string $message = null): self
     {
         if (null === $this->value) {

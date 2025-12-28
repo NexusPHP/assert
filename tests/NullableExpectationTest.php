@@ -53,6 +53,19 @@ final class NullableExpectationTest extends TestCase
         Assert::that(42)->nullOr()->isBool();
     }
 
+    public function testIsCallable(): void
+    {
+        $nullableExpectation = Assert::that(null)->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->isCallable());
+
+        $nullableExpectation = Assert::that(static function (): void {})->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->isCallable());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "42" is expected to be null or pass the expectation for method "isCallable".');
+        Assert::that(42)->nullOr()->isCallable();
+    }
+
     public function testIsFalse(): void
     {
         $nullableExpectation = Assert::that(null)->nullOr();

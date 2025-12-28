@@ -66,6 +66,22 @@ final class ExpectationTest extends TestCase
         Assert::that(1)->isBool();
     }
 
+    public function testIsCallable(): void
+    {
+        $expectation = Assert::that(static fn(): bool => true);
+        self::assertSame($expectation, $expectation->isCallable());
+
+        $expectation = Assert::that('trim');
+        self::assertSame($expectation, $expectation->isCallable());
+
+        $expectation = Assert::that([new \Exception('Hi'), '__toString']);
+        self::assertSame($expectation, $expectation->isCallable());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "42" is expected to be callable but got int instead.');
+        Assert::that(42)->isCallable();
+    }
+
     public function testIsFalse(): void
     {
         $expectation = Assert::that(false);

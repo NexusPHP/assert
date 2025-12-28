@@ -47,6 +47,16 @@ final class NegatedExpectationTest extends TestCase
         Assert::that(true)->not()->isBool();
     }
 
+    public function testIsCallable(): void
+    {
+        $negatedExpectation = Assert::that(42)->not();
+        self::assertSame($negatedExpectation, $negatedExpectation->isCallable());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "object(Closure)" is not expected to pass the negated expectation for method "isCallable".');
+        Assert::that(static function (): void {})->not()->isCallable();
+    }
+
     public function testIsFalse(): void
     {
         $negatedExpectation = Assert::that(true)->not();

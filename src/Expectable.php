@@ -48,6 +48,15 @@ interface Expectable
      *
      * @throws ExpectationFailedException
      */
+    public function isCallable(?string $message = null): self;
+
+    /**
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
     public function isFalse(?string $message = null): self;
 
     /**

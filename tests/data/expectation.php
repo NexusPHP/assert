@@ -31,6 +31,13 @@ function test_is_bool(mixed $value): void
     assertType('bool', $value);
 }
 
+function test_is_callable(mixed $value): void
+{
+    $assert = Assert::that($value)->isCallable();
+    assertType('Nexus\\Assert\\Expectation<callable(): mixed>', $assert);
+    assertType('callable(): mixed', $value);
+}
+
 function test_is_false(mixed $value): void
 {
     $assert = Assert::that($value)->isFalse();

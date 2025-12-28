@@ -86,6 +86,24 @@ final readonly class Expectation implements Expectable
     /**
      * @return self<TValue>
      */
+    public function isCallable(?string $message = null): self
+    {
+        if (! \is_callable($this->value)) {
+            throw new ExpectationFailedException(
+                $message ?? 'Value "{value}" is expected to be callable but got {type} instead.',
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'type' => $this->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
     public function isFalse(?string $message = null): self
     {
         if (false !== $this->value) {

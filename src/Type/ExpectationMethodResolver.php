@@ -18,6 +18,7 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Type\Accessory\AccessoryNumericStringType;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\BooleanType;
+use PHPStan\Type\CallableType;
 use PHPStan\Type\Constant\ConstantBooleanType;
 use PHPStan\Type\FloatType;
 use PHPStan\Type\IntegerType;
@@ -47,6 +48,7 @@ final class ExpectationMethodResolver
             self::$resolvers = [
                 'isArray' => static fn(Scope $scope, Node\Arg $arg): Type => new ArrayType(new MixedType(), new MixedType()),
                 'isBool' => static fn(Scope $scope, Node\Arg $arg): Type => new BooleanType(),
+                'isCallable' => static fn(Scope $scope, Node\Arg $arg): Type => new CallableType(),
                 'isFalse' => static fn(Scope $scope, Node\Arg $arg): Type => new ConstantBooleanType(false),
                 'isFloat' => static fn(Scope $scope, Node\Arg $arg): Type => new FloatType(),
                 'isInstanceOf' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $class): Type => $scope->getType($class->value)->getClassStringObjectType(),
