@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Nexus\Assert\Tests;
 
 use Nexus\Assert\Exporter;
+use Nexus\Assert\Tests\Fixtures\TestUnitEnum;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
@@ -66,7 +67,7 @@ final class ExporterTest extends TestCase
 
         yield 'object' => [(object) ['foo' => 'bar'], 'object(stdClass)'];
 
-        yield 'enum' => [TestUnitEnum::First, 'enum(Nexus\\Assert\\Tests\\TestUnitEnum::First)'];
+        yield 'enum' => [TestUnitEnum::First, 'enum(Nexus\\Assert\\Tests\\Fixtures\\TestUnitEnum::First)'];
 
         yield 'DateTime object' => [new \DateTimeImmutable('2024-01-01T12:00:00+00:00'), 'object(DateTimeImmutable(2024-01-01T12:00:00+00:00))'];
     }
