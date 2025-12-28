@@ -20,16 +20,13 @@ namespace Nexus\Assert;
  */
 final readonly class Expectation implements Expectable
 {
-    public Exporter $exporter;
-
     /**
      * @param TValue $value
      */
     public function __construct(
         public mixed $value,
-    ) {
-        $this->exporter = new Exporter();
-    }
+        public ExporterInterface $exporter = new Exporter(),
+    ) {}
 
     /**
      * @return NegatedExpectation<TValue>

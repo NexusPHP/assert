@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Nexus\Assert;
 
-final class Exporter
+final class Exporter implements ExporterInterface
 {
     public function exportValue(mixed $value): string
     {
