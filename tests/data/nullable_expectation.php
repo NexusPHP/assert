@@ -94,6 +94,13 @@ function test_is_object(mixed $value): void
     assertType('object|null', $value);
 }
 
+function test_is_resource(mixed $value): void
+{
+    $assert = Assert::that($value)->nullOr()->isResource();
+    assertType('Nexus\\Assert\\NullableExpectation<resource|null>', $assert);
+    assertType('resource|null', $value);
+}
+
 function test_is_scalar(mixed $value): void
 {
     $assert = Assert::that($value)->nullOr()->isScalar();

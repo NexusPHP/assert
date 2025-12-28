@@ -94,6 +94,13 @@ function test_is_object(mixed $value): void
     assertType('mixed~object', $value);
 }
 
+function test_is_resource(mixed $value): void
+{
+    $assert = Assert::that($value)->not()->isResource();
+    assertType('Nexus\\Assert\\NegatedExpectation<mixed~resource>', $assert);
+    assertType('mixed~resource', $value);
+}
+
 function test_is_scalar(mixed $value): void
 {
     $assert = Assert::that($value)->not()->isScalar();

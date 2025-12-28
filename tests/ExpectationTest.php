@@ -180,6 +180,20 @@ final class ExpectationTest extends TestCase
         Assert::that(42)->isObject();
     }
 
+    public function testIsResource(): void
+    {
+        $resource = fopen('php://temp', 'rb');
+        self::assertNotFalse($resource);
+
+        $expectation = Assert::that($resource);
+        self::assertSame($expectation, $expectation->isResource());
+        fclose($resource);
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "42" is expected to be a resource but got int instead.');
+        Assert::that(42)->isResource();
+    }
+
     public function testIsScalar(): void
     {
         $expectation = Assert::that(42);

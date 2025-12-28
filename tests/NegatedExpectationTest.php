@@ -137,6 +137,23 @@ final class NegatedExpectationTest extends TestCase
         Assert::that(new \stdClass())->not()->isObject();
     }
 
+    public function testIsResource(): void
+    {
+        $resource = fopen('php://temp', 'rb');
+        self::assertNotFalse($resource);
+
+        try {
+            $negatedExpectation = Assert::that(42)->not();
+            self::assertSame($negatedExpectation, $negatedExpectation->isResource());
+
+            $this->expectException(ExpectationFailedException::class);
+            $this->expectExceptionMessage('Value "resource (stream)" is not expected to pass the negated expectation for method "isResource".');
+            Assert::that($resource)->not()->isResource();
+        } finally {
+            fclose($resource);
+        }
+    }
+
     public function testIsScalar(): void
     {
         $negatedExpectation = Assert::that([])->not();

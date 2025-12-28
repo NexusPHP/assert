@@ -246,6 +246,24 @@ final readonly class Expectation implements Expectable
     /**
      * @return self<TValue>
      */
+    public function isResource(?string $message = null): self
+    {
+        if (! \is_resource($this->value)) {
+            throw new ExpectationFailedException(
+                $message ?? 'Value "{value}" is expected to be a resource but got {type} instead.',
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'type' => $this->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
     public function isScalar(?string $message = null): self
     {
         if (! \is_scalar($this->value)) {

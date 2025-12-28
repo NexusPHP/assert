@@ -26,6 +26,7 @@ use PHPStan\Type\IterableType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectWithoutClassType;
+use PHPStan\Type\ResourceType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
@@ -64,6 +65,7 @@ final class ExpectationMethodResolver
                     ),
                 ),
                 'isObject' => static fn(Scope $scope, Node\Arg $arg): Type => new ObjectWithoutClassType(),
+                'isResource' => static fn(Scope $scope, Node\Arg $arg): Type => new ResourceType(),
                 'isScalar' => static fn(Scope $scope, Node\Arg $arg): Type => TypeCombinator::union(
                     new BooleanType(),
                     new IntegerType(),

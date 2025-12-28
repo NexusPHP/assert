@@ -170,6 +170,24 @@ final class NullableExpectationTest extends TestCase
         Assert::that(42)->nullOr()->isObject();
     }
 
+    public function testIsResource(): void
+    {
+        $resource = fopen('php://temp', 'rb');
+        self::assertNotFalse($resource);
+
+        $nullableExpectation = Assert::that(null)->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->isResource());
+
+        $nullableExpectation = Assert::that($resource)->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->isResource());
+
+        fclose($resource);
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "42" is expected to be null or pass the expectation for method "isResource".');
+        Assert::that(42)->nullOr()->isResource();
+    }
+
     public function testIsScalar(): void
     {
         $nullableExpectation = Assert::that(null)->nullOr();
