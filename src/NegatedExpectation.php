@@ -92,6 +92,23 @@ final readonly class NegatedExpectation implements Expectable
     /**
      * @return self<TValue>
      */
+    public function isCountable(?string $message = null): self
+    {
+        try {
+            $this->expectation->isCountable($message);
+        } catch (ExpectationFailedException) {
+            return $this;
+        }
+
+        throw new ExpectationFailedException(
+            $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isCountable".',
+            ['value' => $this->expectation->exporter->exportValue($this->value)],
+        );
+    }
+
+    /**
+     * @return self<TValue>
+     */
     public function isFalse(?string $message = null): self
     {
         try {

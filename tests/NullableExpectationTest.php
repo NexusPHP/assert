@@ -66,6 +66,19 @@ final class NullableExpectationTest extends TestCase
         Assert::that(42)->nullOr()->isCallable();
     }
 
+    public function testIsCountable(): void
+    {
+        $nullableExpectation = Assert::that(null)->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->isCountable());
+
+        $nullableExpectation = Assert::that([])->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->isCountable());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "42" is expected to be null or pass the expectation for method "isCountable".');
+        Assert::that(42)->nullOr()->isCountable();
+    }
+
     public function testIsFalse(): void
     {
         $nullableExpectation = Assert::that(null)->nullOr();

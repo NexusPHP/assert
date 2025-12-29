@@ -82,6 +82,19 @@ final class ExpectationTest extends TestCase
         Assert::that(42)->isCallable();
     }
 
+    public function testIsCountable(): void
+    {
+        $expectation = Assert::that([]);
+        self::assertSame($expectation, $expectation->isCountable());
+
+        $expectation = Assert::that(new \ArrayObject([1, 2, 3]));
+        self::assertSame($expectation, $expectation->isCountable());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "42" is expected to be countable but got int instead.');
+        Assert::that(42)->isCountable();
+    }
+
     public function testIsFalse(): void
     {
         $expectation = Assert::that(false);

@@ -38,6 +38,13 @@ function test_is_callable(mixed $value): void
     assertType('callable(): mixed', $value);
 }
 
+function test_is_countable(mixed $value): void
+{
+    $assert = Assert::that($value)->isCountable();
+    assertType('Nexus\\Assert\\Expectation<array<mixed>|Countable>', $assert);
+    assertType('array<mixed>|Countable', $value);
+}
+
 function test_is_false(mixed $value): void
 {
     $assert = Assert::that($value)->isFalse();

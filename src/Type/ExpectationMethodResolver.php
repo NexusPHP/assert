@@ -137,6 +137,10 @@ final class ExpectationMethodResolver
                     new Node\Name\FullyQualified('is_callable'),
                     [$arg],
                 ),
+                'isCountable' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\FuncCall(
+                    new Node\Name\FullyQualified('is_countable'),
+                    [$arg],
+                ),
                 'isFalse' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\BinaryOp\Identical(
                     new Node\Expr\ConstFetch(new Node\Name('false')),
                     $arg->value,

@@ -57,6 +57,16 @@ final class NegatedExpectationTest extends TestCase
         Assert::that(static function (): void {})->not()->isCallable();
     }
 
+    public function testIsCountable(): void
+    {
+        $negatedExpectation = Assert::that(42)->not();
+        self::assertSame($negatedExpectation, $negatedExpectation->isCountable());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "[]" is not expected to pass the negated expectation for method "isCountable".');
+        Assert::that([])->not()->isCountable();
+    }
+
     public function testIsFalse(): void
     {
         $negatedExpectation = Assert::that(true)->not();
