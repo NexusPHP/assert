@@ -58,6 +58,10 @@ final class ExpectationMethodResolver
             return null;
         }
 
+        if (! $this->isSupported($methodName)) {
+            return null;
+        }
+
         $expr = self::$resolvers[$methodName]($scope, $arg, ...$args);
 
         if (null === $expr) {
