@@ -13,23 +13,13 @@ declare(strict_types=1);
 
 namespace Nexus\Assert\Type;
 
+use Nexus\Assert\NegatedExpectation;
+use Nexus\Assert\NullableExpectation;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
-use PHPStan\Type\Accessory\AccessoryNumericStringType;
-use PHPStan\Type\ArrayType;
-use PHPStan\Type\BooleanType;
-use PHPStan\Type\CallableType;
-use PHPStan\Type\Constant\ConstantBooleanType;
-use PHPStan\Type\FloatType;
-use PHPStan\Type\IntegerType;
-use PHPStan\Type\IterableType;
-use PHPStan\Type\MixedType;
-use PHPStan\Type\NullType;
-use PHPStan\Type\ObjectWithoutClassType;
-use PHPStan\Type\ResourceType;
-use PHPStan\Type\StringType;
+use PHPStan\Analyser\TypeSpecifier;
+use PHPStan\Analyser\TypeSpecifierContext;
 use PHPStan\Type\Type;
-use PHPStan\Type\TypeCombinator;
 
 final class ExpectationMethodResolver
 {
@@ -39,59 +29,185 @@ final class ExpectationMethodResolver
     ];
 
     /**
-     * @var array<string, \Closure(Scope, Node\Arg, Node\Arg): Type>
+     * @var array<string, \Closure(Scope, Node\Arg, Node\Arg): (null|Node\Expr)>
      */
     private static array $resolvers = [];
 
-    public static function create(): self
+    public function __construct()
     {
-        if ([] === self::$resolvers) {
-            self::$resolvers = [
-                'isArray' => static fn(Scope $scope, Node\Arg $arg): Type => new ArrayType(new MixedType(true), new MixedType(true)),
-                'isBool' => static fn(Scope $scope, Node\Arg $arg): Type => new BooleanType(),
-                'isCallable' => static fn(Scope $scope, Node\Arg $arg): Type => new CallableType(),
-                'isFalse' => static fn(Scope $scope, Node\Arg $arg): Type => new ConstantBooleanType(false),
-                'isFloat' => static fn(Scope $scope, Node\Arg $arg): Type => new FloatType(),
-                'isInstanceOf' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $class): Type => $scope->getType($class->value)->getClassStringObjectType(),
-                'isInt' => static fn(Scope $scope, Node\Arg $arg): Type => new IntegerType(),
-                'isIterable' => static fn(Scope $scope, Node\Arg $arg): Type => new IterableType(new MixedType(), new MixedType()),
-                'isNull' => static fn(Scope $scope, Node\Arg $arg): Type => new NullType(),
-                'isNumeric' => static fn(Scope $scope, Node\Arg $arg): Type => TypeCombinator::union(
-                    new IntegerType(),
-                    new FloatType(),
-                    TypeCombinator::intersect(
-                        new StringType(),
-                        new AccessoryNumericStringType(),
-                    ),
-                ),
-                'isObject' => static fn(Scope $scope, Node\Arg $arg): Type => new ObjectWithoutClassType(),
-                'isResource' => static fn(Scope $scope, Node\Arg $arg): Type => new ResourceType(),
-                'isScalar' => static fn(Scope $scope, Node\Arg $arg): Type => TypeCombinator::union(
-                    new BooleanType(),
-                    new IntegerType(),
-                    new FloatType(),
-                    new StringType(),
-                ),
-                'isString' => static fn(Scope $scope, Node\Arg $arg): Type => new StringType(),
-                'isTrue' => static fn(Scope $scope, Node\Arg $arg): Type => new ConstantBooleanType(true),
-            ];
-        }
-
-        return new self();
+        self::createExprResolvers();
     }
 
-    public function resolve(string $methodName, Scope $scope, Node\Arg $arg, Node\Arg ...$args): ?Type
+    public function isSupported(string $methodName): bool
     {
-        $resolvers = self::$resolvers;
+        return ! \in_array($methodName, self::UNSUPPORTED_EXPECTATION_METHODS, true)
+            && isset(self::$resolvers[$methodName]);
+    }
 
+    /**
+     * @param class-string $expectationClass
+     */
+    public function resolveExpr(
+        string $expectationClass,
+        string $methodName,
+        Scope $scope,
+        Node\Arg $arg,
+        Node\Arg ...$args,
+    ): ?Node\Expr {
         if (\in_array($methodName, self::UNSUPPORTED_EXPECTATION_METHODS, true)) {
             return null;
         }
 
-        if (! isset($resolvers[$methodName])) {
-            throw new \LogicException(\sprintf('No type resolver found for method %s()', $methodName));
+        $expr = self::$resolvers[$methodName]($scope, $arg, ...$args);
+
+        if (null === $expr) {
+            return null;
         }
 
-        return $resolvers[$methodName]($scope, $arg, ...$args);
+        if (NegatedExpectation::class === $expectationClass) {
+            return new Node\Expr\BooleanNot($expr);
+        }
+
+        if (NullableExpectation::class === $expectationClass) {
+            return new Node\Expr\BinaryOp\BooleanOr(
+                new Node\Expr\BinaryOp\Identical(
+                    new Node\Expr\ConstFetch(new Node\Name('null')),
+                    $arg->value,
+                ),
+                $expr,
+            );
+        }
+
+        return $expr;
+    }
+
+    /**
+     * @param class-string $expectationClass
+     */
+    public function resolveType(
+        TypeSpecifier $typeSpecifier,
+        string $expectationClass,
+        string $methodName,
+        Scope $scope,
+        Node\Arg $arg,
+        Node\Arg ...$args,
+    ): ?Type {
+        $resolvedExpr = $this->resolveExpr($expectationClass, $methodName, $scope, $arg, ...$args);
+
+        if (null === $resolvedExpr) {
+            return null;
+        }
+
+        $context = TypeSpecifierContext::createTruthy();
+
+        if (NegatedExpectation::class === $expectationClass) {
+            foreach ($typeSpecifier->specifyTypesInCondition($scope, $resolvedExpr, $context)->getSureNotTypes() as [$expr, $type]) {
+                if ($expr === $arg->value) {
+                    return $type;
+                }
+            }
+        }
+
+        foreach ($typeSpecifier->specifyTypesInCondition($scope, $resolvedExpr, $context)->getSureTypes() as [$expr, $type]) {
+            if ($expr === $arg->value) {
+                return $type;
+            }
+        }
+
+        return null;
+    }
+
+    private static function createExprResolvers(): void
+    {
+        if ([] === self::$resolvers) {
+            self::$resolvers = [
+                'isArray' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\FuncCall(
+                    new Node\Name\FullyQualified('is_array'),
+                    [$arg],
+                ),
+                'isBool' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\FuncCall(
+                    new Node\Name\FullyQualified('is_bool'),
+                    [$arg],
+                ),
+                'isCallable' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\FuncCall(
+                    new Node\Name\FullyQualified('is_callable'),
+                    [$arg],
+                ),
+                'isFalse' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\BinaryOp\Identical(
+                    new Node\Expr\ConstFetch(new Node\Name('false')),
+                    $arg->value,
+                ),
+                'isFloat' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\FuncCall(
+                    new Node\Name\FullyQualified('is_float'),
+                    [$arg],
+                ),
+                'isInstanceOf' => static function (Scope $scope, Node\Arg $arg, Node\Arg $class): ?Node\Expr {
+                    $classType = $scope->getType($class->value);
+
+                    if (\count($classType->getConstantStrings()) === 1) {
+                        $className = $classType->getConstantStrings()[0]->getValue();
+
+                        return new Node\Expr\Instanceof_(
+                            $arg->value,
+                            new Node\Name\FullyQualified($className),
+                        );
+                    }
+
+                    if ($classType->isClassString()->yes()) {
+                        $objectType = $classType->getClassStringObjectType();
+
+                        if ($objectType->getObjectClassNames() !== []) {
+                            return new Node\Expr\Instanceof_(
+                                $arg->value,
+                                new Node\Name\FullyQualified($objectType->getObjectClassNames()[0]),
+                            );
+                        }
+
+                        return new Node\Expr\Instanceof_(
+                            $arg->value,
+                            $class->value,
+                        );
+                    }
+
+                    return null;
+                },
+                'isInt' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\FuncCall(
+                    new Node\Name\FullyQualified('is_int'),
+                    [$arg],
+                ),
+                'isIterable' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\FuncCall(
+                    new Node\Name\FullyQualified('is_iterable'),
+                    [$arg],
+                ),
+                'isNull' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\BinaryOp\Identical(
+                    new Node\Expr\ConstFetch(new Node\Name('null')),
+                    $arg->value,
+                ),
+                'isNumeric' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\FuncCall(
+                    new Node\Name\FullyQualified('is_numeric'),
+                    [$arg],
+                ),
+                'isObject' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\FuncCall(
+                    new Node\Name\FullyQualified('is_object'),
+                    [$arg],
+                ),
+                'isResource' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\FuncCall(
+                    new Node\Name\FullyQualified('is_resource'),
+                    [$arg],
+                ),
+                'isScalar' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\FuncCall(
+                    new Node\Name\FullyQualified('is_scalar'),
+                    [$arg],
+                ),
+                'isString' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\FuncCall(
+                    new Node\Name\FullyQualified('is_string'),
+                    [$arg],
+                ),
+                'isTrue' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\BinaryOp\Identical(
+                    new Node\Expr\ConstFetch(new Node\Name('true')),
+                    $arg->value,
+                ),
+            ];
+        }
     }
 }

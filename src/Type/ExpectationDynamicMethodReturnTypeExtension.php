@@ -20,6 +20,8 @@ use Nexus\Assert\NullableExpectation;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\Analyser\TypeSpecifier;
+use PHPStan\Analyser\TypeSpecifierAwareExtension;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
@@ -28,11 +30,22 @@ use PHPStan\Type\NeverType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 
-final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
+final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension, TypeSpecifierAwareExtension
 {
+    private TypeSpecifier $typeSpecifier;
+
+    public function __construct(
+        private ExpectationMethodResolver $resolver,
+    ) {}
+
     public function getClass(): string
     {
         return Expectable::class;
+    }
+
+    public function setTypeSpecifier(TypeSpecifier $typeSpecifier): void
+    {
+        $this->typeSpecifier = $typeSpecifier;
     }
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
@@ -55,55 +68,37 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
         )->getReturnType();
 
         if ($returnType instanceof GenericObjectType) {
+            /** @var class-string $expectationClass */
             $expectationClass = $returnType->getClassName();
-            $args = [
+            $resolvedType = $this->resolver->resolveType(
+                $this->typeSpecifier,
+                $expectationClass,
+                $methodReflection->getName(),
+                $scope,
                 new Node\Arg($calledOnType->getValueExpr()),
                 ...$methodCall->getArgs(),
-            ];
+            );
 
             if (NegatedExpectation::class === $expectationClass) {
-                return self::getTypeFromNegatedExpectationMethodCall(
-                    $methodReflection,
-                    $returnType,
-                    $calledOnType,
-                    $scope,
-                    ...$args,
-                );
+                return self::getTypeFromNegatedExpectationMethodCall($returnType, $calledOnType, $resolvedType);
             }
 
             if (NullableExpectation::class === $expectationClass) {
-                return self::getTypeFromNullableExpectationMethodCall(
-                    $methodReflection,
-                    $returnType,
-                    $calledOnType,
-                    $scope,
-                    ...$args,
-                );
+                return self::getTypeFromNullableExpectationMethodCall($returnType, $calledOnType, $resolvedType);
             }
 
-            return self::getTypeFromRegularExpectationMethodCall(
-                $methodReflection,
-                $returnType,
-                $calledOnType,
-                $scope,
-                ...$args,
-            );
+            return self::getTypeFromRegularExpectationMethodCall($returnType, $calledOnType, $resolvedType);
         }
 
         return $returnType;
     }
 
     private static function getTypeFromNegatedExpectationMethodCall(
-        MethodReflection $methodReflection,
         GenericObjectType $returnType,
         ExpectationObjectType $calledOnType,
-        Scope $scope,
-        Node\Arg ...$args,
+        ?Type $resolvedType,
     ): Type {
-        $methodName = $methodReflection->getName();
-        $subtractedType = ExpectationMethodResolver::create()->resolve($methodName, $scope, ...$args);
-
-        if (null === $subtractedType) {
+        if (null === $resolvedType) {
             return new ExpectationObjectType(
                 NegatedExpectation::class,
                 $returnType->getTypes(),
@@ -113,7 +108,7 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
 
         $newType = TypeCombinator::remove(
             TypeCombinator::union(...$returnType->getTypes()),
-            $subtractedType,
+            $resolvedType,
         );
 
         if ($newType instanceof NeverType) {
@@ -124,16 +119,11 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
     }
 
     private static function getTypeFromNullableExpectationMethodCall(
-        MethodReflection $methodReflection,
         GenericObjectType $returnType,
         ExpectationObjectType $calledOnType,
-        Scope $scope,
-        Node\Arg ...$args,
+        ?Type $resolvedType,
     ): Type {
-        $methodName = $methodReflection->getName();
-        $unionedType = ExpectationMethodResolver::create()->resolve($methodName, $scope, ...$args);
-
-        if (null === $unionedType) {
+        if (null === $resolvedType) {
             return new ExpectationObjectType(
                 NullableExpectation::class,
                 $returnType->getTypes(),
@@ -143,7 +133,7 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
 
         $newType = TypeCombinator::intersect(
             TypeCombinator::union(...$returnType->getTypes()),
-            $unionedType,
+            $resolvedType,
         );
 
         if ($newType instanceof NeverType) {
@@ -156,16 +146,11 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
     }
 
     private static function getTypeFromRegularExpectationMethodCall(
-        MethodReflection $methodReflection,
         GenericObjectType $returnType,
         ExpectationObjectType $calledOnType,
-        Scope $scope,
-        Node\Arg ...$args,
+        ?Type $resolvedType,
     ): Type {
-        $methodName = $methodReflection->getName();
-        $intersectedType = ExpectationMethodResolver::create()->resolve($methodName, $scope, ...$args);
-
-        if (null === $intersectedType) {
+        if (null === $resolvedType) {
             return new ExpectationObjectType(
                 Expectation::class,
                 $returnType->getTypes(),
@@ -175,7 +160,7 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
 
         $newType = TypeCombinator::intersect(
             TypeCombinator::union(...$returnType->getTypes()),
-            $intersectedType,
+            $resolvedType,
         );
 
         if ($newType instanceof NeverType) {

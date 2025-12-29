@@ -14,8 +14,6 @@ declare(strict_types=1);
 namespace Nexus\Assert\Type;
 
 use Nexus\Assert\Expectable;
-use Nexus\Assert\NegatedExpectation;
-use Nexus\Assert\NullableExpectation;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
@@ -25,11 +23,14 @@ use PHPStan\Analyser\TypeSpecifierAwareExtension;
 use PHPStan\Analyser\TypeSpecifierContext;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\MethodTypeSpecifyingExtension;
-use PHPStan\Type\TypeCombinator;
 
 final class ExpectationMethodTypeSpecifyingExtension implements MethodTypeSpecifyingExtension, TypeSpecifierAwareExtension
 {
     private TypeSpecifier $typeSpecifier;
+
+    public function __construct(
+        private ExpectationMethodResolver $resolver,
+    ) {}
 
     public function setTypeSpecifier(TypeSpecifier $typeSpecifier): void
     {
@@ -43,7 +44,7 @@ final class ExpectationMethodTypeSpecifyingExtension implements MethodTypeSpecif
 
     public function isMethodSupported(MethodReflection $methodReflection, MethodCall $node, TypeSpecifierContext $context): bool
     {
-        return true;
+        return $this->resolver->isSupported($methodReflection->getName());
     }
 
     public function specifyTypes(
@@ -62,40 +63,20 @@ final class ExpectationMethodTypeSpecifyingExtension implements MethodTypeSpecif
             return new SpecifiedTypes();
         }
 
-        $args = [
+        /** @var class-string $expectationClass */
+        $expectationClass = $calledOnType->getClassName();
+        $expr = $this->resolver->resolveExpr(
+            $expectationClass,
+            $methodReflection->getName(),
+            $scope,
             new Node\Arg($calledOnType->getValueExpr()),
             ...$node->getArgs(),
-        ];
+        );
 
-        $returnType = ExpectationMethodResolver::create()->resolve($methodReflection->getName(), $scope, ...$args);
-
-        if (null === $returnType) {
+        if (null === $expr) {
             return new SpecifiedTypes();
         }
 
-        if ($calledOnType->getClassName() === NegatedExpectation::class) {
-            return $this->typeSpecifier->create(
-                $calledOnType->getValueExpr(),
-                TypeCombinator::remove(TypeCombinator::union(...$calledOnType->getTypes()), $returnType),
-                TypeSpecifierContext::createTruthy(),
-                $scope,
-            );
-        }
-
-        if ($calledOnType->getClassName() === NullableExpectation::class) {
-            return $this->typeSpecifier->create(
-                $calledOnType->getValueExpr(),
-                TypeCombinator::addNull(TypeCombinator::intersect(...$calledOnType->getTypes(), ...[$returnType])),
-                TypeSpecifierContext::createTruthy(),
-                $scope,
-            );
-        }
-
-        return $this->typeSpecifier->create(
-            $calledOnType->getValueExpr(),
-            TypeCombinator::intersect(...$calledOnType->getTypes(), ...[$returnType]),
-            TypeSpecifierContext::createTruthy(),
-            $scope,
-        );
+        return $this->typeSpecifier->specifyTypesInCondition($scope, $expr, TypeSpecifierContext::createTruthy());
     }
 }

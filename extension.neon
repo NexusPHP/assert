@@ -1,5 +1,8 @@
 services:
   -
+    class: Nexus\Assert\Type\ExpectationMethodResolver
+
+  -
     class: Nexus\Assert\Type\AssertDynamicStaticMethodReturnTypeExtension
     tags:
       - phpstan.broker.dynamicStaticMethodReturnTypeExtension

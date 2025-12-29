@@ -96,9 +96,11 @@ function test_is_object(mixed $value): void
 
 function test_is_resource(mixed $value): void
 {
+    // failing is_resource check will not guarantee that $value is not a resource
+    // as it can be a closed resource
     $assert = Assert::that($value)->not()->isResource();
-    assertType('Nexus\\Assert\\NegatedExpectation<mixed~resource>', $assert);
-    assertType('mixed~resource', $value);
+    assertType('Nexus\\Assert\\NegatedExpectation<mixed>', $assert);
+    assertType('mixed', $value);
 }
 
 function test_is_scalar(mixed $value): void
