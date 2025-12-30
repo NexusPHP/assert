@@ -74,9 +74,13 @@ final class ExpectationVariantsGenerator
     /**
      * Methods which message requires more than the default ['value', 'type'] context.
      *
-     * NOTE: Append '=' to parameter names to mean they are not value-exported.
+     * NOTE:
+     * - Append '=' to parameter names to mean they are not value-exported.
+     * - Append '+' to parameter names to mean they are type-exported.
      */
     private const NON_DEFAULT_CONTEXT = [
+        'hasMethod' => ['value+', 'method='],
+        'hasProperty' => ['value+', 'property='],
         'isInstanceOf' => ['value', 'class=', 'type'],
         'isSameAs' => ['value', 'other', 'type'],
     ];
@@ -232,17 +236,22 @@ final class ExpectationVariantsGenerator
         $contextCodeLines = [];
 
         foreach ($contextVariables as $variable) {
-            $isExported = ! str_ends_with($variable, '=');
-            $variableName = rtrim($variable, '=');
+            $isValueExported = ! str_ends_with($variable, '=');
+            $isTypeExported = str_ends_with($variable, '+');
+            $variableName = rtrim($variable, '=+');
 
-            if ('value' === $variableName) {
-                $exportCode = '$this->expectation->exporter->exportValue($this->value)';
-            } elseif ('type' === $variableName) {
+            if ('type' === $variableName) {
                 $exportCode = '$this->expectation->exporter->exportType($this->value)';
-            } elseif ($isExported) {
-                $exportCode = '$this->expectation->exporter->exportValue($'.$variableName.')';
+            } elseif ('value' === $variableName && $isTypeExported) {
+                $exportCode = '$this->expectation->exporter->exportType($this->value)';
+            } elseif ('value' === $variableName && $isValueExported) {
+                $exportCode = '$this->expectation->exporter->exportValue($this->value)';
+            } elseif ($isTypeExported) {
+                $exportCode = \sprintf('$this->expectation->exporter->exportType($%s)', $variableName);
+            } elseif ($isValueExported) {
+                $exportCode = \sprintf('$this->expectation->exporter->exportValue($%s)', $variableName);
             } else {
-                $exportCode = '$'.$variableName;
+                $exportCode = \sprintf('$%s', $variableName);
             }
 
             $contextCodeLines[$variableName] = \sprintf("'%s' => %s,", $variableName, $exportCode);

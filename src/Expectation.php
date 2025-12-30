@@ -20,6 +20,8 @@ namespace Nexus\Assert;
  */
 final readonly class Expectation implements Expectable
 {
+    private const MESSAGE_HAS_METHOD = 'Object of class {value} is expected to have method "{method}".';
+    private const MESSAGE_HAS_PROPERTY = 'Object of class {value} is expected to have property "{property}".';
     private const MESSAGE_IS_ARRAY = 'Value "{value}" is expected to be an array but got {type} instead.';
     private const MESSAGE_IS_BOOL = 'Value "{value}" is expected to be a bool but got {type} instead.';
     private const MESSAGE_IS_CALLABLE = 'Value "{value}" is expected to be callable but got {type} instead.';
@@ -60,6 +62,50 @@ final readonly class Expectation implements Expectable
     public function nullOr(): NullableExpectation
     {
         return new NullableExpectation($this);
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function hasMethod(string $method, ?string $message = null): self
+    {
+        // Due to limitations in the extensions and/or PHPStan, we have to
+        // use an external assertion here instead of `$this->isObject()`.
+        // @todo To use `$this->isObject($message)`
+        Assert::that($this->value)->isObject($message);
+
+        if (! method_exists($this->value, $method)) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_HAS_METHOD,
+                [
+                    'value' => $this->exporter->exportType($this->value),
+                    'method' => $method,
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function hasProperty(string $property, ?string $message = null): self
+    {
+        // @todo To use `$this->isObject($message)`
+        Assert::that($this->value)->isObject($message);
+
+        if (! property_exists($this->value, $property)) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_HAS_PROPERTY,
+                [
+                    'value' => $this->exporter->exportType($this->value),
+                    'property' => $property,
+                ],
+            );
+        }
+
+        return $this;
     }
 
     /**
