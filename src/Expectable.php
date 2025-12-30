@@ -150,6 +150,15 @@ interface Expectable
      *
      * @throws ExpectationFailedException
      */
+    public function isSameAs(mixed $other, ?string $message = null): self;
+
+    /**
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
     public function isScalar(?string $message = null): self;
 
     /**

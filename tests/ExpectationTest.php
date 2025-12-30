@@ -17,6 +17,7 @@ use Nexus\Assert\Assert;
 use Nexus\Assert\Expectation;
 use Nexus\Assert\ExpectationFailedException;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
@@ -205,6 +206,33 @@ final class ExpectationTest extends TestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "42" is expected to be a resource but got int instead.');
         Assert::that(42)->isResource();
+    }
+
+    #[DataProvider('provideIsSameAsCases')]
+    public function testIsSameAs(mixed $value, mixed $other): void
+    {
+        $expectation = Assert::that($value);
+        self::assertSame($expectation, $expectation->isSameAs($other));
+
+        $this->expectException(ExpectationFailedException::class);
+        Assert::that($value)->isSameAs('different');
+    }
+
+    public static function provideIsSameAsCases(): iterable
+    {
+        $object = new \stdClass();
+
+        yield 'int' => [42, 42];
+
+        yield 'float' => [3.14, 3.14];
+
+        yield 'string' => ['hello', 'hello'];
+
+        yield 'null' => [null, null];
+
+        yield 'array' => [[1, 2, 3], [1, 2, 3]];
+
+        yield 'object' => [$object, $object];
     }
 
     public function testIsScalar(): void

@@ -15,8 +15,11 @@ namespace Nexus\Assert\Tests;
 
 use Nexus\Assert\Assert;
 use Nexus\Assert\ExpectationFailedException;
+use Nexus\Assert\Exporter;
+use Nexus\Assert\ExporterInterface;
 use Nexus\Assert\NegatedExpectation;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
@@ -27,6 +30,15 @@ use PHPUnit\Framework\TestCase;
 #[Group('unit')]
 final class NegatedExpectationTest extends TestCase
 {
+    private ExporterInterface $exporter;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->exporter = new Exporter();
+    }
+
     public function testIsArray(): void
     {
         $negatedExpectation = Assert::that(42)->not();
@@ -162,6 +174,31 @@ final class NegatedExpectationTest extends TestCase
         } finally {
             fclose($resource);
         }
+    }
+
+    #[DataProvider('provideIsSameAsCases')]
+    public function testIsSameAs(mixed $value, mixed $other): void
+    {
+        $negatedExpectation = Assert::that($value)->not();
+        self::assertSame($negatedExpectation, $negatedExpectation->isSameAs($other));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage(\sprintf(
+            'Value "%s" is not expected to pass the negated expectation for method "isSameAs".',
+            $this->exporter->exportValue($value),
+        ));
+        Assert::that($value)->not()->isSameAs($value);
+    }
+
+    public static function provideIsSameAsCases(): iterable
+    {
+        yield 'int vs string' => [42, '42'];
+
+        yield 'float vs int' => [3.14, 3];
+
+        yield 'string vs bool' => ['true', true];
+
+        yield 'array vs object' => [[], new \stdClass()];
     }
 
     public function testIsScalar(): void

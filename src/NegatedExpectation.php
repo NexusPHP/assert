@@ -262,6 +262,23 @@ final readonly class NegatedExpectation implements Expectable
     /**
      * @return self<TValue>
      */
+    public function isSameAs(mixed $other, ?string $message = null): self
+    {
+        try {
+            $this->expectation->isSameAs($other, $message);
+        } catch (ExpectationFailedException) {
+            return $this;
+        }
+
+        throw new ExpectationFailedException(
+            $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isSameAs".',
+            ['value' => $this->expectation->exporter->exportValue($this->value)],
+        );
+    }
+
+    /**
+     * @return self<TValue>
+     */
     public function isScalar(?string $message = null): self
     {
         try {

@@ -282,6 +282,24 @@ final readonly class Expectation implements Expectable
     /**
      * @return self<TValue>
      */
+    public function isSameAs(mixed $other, ?string $message = null): self
+    {
+        if ($this->value !== $other) {
+            throw new ExpectationFailedException(
+                $message ?? 'Value "{value}" is expected to be the same as {expected} but they differ.',
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'expected' => $this->exporter->exportValue($other),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
     public function isScalar(?string $message = null): self
     {
         if (! \is_scalar($this->value)) {

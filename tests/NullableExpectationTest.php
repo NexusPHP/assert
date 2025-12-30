@@ -15,8 +15,11 @@ namespace Nexus\Assert\Tests;
 
 use Nexus\Assert\Assert;
 use Nexus\Assert\ExpectationFailedException;
+use Nexus\Assert\Exporter;
+use Nexus\Assert\ExporterInterface;
 use Nexus\Assert\NullableExpectation;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
@@ -27,6 +30,15 @@ use PHPUnit\Framework\TestCase;
 #[Group('unit')]
 final class NullableExpectationTest extends TestCase
 {
+    private ExporterInterface $exporter;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->exporter = new Exporter();
+    }
+
     public function testIsArray(): void
     {
         $nullableExpectation = Assert::that(null)->nullOr();
@@ -199,6 +211,38 @@ final class NullableExpectationTest extends TestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "42" is expected to be null or pass the expectation for method "isResource".');
         Assert::that(42)->nullOr()->isResource();
+    }
+
+    #[DataProvider('provideIsSameAsCases')]
+    public function testIsSameAs(mixed $value, mixed $other): void
+    {
+        $nullableExpectation = Assert::that(null)->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->isSameAs($other));
+
+        $nullableExpectation = Assert::that($value)->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->isSameAs($other));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage(\sprintf(
+            'Value "%s" is expected to be null or pass the expectation for method "isSameAs".',
+            $this->exporter->exportValue($value),
+        ));
+        Assert::that($value)->nullOr()->isSameAs('different');
+    }
+
+    public static function provideIsSameAsCases(): iterable
+    {
+        $object = new \stdClass();
+
+        yield 'object' => [$object, $object];
+
+        yield 'int' => [42, 42];
+
+        yield 'float' => [3.14, 3.14];
+
+        yield 'string' => ['hello', 'hello'];
+
+        yield 'array' => [[], []];
     }
 
     public function testIsScalar(): void

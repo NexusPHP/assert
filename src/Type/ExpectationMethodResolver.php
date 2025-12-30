@@ -54,10 +54,6 @@ final class ExpectationMethodResolver
         Node\Arg $arg,
         Node\Arg ...$args,
     ): ?Node\Expr {
-        if (\in_array($methodName, self::UNSUPPORTED_EXPECTATION_METHODS, true)) {
-            return null;
-        }
-
         if (! $this->isSupported($methodName)) {
             return null;
         }
@@ -103,16 +99,19 @@ final class ExpectationMethodResolver
         }
 
         $context = TypeSpecifierContext::createTruthy();
+        $specifiedTypes = $typeSpecifier->specifyTypesInCondition($scope, $resolvedExpr, $context);
 
         if (NegatedExpectation::class === $expectationClass) {
-            foreach ($typeSpecifier->specifyTypesInCondition($scope, $resolvedExpr, $context)->getSureNotTypes() as [$expr, $type]) {
+            foreach ($specifiedTypes->getSureNotTypes() as [$expr, $type]) {
                 if ($expr === $arg->value) {
                     return $type;
                 }
             }
+
+            return null;
         }
 
-        foreach ($typeSpecifier->specifyTypesInCondition($scope, $resolvedExpr, $context)->getSureTypes() as [$expr, $type]) {
+        foreach ($specifiedTypes->getSureTypes() as [$expr, $type]) {
             if ($expr === $arg->value) {
                 return $type;
             }
@@ -138,7 +137,7 @@ final class ExpectationMethodResolver
                     [$arg],
                 ),
                 'isCountable' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\FuncCall(
-                    new Node\Name\FullyQualified('is_countable'),
+                    new Node\Name('is_countable'),
                     [$arg],
                 ),
                 'isFalse' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\BinaryOp\Identical(
@@ -184,7 +183,7 @@ final class ExpectationMethodResolver
                     [$arg],
                 ),
                 'isIterable' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\FuncCall(
-                    new Node\Name\FullyQualified('is_iterable'),
+                    new Node\Name('is_iterable'),
                     [$arg],
                 ),
                 'isNull' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\BinaryOp\Identical(
@@ -192,7 +191,7 @@ final class ExpectationMethodResolver
                     $arg->value,
                 ),
                 'isNumeric' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\FuncCall(
-                    new Node\Name\FullyQualified('is_numeric'),
+                    new Node\Name('is_numeric'),
                     [$arg],
                 ),
                 'isObject' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\FuncCall(
@@ -202,6 +201,10 @@ final class ExpectationMethodResolver
                 'isResource' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\FuncCall(
                     new Node\Name\FullyQualified('is_resource'),
                     [$arg],
+                ),
+                'isSameAs' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $expected): Node\Expr => new Node\Expr\BinaryOp\Identical(
+                    $arg->value,
+                    $expected->value,
                 ),
                 'isScalar' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\FuncCall(
                     new Node\Name\FullyQualified('is_scalar'),
