@@ -48,7 +48,7 @@ final class NullableExpectationTest extends TestCase
         self::assertSame($nullableExpectation, $nullableExpectation->isArray());
 
         $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage('Value "42" is expected to be null or pass the expectation for method "isArray".');
+        $this->expectExceptionMessage('Value "42" is expected to be null or an array but got int instead.');
         Assert::that(42)->nullOr()->isArray();
     }
 
@@ -61,7 +61,7 @@ final class NullableExpectationTest extends TestCase
         self::assertSame($nullableExpectation, $nullableExpectation->isBool());
 
         $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage('Value "42" is expected to be null or pass the expectation for method "isBool".');
+        $this->expectExceptionMessage('Value "42" is expected to be null or a bool but got int instead.');
         Assert::that(42)->nullOr()->isBool();
     }
 
@@ -74,7 +74,7 @@ final class NullableExpectationTest extends TestCase
         self::assertSame($nullableExpectation, $nullableExpectation->isCallable());
 
         $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage('Value "42" is expected to be null or pass the expectation for method "isCallable".');
+        $this->expectExceptionMessage('Value "42" is expected to be null or callable but got int instead.');
         Assert::that(42)->nullOr()->isCallable();
     }
 
@@ -87,7 +87,7 @@ final class NullableExpectationTest extends TestCase
         self::assertSame($nullableExpectation, $nullableExpectation->isCountable());
 
         $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage('Value "42" is expected to be null or pass the expectation for method "isCountable".');
+        $this->expectExceptionMessage('Value "42" is expected to be null or countable but got int instead.');
         Assert::that(42)->nullOr()->isCountable();
     }
 
@@ -100,7 +100,7 @@ final class NullableExpectationTest extends TestCase
         self::assertSame($nullableExpectation, $nullableExpectation->isFalse());
 
         $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage('Value "true" is expected to be null or pass the expectation for method "isFalse".');
+        $this->expectExceptionMessage('Value "true" is expected to be null or false but got bool instead.');
         Assert::that(true)->nullOr()->isFalse();
     }
 
@@ -113,7 +113,7 @@ final class NullableExpectationTest extends TestCase
         self::assertSame($nullableExpectation, $nullableExpectation->isFloat());
 
         $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage('Value "42" is expected to be null or pass the expectation for method "isFloat".');
+        $this->expectExceptionMessage('Value "42" is expected to be null or a float but got int instead.');
         Assert::that(42)->nullOr()->isFloat();
     }
 
@@ -126,7 +126,7 @@ final class NullableExpectationTest extends TestCase
         self::assertSame($nullableExpectation, $nullableExpectation->isInstanceOf(\stdClass::class));
 
         $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage('Value "object(stdClass)" is expected to be null or pass the expectation for method "isInstanceOf".');
+        $this->expectExceptionMessage('Value "object(stdClass)" is expected to be null or an instance of Generator but got stdClass instead.');
         Assert::that(new \stdClass())->nullOr()->isInstanceOf(\Generator::class);
     }
 
@@ -139,7 +139,7 @@ final class NullableExpectationTest extends TestCase
         self::assertSame($nullableExpectation, $nullableExpectation->isInt());
 
         $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage('Value "3.14" is expected to be null or pass the expectation for method "isInt".');
+        $this->expectExceptionMessage('Value "3.14" is expected to be null or an int but got float instead.');
         Assert::that(3.14)->nullOr()->isInt();
     }
 
@@ -152,7 +152,7 @@ final class NullableExpectationTest extends TestCase
         self::assertSame($nullableExpectation, $nullableExpectation->isIterable());
 
         $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage('Value "42" is expected to be null or pass the expectation for method "isIterable".');
+        $this->expectExceptionMessage('Value "42" is expected to be null or iterable but got int instead.');
         Assert::that(42)->nullOr()->isIterable();
     }
 
@@ -178,7 +178,7 @@ final class NullableExpectationTest extends TestCase
         self::assertSame($nullableExpectation, $nullableExpectation->isNumeric());
 
         $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage('Value "true" is expected to be null or pass the expectation for method "isNumeric".');
+        $this->expectExceptionMessage('Value "true" is expected to be null or numeric but got bool instead.');
         Assert::that(true)->nullOr()->isNumeric();
     }
 
@@ -191,7 +191,7 @@ final class NullableExpectationTest extends TestCase
         self::assertSame($nullableExpectation, $nullableExpectation->isObject());
 
         $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage('Value "42" is expected to be null or pass the expectation for method "isObject".');
+        $this->expectExceptionMessage('Value "42" is expected to be null or an object but got int instead.');
         Assert::that(42)->nullOr()->isObject();
     }
 
@@ -209,7 +209,7 @@ final class NullableExpectationTest extends TestCase
         fclose($resource);
 
         $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage('Value "42" is expected to be null or pass the expectation for method "isResource".');
+        $this->expectExceptionMessage('Value "42" is expected to be null or a resource but got int instead.');
         Assert::that(42)->nullOr()->isResource();
     }
 
@@ -224,7 +224,7 @@ final class NullableExpectationTest extends TestCase
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage(\sprintf(
-            'Value "%s" is expected to be null or pass the expectation for method "isSameAs".',
+            'Value "%s" is expected to be null or the same as \'different\' but they differ.',
             $this->exporter->exportValue($value),
         ));
         Assert::that($value)->nullOr()->isSameAs('different');
@@ -260,7 +260,7 @@ final class NullableExpectationTest extends TestCase
         self::assertSame($nullableExpectation, $nullableExpectation->isScalar());
 
         $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage('Value "[]" is expected to be null or pass the expectation for method "isScalar".');
+        $this->expectExceptionMessage('Value "[]" is expected to be null or a scalar but got array instead.');
         Assert::that([])->nullOr()->isScalar();
     }
 
@@ -273,7 +273,7 @@ final class NullableExpectationTest extends TestCase
         self::assertSame($nullableExpectation, $nullableExpectation->isString());
 
         $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage('Value "42" is expected to be null or pass the expectation for method "isString".');
+        $this->expectExceptionMessage('Value "42" is expected to be null or a string but got int instead.');
         Assert::that(42)->nullOr()->isString();
     }
 
@@ -286,7 +286,7 @@ final class NullableExpectationTest extends TestCase
         self::assertSame($nullableExpectation, $nullableExpectation->isTrue());
 
         $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage('Value "false" is expected to be null or pass the expectation for method "isTrue".');
+        $this->expectExceptionMessage('Value "false" is expected to be null or true but got bool instead.');
         Assert::that(false)->nullOr()->isTrue();
     }
 }

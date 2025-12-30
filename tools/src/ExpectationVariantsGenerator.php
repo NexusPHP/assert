@@ -30,7 +30,7 @@ final class ExpectationVariantsGenerator
         namespace Nexus\Assert;
 
         /**
-         * {{CLASS_DESCRIPTION}}
+         * {{ CLASS_DESCRIPTION }}
          *
          * @template TValue
          *
@@ -38,8 +38,10 @@ final class ExpectationVariantsGenerator
          *
          * @auto-generated
          */
-        final readonly class {{CLASS_NAME}} implements Expectable
+        final readonly class {{ CLASS_NAME }} implements Expectable
         {
+            {{ CLASS_CONSTANTS }}
+
             /**
              * @var TValue
              */
@@ -54,7 +56,7 @@ final class ExpectationVariantsGenerator
                 $this->value = $expectation->value;
             }
 
-            {{CLASS_METHODS}}
+            {{ CLASS_METHODS }}
         }
 
         PHP;
@@ -68,6 +70,25 @@ final class ExpectationVariantsGenerator
             'description' => 'An expectation that allows null values in addition to the original expectation.',
         ],
     ];
+
+    /**
+     * Methods which message requires more than the default ['value', 'type'] context.
+     *
+     * NOTE: Append '=' to parameter names to mean they are not value-exported.
+     */
+    private const NON_DEFAULT_CONTEXT = [
+        'isInstanceOf' => ['value', 'class=', 'type'],
+        'isSameAs' => ['value', 'other', 'type'],
+    ];
+
+    private const NEGATED_EXPECTATION_REPLACEMENTS = [
+        'is expected to' => 'is not expected to',
+        ' but got {type} instead.' => '.',
+        ' but they differ.' => ' but they are.',
+    ];
+    private const NULLABLE_EXPECTATION_REPLACEMENTS = [
+        'is expected to be' => 'is expected to be null or',
+    ];
     private const UNSUPPORTED_METHODS = [
         'not',
         'nullOr',
@@ -78,6 +99,7 @@ final class ExpectationVariantsGenerator
      * @var array{
      *   all?: false,
      *   negated?: false,
+     *   nullable?: false,
      *   help?: false,
      * }
      */
@@ -117,6 +139,7 @@ final class ExpectationVariantsGenerator
                 $expectation,
                 self::EXPECTATION_VARIANTS['generateNegatedExpectation']['name'],
                 self::EXPECTATION_VARIANTS['generateNegatedExpectation']['description'],
+                'generateNegatedConstantCode',
                 'generateNegatedMethodCode',
             );
         }
@@ -126,6 +149,7 @@ final class ExpectationVariantsGenerator
                 $expectation,
                 self::EXPECTATION_VARIANTS['generateNullableExpectation']['name'],
                 self::EXPECTATION_VARIANTS['generateNullableExpectation']['description'],
+                'generateNullableConstantCode',
                 'generateNullableMethodCode',
             );
         }
@@ -134,8 +158,21 @@ final class ExpectationVariantsGenerator
     /**
      * @param \ReflectionClass<Expectation<mixed>> $expectation
      */
-    private static function generateExpectation(\ReflectionClass $expectation, string $name, string $description, string $methodGenerationCode): void
-    {
+    private static function generateExpectation(
+        \ReflectionClass $expectation,
+        string $name,
+        string $description,
+        string $constantGenerationCode,
+        string $methodGenerationCode,
+    ): void {
+        $constantsCode = '';
+
+        foreach ($expectation->getReflectionConstants(\ReflectionClassConstant::IS_PRIVATE) as $constant) {
+            $constantCode = self::$constantGenerationCode($constant); // @phpstan-ignore staticMethod.dynamicName
+            \assert(\is_string($constantCode));
+            $constantsCode .= $constantCode."\n";
+        }
+
         $methodsCode = '';
 
         foreach ($expectation->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
@@ -149,12 +186,80 @@ final class ExpectationVariantsGenerator
         }
 
         $classCode = str_replace(
-            ['{{CLASS_NAME}}', '{{CLASS_DESCRIPTION}}', '{{CLASS_METHODS}}'],
-            [$name, $description, rtrim($methodsCode)],
+            ['{{ CLASS_NAME }}', '{{ CLASS_DESCRIPTION }}', '{{ CLASS_CONSTANTS }}', '{{ CLASS_METHODS }}'],
+            [$name, $description, rtrim($constantsCode), rtrim($methodsCode)],
             self::EXPECTATION_CLASS_TEMPLATE,
         );
 
         file_put_contents(self::SRC_PATH.$name.'.php', $classCode);
+    }
+
+    private static function generateNegatedConstantCode(\ReflectionClassConstant $constant): string
+    {
+        $value = $constant->getValue();
+        \assert(\is_string($value));
+
+        $value = strtr($value, self::NEGATED_EXPECTATION_REPLACEMENTS);
+
+        return \sprintf(
+            '    private const %s = %s;',
+            $constant->getName(),
+            var_export($value, true),
+        );
+    }
+
+    private static function generateNullableConstantCode(\ReflectionClassConstant $constant): string
+    {
+        if ($constant->getName() === 'MESSAGE_IS_NULL') {
+            return '';
+        }
+
+        $value = $constant->getValue();
+        \assert(\is_string($value));
+
+        $value = strtr($value, self::NULLABLE_EXPECTATION_REPLACEMENTS);
+
+        return \sprintf(
+            '    private const %s = %s;',
+            $constant->getName(),
+            var_export($value, true),
+        );
+    }
+
+    private static function generateContext(string $methodName, bool $isNegated): string
+    {
+        $contextVariables = self::NON_DEFAULT_CONTEXT[$methodName] ?? ['value', 'type'];
+        $contextCodeLines = [];
+
+        foreach ($contextVariables as $variable) {
+            $isExported = ! str_ends_with($variable, '=');
+            $variableName = rtrim($variable, '=');
+
+            if ('value' === $variableName) {
+                $exportCode = '$this->expectation->exporter->exportValue($this->value)';
+            } elseif ('type' === $variableName) {
+                $exportCode = '$this->expectation->exporter->exportType($this->value)';
+            } elseif ($isExported) {
+                $exportCode = '$this->expectation->exporter->exportValue($'.$variableName.')';
+            } else {
+                $exportCode = '$'.$variableName;
+            }
+
+            $contextCodeLines[$variableName] = \sprintf("'%s' => %s,", $variableName, $exportCode);
+        }
+
+        if ($isNegated) {
+            unset($contextCodeLines['type']);
+        }
+
+        if (\count($contextCodeLines) === 1) {
+            return \sprintf('[%s]', implode('', $contextCodeLines));
+        }
+
+        return \sprintf(
+            "[\n        %s\n    ]",
+            implode("\n        ", $contextCodeLines),
+        );
     }
 
     /**
@@ -196,6 +301,7 @@ final class ExpectationVariantsGenerator
     private static function generateNegatedMethodCode(\ReflectionMethod $method): string
     {
         $methodName = $method->getName();
+        $constantName = 'self::MESSAGE_'.strtoupper(preg_replace('/(?<!^)[A-Z]/', '_$0', $methodName) ?? $methodName);
         [$parametersCode, $parameterCallsCode] = self::generateMethodParametersAndArguments($method);
 
         return \sprintf(
@@ -212,20 +318,23 @@ final class ExpectationVariantsGenerator
                     }
 
                     throw new ExpectationFailedException(
-                        $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "%1$s".',
-                        ['value' => $this->expectation->exporter->exportValue($this->value)],
+                        $message ?? %4$s,
+                        %5$s,
                     );
                 }
                 PHP,
             $methodName,
             $parametersCode,
             $parameterCallsCode,
+            $constantName,
+            self::generateContext($methodName, true),
         );
     }
 
     private static function generateNullableMethodCode(\ReflectionMethod $method): string
     {
         $methodName = $method->getName();
+        $constantName = 'self::MESSAGE_'.strtoupper(preg_replace('/(?<!^)[A-Z]/', '_$0', $methodName) ?? $methodName);
         [$parametersCode, $parameterCallsCode] = self::generateMethodParametersAndArguments($method);
 
         if ('isNull' === $methodName) {
@@ -262,8 +371,8 @@ final class ExpectationVariantsGenerator
                         $this->expectation->%1$s(%3$s);
                     } catch (ExpectationFailedException) {
                         throw new ExpectationFailedException(
-                            $message ?? 'Value "{value}" is expected to be null or pass the expectation for method "%1$s".',
-                            ['value' => $this->expectation->exporter->exportValue($this->value)],
+                            $message ?? %4$s,
+                            %5$s,
                         );
                     }
 
@@ -273,6 +382,8 @@ final class ExpectationVariantsGenerator
             $methodName,
             $parametersCode,
             $parameterCallsCode,
+            $constantName,
+            self::generateContext($methodName, false),
         );
     }
 }

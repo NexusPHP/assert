@@ -24,6 +24,24 @@ namespace Nexus\Assert;
  */
 final readonly class NegatedExpectation implements Expectable
 {
+    private const MESSAGE_IS_ARRAY = 'Value "{value}" is not expected to be an array.';
+    private const MESSAGE_IS_BOOL = 'Value "{value}" is not expected to be a bool.';
+    private const MESSAGE_IS_CALLABLE = 'Value "{value}" is not expected to be callable.';
+    private const MESSAGE_IS_COUNTABLE = 'Value "{value}" is not expected to be countable.';
+    private const MESSAGE_IS_FALSE = 'Value "{value}" is not expected to be false.';
+    private const MESSAGE_IS_FLOAT = 'Value "{value}" is not expected to be a float.';
+    private const MESSAGE_IS_INSTANCE_OF = 'Value "{value}" is not expected to be an instance of {class}.';
+    private const MESSAGE_IS_INT = 'Value "{value}" is not expected to be an int.';
+    private const MESSAGE_IS_ITERABLE = 'Value "{value}" is not expected to be iterable.';
+    private const MESSAGE_IS_NULL = 'Value "{value}" is not expected to be null.';
+    private const MESSAGE_IS_NUMERIC = 'Value "{value}" is not expected to be numeric.';
+    private const MESSAGE_IS_OBJECT = 'Value "{value}" is not expected to be an object.';
+    private const MESSAGE_IS_RESOURCE = 'Value "{value}" is not expected to be a resource.';
+    private const MESSAGE_IS_SAME_AS = 'Value "{value}" is not expected to be the same as {other} but they are.';
+    private const MESSAGE_IS_SCALAR = 'Value "{value}" is not expected to be a scalar.';
+    private const MESSAGE_IS_STRING = 'Value "{value}" is not expected to be a string.';
+    private const MESSAGE_IS_TRUE = 'Value "{value}" is not expected to be true.';
+
     /**
      * @var TValue
      */
@@ -50,7 +68,7 @@ final readonly class NegatedExpectation implements Expectable
         }
 
         throw new ExpectationFailedException(
-            $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isArray".',
+            $message ?? self::MESSAGE_IS_ARRAY,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }
@@ -67,7 +85,7 @@ final readonly class NegatedExpectation implements Expectable
         }
 
         throw new ExpectationFailedException(
-            $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isBool".',
+            $message ?? self::MESSAGE_IS_BOOL,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }
@@ -84,7 +102,7 @@ final readonly class NegatedExpectation implements Expectable
         }
 
         throw new ExpectationFailedException(
-            $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isCallable".',
+            $message ?? self::MESSAGE_IS_CALLABLE,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }
@@ -101,7 +119,7 @@ final readonly class NegatedExpectation implements Expectable
         }
 
         throw new ExpectationFailedException(
-            $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isCountable".',
+            $message ?? self::MESSAGE_IS_COUNTABLE,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }
@@ -118,7 +136,7 @@ final readonly class NegatedExpectation implements Expectable
         }
 
         throw new ExpectationFailedException(
-            $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isFalse".',
+            $message ?? self::MESSAGE_IS_FALSE,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }
@@ -135,7 +153,7 @@ final readonly class NegatedExpectation implements Expectable
         }
 
         throw new ExpectationFailedException(
-            $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isFloat".',
+            $message ?? self::MESSAGE_IS_FLOAT,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }
@@ -143,17 +161,20 @@ final readonly class NegatedExpectation implements Expectable
     /**
      * @return self<TValue>
      */
-    public function isInstanceOf(string $expectedClass, ?string $message = null): self
+    public function isInstanceOf(string $class, ?string $message = null): self
     {
         try {
-            $this->expectation->isInstanceOf($expectedClass, $message);
+            $this->expectation->isInstanceOf($class, $message);
         } catch (ExpectationFailedException) {
             return $this;
         }
 
         throw new ExpectationFailedException(
-            $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isInstanceOf".',
-            ['value' => $this->expectation->exporter->exportValue($this->value)],
+            $message ?? self::MESSAGE_IS_INSTANCE_OF,
+            [
+                'value' => $this->expectation->exporter->exportValue($this->value),
+                'class' => $class,
+            ],
         );
     }
 
@@ -169,7 +190,7 @@ final readonly class NegatedExpectation implements Expectable
         }
 
         throw new ExpectationFailedException(
-            $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isInt".',
+            $message ?? self::MESSAGE_IS_INT,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }
@@ -186,7 +207,7 @@ final readonly class NegatedExpectation implements Expectable
         }
 
         throw new ExpectationFailedException(
-            $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isIterable".',
+            $message ?? self::MESSAGE_IS_ITERABLE,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }
@@ -203,7 +224,7 @@ final readonly class NegatedExpectation implements Expectable
         }
 
         throw new ExpectationFailedException(
-            $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isNull".',
+            $message ?? self::MESSAGE_IS_NULL,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }
@@ -220,7 +241,7 @@ final readonly class NegatedExpectation implements Expectable
         }
 
         throw new ExpectationFailedException(
-            $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isNumeric".',
+            $message ?? self::MESSAGE_IS_NUMERIC,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }
@@ -237,7 +258,7 @@ final readonly class NegatedExpectation implements Expectable
         }
 
         throw new ExpectationFailedException(
-            $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isObject".',
+            $message ?? self::MESSAGE_IS_OBJECT,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }
@@ -254,7 +275,7 @@ final readonly class NegatedExpectation implements Expectable
         }
 
         throw new ExpectationFailedException(
-            $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isResource".',
+            $message ?? self::MESSAGE_IS_RESOURCE,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }
@@ -271,8 +292,11 @@ final readonly class NegatedExpectation implements Expectable
         }
 
         throw new ExpectationFailedException(
-            $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isSameAs".',
-            ['value' => $this->expectation->exporter->exportValue($this->value)],
+            $message ?? self::MESSAGE_IS_SAME_AS,
+            [
+                'value' => $this->expectation->exporter->exportValue($this->value),
+                'other' => $this->expectation->exporter->exportValue($other),
+            ],
         );
     }
 
@@ -288,7 +312,7 @@ final readonly class NegatedExpectation implements Expectable
         }
 
         throw new ExpectationFailedException(
-            $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isScalar".',
+            $message ?? self::MESSAGE_IS_SCALAR,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }
@@ -305,7 +329,7 @@ final readonly class NegatedExpectation implements Expectable
         }
 
         throw new ExpectationFailedException(
-            $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isString".',
+            $message ?? self::MESSAGE_IS_STRING,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }
@@ -322,7 +346,7 @@ final readonly class NegatedExpectation implements Expectable
         }
 
         throw new ExpectationFailedException(
-            $message ?? 'Value "{value}" is not expected to pass the negated expectation for method "isTrue".',
+            $message ?? self::MESSAGE_IS_TRUE,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }

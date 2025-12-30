@@ -20,6 +20,24 @@ namespace Nexus\Assert;
  */
 final readonly class Expectation implements Expectable
 {
+    private const MESSAGE_IS_ARRAY = 'Value "{value}" is expected to be an array but got {type} instead.';
+    private const MESSAGE_IS_BOOL = 'Value "{value}" is expected to be a bool but got {type} instead.';
+    private const MESSAGE_IS_CALLABLE = 'Value "{value}" is expected to be callable but got {type} instead.';
+    private const MESSAGE_IS_COUNTABLE = 'Value "{value}" is expected to be countable but got {type} instead.';
+    private const MESSAGE_IS_FALSE = 'Value "{value}" is expected to be false but got {type} instead.';
+    private const MESSAGE_IS_FLOAT = 'Value "{value}" is expected to be a float but got {type} instead.';
+    private const MESSAGE_IS_INSTANCE_OF = 'Value "{value}" is expected to be an instance of {class} but got {type} instead.';
+    private const MESSAGE_IS_INT = 'Value "{value}" is expected to be an int but got {type} instead.';
+    private const MESSAGE_IS_ITERABLE = 'Value "{value}" is expected to be iterable but got {type} instead.';
+    private const MESSAGE_IS_NULL = 'Value "{value}" is expected to be null but got {type} instead.';
+    private const MESSAGE_IS_NUMERIC = 'Value "{value}" is expected to be numeric but got {type} instead.';
+    private const MESSAGE_IS_OBJECT = 'Value "{value}" is expected to be an object but got {type} instead.';
+    private const MESSAGE_IS_RESOURCE = 'Value "{value}" is expected to be a resource but got {type} instead.';
+    private const MESSAGE_IS_SAME_AS = 'Value "{value}" is expected to be the same as {other} but they differ.';
+    private const MESSAGE_IS_SCALAR = 'Value "{value}" is expected to be a scalar but got {type} instead.';
+    private const MESSAGE_IS_STRING = 'Value "{value}" is expected to be a string but got {type} instead.';
+    private const MESSAGE_IS_TRUE = 'Value "{value}" is expected to be true but got {type} instead.';
+
     /**
      * @param TValue $value
      */
@@ -51,7 +69,7 @@ final readonly class Expectation implements Expectable
     {
         if (! \is_array($this->value)) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be an array but got {type} instead.',
+                $message ?? self::MESSAGE_IS_ARRAY,
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),
@@ -69,7 +87,7 @@ final readonly class Expectation implements Expectable
     {
         if (! \is_bool($this->value)) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be a bool but got {type} instead.',
+                $message ?? self::MESSAGE_IS_BOOL,
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),
@@ -87,7 +105,7 @@ final readonly class Expectation implements Expectable
     {
         if (! \is_callable($this->value)) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be callable but got {type} instead.',
+                $message ?? self::MESSAGE_IS_CALLABLE,
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),
@@ -105,7 +123,7 @@ final readonly class Expectation implements Expectable
     {
         if (! is_countable($this->value)) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be countable but got {type} instead.',
+                $message ?? self::MESSAGE_IS_COUNTABLE,
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),
@@ -123,7 +141,7 @@ final readonly class Expectation implements Expectable
     {
         if (false !== $this->value) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be false but got {type} instead.',
+                $message ?? self::MESSAGE_IS_FALSE,
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),
@@ -141,7 +159,7 @@ final readonly class Expectation implements Expectable
     {
         if (! \is_float($this->value)) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be a float but got {type} instead.',
+                $message ?? self::MESSAGE_IS_FLOAT,
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),
@@ -155,14 +173,14 @@ final readonly class Expectation implements Expectable
     /**
      * @return self<TValue>
      */
-    public function isInstanceOf(string $expectedClass, ?string $message = null): self
+    public function isInstanceOf(string $class, ?string $message = null): self
     {
-        if (! $this->value instanceof $expectedClass) {
+        if (! $this->value instanceof $class) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be an instance of {expectedClass} but got {type} instead.',
+                $message ?? self::MESSAGE_IS_INSTANCE_OF,
                 [
                     'value' => $this->exporter->exportValue($this->value),
-                    'expectedClass' => $expectedClass,
+                    'class' => $class,
                     'type' => $this->exporter->exportType($this->value),
                 ],
             );
@@ -178,7 +196,7 @@ final readonly class Expectation implements Expectable
     {
         if (! \is_int($this->value)) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be an int but got {type} instead.',
+                $message ?? self::MESSAGE_IS_INT,
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),
@@ -196,7 +214,7 @@ final readonly class Expectation implements Expectable
     {
         if (! is_iterable($this->value)) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be iterable but got {type} instead.',
+                $message ?? self::MESSAGE_IS_ITERABLE,
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),
@@ -214,7 +232,7 @@ final readonly class Expectation implements Expectable
     {
         if (null !== $this->value) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be null but got {type} instead.',
+                $message ?? self::MESSAGE_IS_NULL,
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),
@@ -232,7 +250,7 @@ final readonly class Expectation implements Expectable
     {
         if (! is_numeric($this->value)) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be numeric but got {type} instead.',
+                $message ?? self::MESSAGE_IS_NUMERIC,
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),
@@ -250,7 +268,7 @@ final readonly class Expectation implements Expectable
     {
         if (! \is_object($this->value)) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be an object but got {type} instead.',
+                $message ?? self::MESSAGE_IS_OBJECT,
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),
@@ -268,7 +286,7 @@ final readonly class Expectation implements Expectable
     {
         if (! \is_resource($this->value)) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be a resource but got {type} instead.',
+                $message ?? self::MESSAGE_IS_RESOURCE,
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),
@@ -286,10 +304,10 @@ final readonly class Expectation implements Expectable
     {
         if ($this->value !== $other) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be the same as {expected} but they differ.',
+                $message ?? self::MESSAGE_IS_SAME_AS,
                 [
                     'value' => $this->exporter->exportValue($this->value),
-                    'expected' => $this->exporter->exportValue($other),
+                    'other' => $this->exporter->exportValue($other),
                 ],
             );
         }
@@ -304,7 +322,7 @@ final readonly class Expectation implements Expectable
     {
         if (! \is_scalar($this->value)) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be a scalar but got {type} instead.',
+                $message ?? self::MESSAGE_IS_SCALAR,
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),
@@ -322,7 +340,7 @@ final readonly class Expectation implements Expectable
     {
         if (! \is_string($this->value)) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be a string but got {type} instead.',
+                $message ?? self::MESSAGE_IS_STRING,
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),
@@ -340,7 +358,7 @@ final readonly class Expectation implements Expectable
     {
         if (true !== $this->value) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be true but got {type} instead.',
+                $message ?? self::MESSAGE_IS_TRUE,
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),

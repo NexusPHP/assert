@@ -24,6 +24,23 @@ namespace Nexus\Assert;
  */
 final readonly class NullableExpectation implements Expectable
 {
+    private const MESSAGE_IS_ARRAY = 'Value "{value}" is expected to be null or an array but got {type} instead.';
+    private const MESSAGE_IS_BOOL = 'Value "{value}" is expected to be null or a bool but got {type} instead.';
+    private const MESSAGE_IS_CALLABLE = 'Value "{value}" is expected to be null or callable but got {type} instead.';
+    private const MESSAGE_IS_COUNTABLE = 'Value "{value}" is expected to be null or countable but got {type} instead.';
+    private const MESSAGE_IS_FALSE = 'Value "{value}" is expected to be null or false but got {type} instead.';
+    private const MESSAGE_IS_FLOAT = 'Value "{value}" is expected to be null or a float but got {type} instead.';
+    private const MESSAGE_IS_INSTANCE_OF = 'Value "{value}" is expected to be null or an instance of {class} but got {type} instead.';
+    private const MESSAGE_IS_INT = 'Value "{value}" is expected to be null or an int but got {type} instead.';
+    private const MESSAGE_IS_ITERABLE = 'Value "{value}" is expected to be null or iterable but got {type} instead.';
+    private const MESSAGE_IS_NUMERIC = 'Value "{value}" is expected to be null or numeric but got {type} instead.';
+    private const MESSAGE_IS_OBJECT = 'Value "{value}" is expected to be null or an object but got {type} instead.';
+    private const MESSAGE_IS_RESOURCE = 'Value "{value}" is expected to be null or a resource but got {type} instead.';
+    private const MESSAGE_IS_SAME_AS = 'Value "{value}" is expected to be null or the same as {other} but they differ.';
+    private const MESSAGE_IS_SCALAR = 'Value "{value}" is expected to be null or a scalar but got {type} instead.';
+    private const MESSAGE_IS_STRING = 'Value "{value}" is expected to be null or a string but got {type} instead.';
+    private const MESSAGE_IS_TRUE = 'Value "{value}" is expected to be null or true but got {type} instead.';
+
     /**
      * @var TValue
      */
@@ -51,8 +68,11 @@ final readonly class NullableExpectation implements Expectable
             $this->expectation->isArray($message);
         } catch (ExpectationFailedException) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be null or pass the expectation for method "isArray".',
-                ['value' => $this->expectation->exporter->exportValue($this->value)],
+                $message ?? self::MESSAGE_IS_ARRAY,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'type' => $this->expectation->exporter->exportType($this->value),
+                ],
             );
         }
 
@@ -72,8 +92,11 @@ final readonly class NullableExpectation implements Expectable
             $this->expectation->isBool($message);
         } catch (ExpectationFailedException) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be null or pass the expectation for method "isBool".',
-                ['value' => $this->expectation->exporter->exportValue($this->value)],
+                $message ?? self::MESSAGE_IS_BOOL,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'type' => $this->expectation->exporter->exportType($this->value),
+                ],
             );
         }
 
@@ -93,8 +116,11 @@ final readonly class NullableExpectation implements Expectable
             $this->expectation->isCallable($message);
         } catch (ExpectationFailedException) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be null or pass the expectation for method "isCallable".',
-                ['value' => $this->expectation->exporter->exportValue($this->value)],
+                $message ?? self::MESSAGE_IS_CALLABLE,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'type' => $this->expectation->exporter->exportType($this->value),
+                ],
             );
         }
 
@@ -114,8 +140,11 @@ final readonly class NullableExpectation implements Expectable
             $this->expectation->isCountable($message);
         } catch (ExpectationFailedException) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be null or pass the expectation for method "isCountable".',
-                ['value' => $this->expectation->exporter->exportValue($this->value)],
+                $message ?? self::MESSAGE_IS_COUNTABLE,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'type' => $this->expectation->exporter->exportType($this->value),
+                ],
             );
         }
 
@@ -135,8 +164,11 @@ final readonly class NullableExpectation implements Expectable
             $this->expectation->isFalse($message);
         } catch (ExpectationFailedException) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be null or pass the expectation for method "isFalse".',
-                ['value' => $this->expectation->exporter->exportValue($this->value)],
+                $message ?? self::MESSAGE_IS_FALSE,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'type' => $this->expectation->exporter->exportType($this->value),
+                ],
             );
         }
 
@@ -156,8 +188,11 @@ final readonly class NullableExpectation implements Expectable
             $this->expectation->isFloat($message);
         } catch (ExpectationFailedException) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be null or pass the expectation for method "isFloat".',
-                ['value' => $this->expectation->exporter->exportValue($this->value)],
+                $message ?? self::MESSAGE_IS_FLOAT,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'type' => $this->expectation->exporter->exportType($this->value),
+                ],
             );
         }
 
@@ -167,18 +202,22 @@ final readonly class NullableExpectation implements Expectable
     /**
      * @return self<null|TValue>
      */
-    public function isInstanceOf(string $expectedClass, ?string $message = null): self
+    public function isInstanceOf(string $class, ?string $message = null): self
     {
         if (null === $this->value) {
             return $this;
         }
 
         try {
-            $this->expectation->isInstanceOf($expectedClass, $message);
+            $this->expectation->isInstanceOf($class, $message);
         } catch (ExpectationFailedException) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be null or pass the expectation for method "isInstanceOf".',
-                ['value' => $this->expectation->exporter->exportValue($this->value)],
+                $message ?? self::MESSAGE_IS_INSTANCE_OF,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'class' => $class,
+                    'type' => $this->expectation->exporter->exportType($this->value),
+                ],
             );
         }
 
@@ -198,8 +237,11 @@ final readonly class NullableExpectation implements Expectable
             $this->expectation->isInt($message);
         } catch (ExpectationFailedException) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be null or pass the expectation for method "isInt".',
-                ['value' => $this->expectation->exporter->exportValue($this->value)],
+                $message ?? self::MESSAGE_IS_INT,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'type' => $this->expectation->exporter->exportType($this->value),
+                ],
             );
         }
 
@@ -219,8 +261,11 @@ final readonly class NullableExpectation implements Expectable
             $this->expectation->isIterable($message);
         } catch (ExpectationFailedException) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be null or pass the expectation for method "isIterable".',
-                ['value' => $this->expectation->exporter->exportValue($this->value)],
+                $message ?? self::MESSAGE_IS_ITERABLE,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'type' => $this->expectation->exporter->exportType($this->value),
+                ],
             );
         }
 
@@ -250,8 +295,11 @@ final readonly class NullableExpectation implements Expectable
             $this->expectation->isNumeric($message);
         } catch (ExpectationFailedException) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be null or pass the expectation for method "isNumeric".',
-                ['value' => $this->expectation->exporter->exportValue($this->value)],
+                $message ?? self::MESSAGE_IS_NUMERIC,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'type' => $this->expectation->exporter->exportType($this->value),
+                ],
             );
         }
 
@@ -271,8 +319,11 @@ final readonly class NullableExpectation implements Expectable
             $this->expectation->isObject($message);
         } catch (ExpectationFailedException) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be null or pass the expectation for method "isObject".',
-                ['value' => $this->expectation->exporter->exportValue($this->value)],
+                $message ?? self::MESSAGE_IS_OBJECT,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'type' => $this->expectation->exporter->exportType($this->value),
+                ],
             );
         }
 
@@ -292,8 +343,11 @@ final readonly class NullableExpectation implements Expectable
             $this->expectation->isResource($message);
         } catch (ExpectationFailedException) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be null or pass the expectation for method "isResource".',
-                ['value' => $this->expectation->exporter->exportValue($this->value)],
+                $message ?? self::MESSAGE_IS_RESOURCE,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'type' => $this->expectation->exporter->exportType($this->value),
+                ],
             );
         }
 
@@ -313,8 +367,12 @@ final readonly class NullableExpectation implements Expectable
             $this->expectation->isSameAs($other, $message);
         } catch (ExpectationFailedException) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be null or pass the expectation for method "isSameAs".',
-                ['value' => $this->expectation->exporter->exportValue($this->value)],
+                $message ?? self::MESSAGE_IS_SAME_AS,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'other' => $this->expectation->exporter->exportValue($other),
+                    'type' => $this->expectation->exporter->exportType($this->value),
+                ],
             );
         }
 
@@ -334,8 +392,11 @@ final readonly class NullableExpectation implements Expectable
             $this->expectation->isScalar($message);
         } catch (ExpectationFailedException) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be null or pass the expectation for method "isScalar".',
-                ['value' => $this->expectation->exporter->exportValue($this->value)],
+                $message ?? self::MESSAGE_IS_SCALAR,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'type' => $this->expectation->exporter->exportType($this->value),
+                ],
             );
         }
 
@@ -355,8 +416,11 @@ final readonly class NullableExpectation implements Expectable
             $this->expectation->isString($message);
         } catch (ExpectationFailedException) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be null or pass the expectation for method "isString".',
-                ['value' => $this->expectation->exporter->exportValue($this->value)],
+                $message ?? self::MESSAGE_IS_STRING,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'type' => $this->expectation->exporter->exportType($this->value),
+                ],
             );
         }
 
@@ -376,8 +440,11 @@ final readonly class NullableExpectation implements Expectable
             $this->expectation->isTrue($message);
         } catch (ExpectationFailedException) {
             throw new ExpectationFailedException(
-                $message ?? 'Value "{value}" is expected to be null or pass the expectation for method "isTrue".',
-                ['value' => $this->expectation->exporter->exportValue($this->value)],
+                $message ?? self::MESSAGE_IS_TRUE,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'type' => $this->expectation->exporter->exportType($this->value),
+                ],
             );
         }
 
