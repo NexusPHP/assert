@@ -70,8 +70,10 @@
             "@cs:check",
             "@phpstan:check",
             "@test:unit",
+            "@test:auto-review",
             "@test:stan"
         ],
+        "test:auto-review": "phpunit --colors=always --group=auto-review",
         "test:stan": "phpunit --colors=always --group=static-analysis",
         "test:unit": "phpunit --colors=always --group=unit --coverage-clover=build/phpunit/clover.xml --coverage-html=build/phpunit/html"
     },
@@ -81,6 +83,7 @@
         "phpstan:baseline": "Runs PHPStan and dumps resulting errors to baseline",
         "phpstan:check": "Runs PHPStan with identifiers support",
         "test:all": "Runs all tests",
+        "test:auto-review": "Runs the Auto Review Tests",
         "test:stan": "Runs the Static Analysis Tests",
         "test:unit": "Runs the Unit Tests"
     }

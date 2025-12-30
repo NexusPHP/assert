@@ -254,16 +254,6 @@ final class ExpectationTest extends TestCase
         Assert::that([])->isScalar();
     }
 
-    public function testIsTrue(): void
-    {
-        $expectation = Assert::that(true);
-        self::assertSame($expectation, $expectation->isTrue());
-
-        $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage('Value "12" is expected to be true but got int instead.');
-        Assert::that(12)->isTrue();
-    }
-
     public function testIsString(): void
     {
         $expectation = Assert::that('hello');
@@ -277,41 +267,13 @@ final class ExpectationTest extends TestCase
         Assert::that(3.14)->isString();
     }
 
-    public function testExpectationMethodsAreArrangedInOrder(): void
+    public function testIsTrue(): void
     {
-        $reflection = new \ReflectionClass(Expectation::class);
-        $publicMethods = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
-        $sortedMethods = $publicMethods;
+        $expectation = Assert::that(true);
+        self::assertSame($expectation, $expectation->isTrue());
 
-        usort($sortedMethods, static function (\ReflectionMethod $a, \ReflectionMethod $b): int {
-            if ($a->isConstructor()) {
-                return -1;
-            }
-
-            if ($b->isConstructor()) {
-                return 1;
-            }
-
-            if (\in_array($a->getName(), ['not', 'nullOr'], true)) {
-                return -1;
-            }
-
-            if (\in_array($b->getName(), ['not', 'nullOr'], true)) {
-                return 1;
-            }
-
-            return strcmp($a->getName(), $b->getName());
-        });
-
-        $publicMethods = array_map(
-            static fn(\ReflectionMethod $method): string => $method->getName(),
-            $publicMethods,
-        );
-        $sortedMethods = array_map(
-            static fn(\ReflectionMethod $method): string => $method->getName(),
-            $sortedMethods,
-        );
-
-        self::assertSame($sortedMethods, $publicMethods);
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "12" is expected to be true but got int instead.');
+        Assert::that(12)->isTrue();
     }
 }
