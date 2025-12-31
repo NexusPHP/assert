@@ -17,6 +17,13 @@ use Nexus\Assert\Assert;
 
 use function PHPStan\Testing\assertType;
 
+function test_has_method(mixed $value): void
+{
+    $assert = Assert::that($value)->nullOr()->hasMethod('jsonSerialize');
+    assertType('Nexus\\Assert\\NullableExpectation<(object&hasMethod(jsonSerialize))|null>', $assert);
+    assertType('(object&hasMethod(jsonSerialize))|null', $value);
+}
+
 function test_is_array(mixed $value): void
 {
     $assert = Assert::that($value)->nullOr()->isArray();

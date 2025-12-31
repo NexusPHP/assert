@@ -41,6 +41,16 @@ final class ExpectationTest extends TestCase
         self::assertSame($nullableExpectation, $nullableExpectation->isArray());
     }
 
+    public function testHasMethod(): void
+    {
+        $expectation = Assert::that(new \Exception('Test'));
+        self::assertSame($expectation, $expectation->hasMethod('__toString'));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Object of class "stdClass" is expected to have method "nonExistentMethod".');
+        Assert::that(new \stdClass())->hasMethod('nonExistentMethod');
+    }
+
     public function testIsArray(): void
     {
         $expectation = Assert::that([]);

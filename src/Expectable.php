@@ -24,6 +24,16 @@ namespace Nexus\Assert;
 interface Expectable
 {
     /**
+     * @param non-empty-string      $method
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
+    public function hasMethod(string $method, ?string $message = null): self;
+
+    /**
      * @param null|non-empty-string $message
      *
      * @return self<TValue>

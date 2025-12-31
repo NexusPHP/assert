@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Nexus\Assert\Type;
 
-use Nexus\Assert\Expectable;
 use PhpParser\Node;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\Type;
@@ -21,10 +20,8 @@ use PHPStan\Type\Type;
 final class ExpectationObjectType extends GenericObjectType
 {
     /**
-     * @template T
-     *
-     * @param class-string<Expectable<T>> $className
-     * @param array<int, Type>            $types
+     * @param class-string     $className
+     * @param array<int, Type> $types
      */
     public function __construct(
         string $className,

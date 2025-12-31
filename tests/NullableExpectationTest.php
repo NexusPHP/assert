@@ -39,6 +39,19 @@ final class NullableExpectationTest extends TestCase
         $this->exporter = new Exporter();
     }
 
+    public function testHasMethod(): void
+    {
+        $nullableExpectation = Assert::that(null)->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->hasMethod('nonExistentMethod'));
+
+        $nullableExpectation = Assert::that(new \Exception('Test'))->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->hasMethod('__toString'));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Object of class "stdClass" is expected to be null or to have method "__toString".');
+        Assert::that(new \stdClass())->nullOr()->hasMethod('__toString');
+    }
+
     public function testIsArray(): void
     {
         $nullableExpectation = Assert::that(null)->nullOr();

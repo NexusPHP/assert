@@ -29,7 +29,26 @@ final class ExpectationMethodResolver
     ];
 
     /**
-     * @var array<string, \Closure(Scope, Node\Arg, Node\Arg): (null|Node\Expr)>
+     * @var array{
+     *   hasMethod: \Closure(Scope, Node\Arg, Node\Arg): Node\Expr,
+     *   isArray: \Closure(Scope, Node\Arg): Node\Expr,
+     *   isBool: \Closure(Scope, Node\Arg): Node\Expr,
+     *   isCallable: \Closure(Scope, Node\Arg): Node\Expr,
+     *   isCountable: \Closure(Scope, Node\Arg): Node\Expr,
+     *   isFalse: \Closure(Scope, Node\Arg): Node\Expr,
+     *   isFloat: \Closure(Scope, Node\Arg): Node\Expr,
+     *   isInstanceOf: \Closure(Scope, Node\Arg, Node\Arg): Node\Expr,
+     *   isInt: \Closure(Scope, Node\Arg): Node\Expr,
+     *   isIterable: \Closure(Scope, Node\Arg): Node\Expr,
+     *   isNull: \Closure(Scope, Node\Arg): Node\Expr,
+     *   isNumeric: \Closure(Scope, Node\Arg): Node\Expr,
+     *   isObject: \Closure(Scope, Node\Arg): Node\Expr,
+     *   isResource: \Closure(Scope, Node\Arg): Node\Expr,
+     *   isSameAs: \Closure(Scope, Node\Arg, Node\Arg): Node\Expr,
+     *   isScalar: \Closure(Scope, Node\Arg): Node\Expr,
+     *   isString: \Closure(Scope, Node\Arg): Node\Expr,
+     *   isTrue: \Closure(Scope, Node\Arg): Node\Expr,
+     * }
      */
     private static array $resolvers = [];
 
@@ -124,6 +143,13 @@ final class ExpectationMethodResolver
     {
         if ([] === self::$resolvers) {
             self::$resolvers = [
+                'hasMethod' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $method): Node\Expr => new Node\Expr\BinaryOp\BooleanAnd(
+                    self::$resolvers['isObject']($scope, $arg),
+                    new Node\Expr\FuncCall(
+                        new Node\Name('method_exists'),
+                        [$arg, $method],
+                    ),
+                ),
                 'isArray' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\FuncCall(
                     new Node\Name\FullyQualified('is_array'),
                     [$arg],
@@ -148,7 +174,7 @@ final class ExpectationMethodResolver
                     new Node\Name\FullyQualified('is_float'),
                     [$arg],
                 ),
-                'isInstanceOf' => static function (Scope $scope, Node\Arg $arg, Node\Arg $class): ?Node\Expr {
+                'isInstanceOf' => static function (Scope $scope, Node\Arg $arg, Node\Arg $class): Node\Expr {
                     $classType = $scope->getType($class->value);
 
                     if (\count($classType->getConstantStrings()) === 1) {
@@ -176,7 +202,10 @@ final class ExpectationMethodResolver
                         );
                     }
 
-                    return null;
+                    return new Node\Expr\Instanceof_(
+                        $arg->value,
+                        $class->value,
+                    );
                 },
                 'isInt' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\FuncCall(
                     new Node\Name\FullyQualified('is_int'),

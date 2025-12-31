@@ -39,6 +39,16 @@ final class NegatedExpectationTest extends TestCase
         $this->exporter = new Exporter();
     }
 
+    public function testHasMethod(): void
+    {
+        $negatedExpectation = Assert::that(new \stdClass())->not();
+        self::assertSame($negatedExpectation, $negatedExpectation->hasMethod('nonExistentMethod'));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Object of class "Exception" is not expected to have method "__toString".');
+        Assert::that(new \Exception('Test'))->not()->hasMethod('__toString');
+    }
+
     public function testIsArray(): void
     {
         $negatedExpectation = Assert::that(42)->not();

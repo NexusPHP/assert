@@ -20,6 +20,7 @@ namespace Nexus\Assert;
  */
 final readonly class Expectation implements Expectable
 {
+    private const MESSAGE_HAS_METHOD = 'Object of class "{value}" is expected to have method "{method}".';
     private const MESSAGE_IS_ARRAY = 'Value "{value}" is expected to be an array but got {type} instead.';
     private const MESSAGE_IS_BOOL = 'Value "{value}" is expected to be a bool but got {type} instead.';
     private const MESSAGE_IS_CALLABLE = 'Value "{value}" is expected to be callable but got {type} instead.';
@@ -60,6 +61,26 @@ final readonly class Expectation implements Expectable
     public function nullOr(): NullableExpectation
     {
         return new NullableExpectation($this);
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function hasMethod(string $method, ?string $message = null): self
+    {
+        $this->isObject($message);
+
+        if (! method_exists($this->value, $method)) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_HAS_METHOD,
+                [
+                    'value' => $this->exporter->exportType($this->value),
+                    'method' => $method,
+                ],
+            );
+        }
+
+        return $this;
     }
 
     /**

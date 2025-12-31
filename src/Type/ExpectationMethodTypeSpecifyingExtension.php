@@ -22,7 +22,10 @@ use PHPStan\Analyser\TypeSpecifier;
 use PHPStan\Analyser\TypeSpecifierAwareExtension;
 use PHPStan\Analyser\TypeSpecifierContext;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\MethodTypeSpecifyingExtension;
+use PHPStan\Type\MixedType;
+use PHPStan\Type\ThisType;
 
 final class ExpectationMethodTypeSpecifyingExtension implements MethodTypeSpecifyingExtension, TypeSpecifierAwareExtension
 {
@@ -54,6 +57,17 @@ final class ExpectationMethodTypeSpecifyingExtension implements MethodTypeSpecif
         TypeSpecifierContext $context,
     ): SpecifiedTypes {
         $calledOnType = $scope->getType($node->var);
+
+        if ($calledOnType instanceof ThisType) {
+            $objectType = $calledOnType->getStaticObjectType();
+            \assert($objectType instanceof GenericObjectType);
+
+            $calledOnType = new ExpectationObjectType(
+                $objectType->getClassName(),
+                [new MixedType(true)],
+                new Node\Expr\PropertyFetch($node->var, 'value'),
+            );
+        }
 
         if (! $calledOnType instanceof ExpectationObjectType) {
             return new SpecifiedTypes();

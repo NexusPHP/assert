@@ -74,9 +74,12 @@ final class ExpectationVariantsGenerator
     /**
      * Methods which message requires more than the default ['value', 'type'] context.
      *
-     * NOTE: Append '=' to parameter names to mean they are not value-exported.
+     * NOTES:
+     * - Append '=' to parameter names to mean they are not value-exported.
+     * - Append '+' to parameter names to mean they are type-exported.
      */
     private const NON_DEFAULT_CONTEXT = [
+        'hasMethod' => ['value+', 'method='],
         'isInstanceOf' => ['value', 'class=', 'type'],
         'isSameAs' => ['value', 'other', 'type'],
     ];
@@ -88,6 +91,7 @@ final class ExpectationVariantsGenerator
     ];
     private const NULLABLE_EXPECTATION_REPLACEMENTS = [
         'is expected to be' => 'is expected to be null or',
+        'is expected to have' => 'is expected to be null or to have',
     ];
     private const UNSUPPORTED_METHODS = [
         'not',
@@ -232,14 +236,19 @@ final class ExpectationVariantsGenerator
         $contextCodeLines = [];
 
         foreach ($contextVariables as $variable) {
-            $isExported = ! str_ends_with($variable, '=');
-            $variableName = rtrim($variable, '=');
+            $isValueExported = ! str_ends_with($variable, '=');
+            $isTypeExported = str_ends_with($variable, '+');
+            $variableName = rtrim($variable, '=+');
 
-            if ('value' === $variableName) {
-                $exportCode = '$this->expectation->exporter->exportValue($this->value)';
-            } elseif ('type' === $variableName) {
+            if ('type' === $variableName) {
                 $exportCode = '$this->expectation->exporter->exportType($this->value)';
-            } elseif ($isExported) {
+            } elseif ('value' === $variableName && $isTypeExported) {
+                $exportCode = '$this->expectation->exporter->exportType($this->value)';
+            } elseif ('value' === $variableName) {
+                $exportCode = '$this->expectation->exporter->exportValue($this->value)';
+            } elseif ($isTypeExported) {
+                $exportCode = '$this->expectation->exporter->exportType($'.$variableName.')';
+            } elseif ($isValueExported) {
                 $exportCode = '$this->expectation->exporter->exportValue($'.$variableName.')';
             } else {
                 $exportCode = '$'.$variableName;
