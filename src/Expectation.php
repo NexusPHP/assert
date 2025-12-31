@@ -21,6 +21,7 @@ namespace Nexus\Assert;
 final readonly class Expectation implements Expectable
 {
     private const MESSAGE_HAS_METHOD = 'Object of class "{value}" is expected to have method "{method}".';
+    private const MESSAGE_HAS_PROPERTY = 'Object of class "{value}" is expected to have property "{property}".';
     private const MESSAGE_IS_ARRAY = 'Value "{value}" is expected to be an array but got {type} instead.';
     private const MESSAGE_IS_BOOL = 'Value "{value}" is expected to be a bool but got {type} instead.';
     private const MESSAGE_IS_CALLABLE = 'Value "{value}" is expected to be callable but got {type} instead.';
@@ -76,6 +77,26 @@ final readonly class Expectation implements Expectable
                 [
                     'value' => $this->exporter->exportType($this->value),
                     'method' => $method,
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function hasProperty(string $property, ?string $message = null): self
+    {
+        $this->isObject($message);
+
+        if (! property_exists($this->value, $property)) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_HAS_PROPERTY,
+                [
+                    'value' => $this->exporter->exportType($this->value),
+                    'property' => $property,
                 ],
             );
         }

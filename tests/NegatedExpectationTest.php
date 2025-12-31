@@ -49,6 +49,18 @@ final class NegatedExpectationTest extends TestCase
         Assert::that(new \Exception('Test'))->not()->hasMethod('__toString');
     }
 
+    public function testHasProperty(): void
+    {
+        $negatedExpectation = Assert::that(new \stdClass())->not();
+        self::assertSame($negatedExpectation, $negatedExpectation->hasProperty('nonExistentProperty'));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Object of class "stdClass" is not expected to have property "existingProperty".');
+        $obj = new \stdClass();
+        $obj->existingProperty = 'value';
+        Assert::that($obj)->not()->hasProperty('existingProperty');
+    }
+
     public function testIsArray(): void
     {
         $negatedExpectation = Assert::that(42)->not();

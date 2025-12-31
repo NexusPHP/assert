@@ -24,6 +24,13 @@ function test_has_method(mixed $value): void
     assertType('(object&hasMethod(jsonSerialize))|null', $value);
 }
 
+function test_has_property(mixed $value): void
+{
+    $assert = Assert::that($value)->nullOr()->hasProperty('length');
+    assertType('Nexus\\Assert\\NullableExpectation<(object&hasProperty(length))|null>', $assert);
+    assertType('(object&hasProperty(length))|null', $value);
+}
+
 function test_is_array(mixed $value): void
 {
     $assert = Assert::that($value)->nullOr()->isArray();

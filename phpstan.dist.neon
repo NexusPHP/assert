@@ -20,6 +20,8 @@ parameters:
       - tools/vendor/**
   bootstrapFiles:
     - vendor/autoload.php
+  ignoreErrors:
+    - identifier: 'property.defaultValue'
   exceptions:
     check:
       throwTypeCovariance: true

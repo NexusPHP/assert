@@ -51,6 +51,18 @@ final class ExpectationTest extends TestCase
         Assert::that(new \stdClass())->hasMethod('nonExistentMethod');
     }
 
+    public function testHasProperty(): void
+    {
+        $expectation = Assert::that(new class {
+            public int $value = 42;
+        });
+        self::assertSame($expectation, $expectation->hasProperty('value'));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Object of class "stdClass" is expected to have property "nonExistentProperty".');
+        Assert::that(new \stdClass())->hasProperty('nonExistentProperty');
+    }
+
     public function testIsArray(): void
     {
         $expectation = Assert::that([]);

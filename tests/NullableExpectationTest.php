@@ -52,6 +52,21 @@ final class NullableExpectationTest extends TestCase
         Assert::that(new \stdClass())->nullOr()->hasMethod('__toString');
     }
 
+    public function testHasProperty(): void
+    {
+        $nullableExpectation = Assert::that(null)->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->hasProperty('nonExistentProperty'));
+
+        $obj = new \stdClass();
+        $obj->existingProperty = 'value';
+        $nullableExpectation = Assert::that($obj)->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->hasProperty('existingProperty'));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Object of class "Exception" is expected to be null or to have property "codes".');
+        Assert::that(new \Exception('Test'))->nullOr()->hasProperty('codes');
+    }
+
     public function testIsArray(): void
     {
         $nullableExpectation = Assert::that(null)->nullOr();

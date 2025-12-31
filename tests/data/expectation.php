@@ -24,6 +24,13 @@ function test_has_method(mixed $value): void
     assertType('object&hasMethod(jsonSerialize)', $value);
 }
 
+function test_has_property(mixed $value): void
+{
+    $assert = Assert::that($value)->hasProperty('length');
+    assertType('Nexus\\Assert\\Expectation<object&hasProperty(length)>', $assert);
+    assertType('object&hasProperty(length)', $value);
+}
+
 function test_is_array(mixed $value): void
 {
     $assert = Assert::that($value)->isArray();

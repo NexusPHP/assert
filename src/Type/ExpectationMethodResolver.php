@@ -31,6 +31,7 @@ final class ExpectationMethodResolver
     /**
      * @var array{
      *   hasMethod: \Closure(Scope, Node\Arg, Node\Arg): Node\Expr,
+     *   hasProperty: \Closure(Scope, Node\Arg, Node\Arg): Node\Expr,
      *   isArray: \Closure(Scope, Node\Arg): Node\Expr,
      *   isBool: \Closure(Scope, Node\Arg): Node\Expr,
      *   isCallable: \Closure(Scope, Node\Arg): Node\Expr,
@@ -148,6 +149,13 @@ final class ExpectationMethodResolver
                     new Node\Expr\FuncCall(
                         new Node\Name('method_exists'),
                         [$arg, $method],
+                    ),
+                ),
+                'hasProperty' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $property): Node\Expr => new Node\Expr\BinaryOp\BooleanAnd(
+                    self::$resolvers['isObject']($scope, $arg),
+                    new Node\Expr\FuncCall(
+                        new Node\Name('property_exists'),
+                        [$arg, $property],
                     ),
                 ),
                 'isArray' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\FuncCall(

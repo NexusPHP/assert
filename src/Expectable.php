@@ -34,6 +34,16 @@ interface Expectable
     public function hasMethod(string $method, ?string $message = null): self;
 
     /**
+     * @param non-empty-string      $property
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
+    public function hasProperty(string $property, ?string $message = null): self;
+
+    /**
      * @param null|non-empty-string $message
      *
      * @return self<TValue>

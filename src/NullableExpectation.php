@@ -25,6 +25,7 @@ namespace Nexus\Assert;
 final readonly class NullableExpectation implements Expectable
 {
     private const MESSAGE_HAS_METHOD = 'Object of class "{value}" is expected to be null or to have method "{method}".';
+    private const MESSAGE_HAS_PROPERTY = 'Object of class "{value}" is expected to be null or to have property "{property}".';
     private const MESSAGE_IS_ARRAY = 'Value "{value}" is expected to be null or an array but got {type} instead.';
     private const MESSAGE_IS_BOOL = 'Value "{value}" is expected to be null or a bool but got {type} instead.';
     private const MESSAGE_IS_CALLABLE = 'Value "{value}" is expected to be null or callable but got {type} instead.';
@@ -73,6 +74,30 @@ final readonly class NullableExpectation implements Expectable
                 [
                     'value' => $this->expectation->exporter->exportType($this->value),
                     'method' => $method,
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<null|TValue>
+     */
+    public function hasProperty(string $property, ?string $message = null): self
+    {
+        if (null === $this->value) {
+            return $this;
+        }
+
+        try {
+            $this->expectation->hasProperty($property, $message);
+        } catch (ExpectationFailedException) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_HAS_PROPERTY,
+                [
+                    'value' => $this->expectation->exporter->exportType($this->value),
+                    'property' => $property,
                 ],
             );
         }
