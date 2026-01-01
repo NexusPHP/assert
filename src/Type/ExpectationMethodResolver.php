@@ -41,6 +41,7 @@ final class ExpectationMethodResolver
      *   isInstanceOf: \Closure(Scope, Node\Arg, Node\Arg): Node\Expr,
      *   isInt: \Closure(Scope, Node\Arg): Node\Expr,
      *   isIterable: \Closure(Scope, Node\Arg): Node\Expr,
+     *   isList: \Closure(Scope, Node\Arg): Node\Expr,
      *   isNull: \Closure(Scope, Node\Arg): Node\Expr,
      *   isNumeric: \Closure(Scope, Node\Arg): Node\Expr,
      *   isObject: \Closure(Scope, Node\Arg): Node\Expr,
@@ -214,6 +215,16 @@ final class ExpectationMethodResolver
                 'isIterable' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\FuncCall(
                     new Node\Name('is_iterable'),
                     [$arg],
+                ),
+                'isList' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\BinaryOp\BooleanAnd(
+                    self::$resolvers['isArray']($scope, $arg),
+                    new Node\Expr\BinaryOp\Identical(
+                        new Node\Expr\FuncCall(
+                            new Node\Name('array_values'),
+                            [$arg],
+                        ),
+                        $arg->value,
+                    ),
                 ),
                 'isNull' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\BinaryOp\Identical(
                     new Node\Expr\ConstFetch(new Node\Name('null')),

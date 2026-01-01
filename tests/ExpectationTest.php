@@ -177,6 +177,19 @@ final class ExpectationTest extends TestCase
         Assert::that(42)->isIterable();
     }
 
+    public function testIsList(): void
+    {
+        $expectation = Assert::that([1, 2, 3]);
+        self::assertSame($expectation, $expectation->isList());
+
+        $expectation = Assert::that([]);
+        self::assertSame($expectation, $expectation->isList());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "[\'a\' => 1, \'b\' => 2]" is expected to be a list but got array instead.');
+        Assert::that(['a' => 1, 'b' => 2])->isList();
+    }
+
     public function testIsNull(): void
     {
         $expectation = Assert::that(null);

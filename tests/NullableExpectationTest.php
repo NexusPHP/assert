@@ -184,6 +184,19 @@ final class NullableExpectationTest extends TestCase
         Assert::that(42)->nullOr()->isIterable();
     }
 
+    public function testIsList(): void
+    {
+        $nullableExpectation = Assert::that(null)->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->isList());
+
+        $nullableExpectation = Assert::that([0, 1, 2])->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->isList());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "[\'a\' => 1, \'b\' => 2]" is expected to be null or a list but got array instead.');
+        Assert::that(['a' => 1, 'b' => 2])->nullOr()->isList();
+    }
+
     public function testIsNull(): void
     {
         $nullableExpectation = Assert::that(null)->nullOr();

@@ -87,6 +87,13 @@ function test_is_iterable(mixed $value): void
     assertType('iterable|null', $value);
 }
 
+function test_is_list(mixed $value): void
+{
+    $assert = Assert::that($value)->nullOr()->isList();
+    assertType('Nexus\\Assert\\NullableExpectation<list<mixed>|null>', $assert);
+    assertType('list<mixed>|null', $value);
+}
+
 function test_is_null(mixed $value): void
 {
     $assert = Assert::that($value)->nullOr()->isNull();

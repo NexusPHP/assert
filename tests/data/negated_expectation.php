@@ -87,6 +87,13 @@ function test_is_iterable(mixed $value): void
     assertType('mixed~iterable', $value);
 }
 
+function test_is_list(mixed $value): void
+{
+    $assert = Assert::that($value)->not()->isList();
+    assertType('Nexus\\Assert\\NegatedExpectation<mixed>', $assert);
+    assertType('mixed', $value);
+}
+
 function test_is_null(mixed $value): void
 {
     $assert = Assert::that($value)->not()->isNull();

@@ -35,6 +35,7 @@ final readonly class NullableExpectation implements Expectable
     private const MESSAGE_IS_INSTANCE_OF = 'Value "{value}" is expected to be null or an instance of {class} but got {type} instead.';
     private const MESSAGE_IS_INT = 'Value "{value}" is expected to be null or an int but got {type} instead.';
     private const MESSAGE_IS_ITERABLE = 'Value "{value}" is expected to be null or iterable but got {type} instead.';
+    private const MESSAGE_IS_LIST = 'Value "{value}" is expected to be null or a list but got {type} instead.';
     private const MESSAGE_IS_NUMERIC = 'Value "{value}" is expected to be null or numeric but got {type} instead.';
     private const MESSAGE_IS_OBJECT = 'Value "{value}" is expected to be null or an object but got {type} instead.';
     private const MESSAGE_IS_RESOURCE = 'Value "{value}" is expected to be null or a resource but got {type} instead.';
@@ -312,6 +313,30 @@ final readonly class NullableExpectation implements Expectable
         } catch (ExpectationFailedException) {
             throw new ExpectationFailedException(
                 $message ?? self::MESSAGE_IS_ITERABLE,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'type' => $this->expectation->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<null|TValue>
+     */
+    public function isList(?string $message = null): self
+    {
+        if (null === $this->value) {
+            return $this;
+        }
+
+        try {
+            $this->expectation->isList($message);
+        } catch (ExpectationFailedException) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_LIST,
                 [
                     'value' => $this->expectation->exporter->exportValue($this->value),
                     'type' => $this->expectation->exporter->exportType($this->value),

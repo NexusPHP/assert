@@ -151,6 +151,16 @@ final class NegatedExpectationTest extends TestCase
         Assert::that([1])->not()->isIterable();
     }
 
+    public function testIsList(): void
+    {
+        $negatedExpectation = Assert::that(['a' => 1, 'b' => 2])->not();
+        self::assertSame($negatedExpectation, $negatedExpectation->isList());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "[0, 1, 2]" is not expected to be a list.');
+        Assert::that([0, 1, 2])->not()->isList();
+    }
+
     public function testIsNull(): void
     {
         $negatedExpectation = Assert::that(42)->not();
