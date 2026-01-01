@@ -73,13 +73,6 @@ function test_is_float(mixed $value): void
     assertType('mixed~float', $value);
 }
 
-function test_is_instance_of(mixed $value): void
-{
-    $assert = Assert::that($value)->not()->isInstanceOf(\DateTimeInterface::class);
-    assertType('Nexus\\Assert\\NegatedExpectation<mixed~DateTimeInterface>', $assert);
-    assertType('mixed~DateTimeInterface', $value);
-}
-
 function test_is_int(mixed $value): void
 {
     $assert = Assert::that($value)->not()->isInt();

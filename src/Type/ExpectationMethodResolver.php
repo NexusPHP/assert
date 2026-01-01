@@ -183,36 +183,31 @@ final class ExpectationMethodResolver
                     [$arg],
                 ),
                 'isInstanceOf' => static function (Scope $scope, Node\Arg $arg, Node\Arg $class): Node\Expr {
-                    $classType = $scope->getType($class->value);
+                    $classType = $scope->getType($class->value)->getClassStringObjectType();
+                    $classNames = $classType->getObjectClassNames();
 
-                    if (\count($classType->getConstantStrings()) === 1) {
-                        $className = $classType->getConstantStrings()[0]->getValue();
+                    if ([] === $classNames) {
+                        return new Node\Expr\Instanceof_($arg->value, $class->value);
+                    }
 
-                        return new Node\Expr\Instanceof_(
+                    $exprs = array_map(
+                        static fn(string $className): Node\Expr => new Node\Expr\Instanceof_(
                             $arg->value,
                             new Node\Name\FullyQualified($className),
-                        );
+                        ),
+                        $classNames,
+                    );
+
+                    if (\count($exprs) === 1) {
+                        return $exprs[0];
                     }
 
-                    if ($classType->isClassString()->yes()) {
-                        $objectType = $classType->getClassStringObjectType();
+                    $firstExpr = array_shift($exprs);
 
-                        if ($objectType->getObjectClassNames() !== []) {
-                            return new Node\Expr\Instanceof_(
-                                $arg->value,
-                                new Node\Name\FullyQualified($objectType->getObjectClassNames()[0]),
-                            );
-                        }
-
-                        return new Node\Expr\Instanceof_(
-                            $arg->value,
-                            $class->value,
-                        );
-                    }
-
-                    return new Node\Expr\Instanceof_(
-                        $arg->value,
-                        $class->value,
+                    return array_reduce(
+                        $exprs,
+                        static fn(Node\Expr $carry, Node\Expr $expr): Node\Expr => new Node\Expr\BinaryOp\BooleanOr($carry, $expr),
+                        $firstExpr,
                     );
                 },
                 'isInt' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\FuncCall(
