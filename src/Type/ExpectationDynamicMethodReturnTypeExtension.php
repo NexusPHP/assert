@@ -66,36 +66,55 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
             $methodCall->getArgs(),
             $methodReflection->getVariants(),
         )->getReturnType();
+        \assert($returnType instanceof GenericObjectType);
 
-        if ($returnType instanceof GenericObjectType) {
-            /** @var class-string $expectationClass */
-            $expectationClass = $returnType->getClassName();
-            $resolvedType = $this->resolver->resolveType(
-                $this->typeSpecifier,
-                $expectationClass,
-                $methodReflection->getName(),
-                $scope,
-                new Node\Arg($calledOnType->getValueExpr()),
-                ...$methodCall->getArgs(),
-            );
+        /** @var class-string $expectationClass */
+        $expectationClass = $returnType->getClassName();
 
-            if (NegatedExpectation::class === $expectationClass) {
-                return self::getTypeFromNegatedExpectationMethodCall($returnType, $calledOnType, $resolvedType);
-            }
+        // When calling `not()` or `nullOr()`, the stored expr gets lost,
+        // so we need to get it from the $calledOnType.
+        $resolvedExpr = $this->resolver->resolveExpr(
+            $expectationClass,
+            $methodReflection->getName(),
+            $scope,
+            new Node\Arg($calledOnType->getValueExpr()),
+            ...$methodCall->getArgs(),
+        );
+        $resolvedExpr = array_reduce(
+            [$resolvedExpr],
+            static function (?Node\Expr $carry, ?Node\Expr $expr): ?Node\Expr {
+                if (null === $carry || null === $expr) {
+                    return $expr ?? $carry;
+                }
 
-            if (NullableExpectation::class === $expectationClass) {
-                return self::getTypeFromNullableExpectationMethodCall($returnType, $calledOnType, $resolvedType);
-            }
+                return new Node\Expr\BinaryOp\BooleanAnd($carry, $expr);
+            },
+            $calledOnType->getStoredExpr(),
+        );
 
-            return self::getTypeFromRegularExpectationMethodCall($returnType, $calledOnType, $resolvedType);
+        $resolvedType = $this->resolver->resolveType(
+            $this->typeSpecifier,
+            $resolvedExpr,
+            $expectationClass,
+            $scope,
+            new Node\Arg($calledOnType->getValueExpr()),
+        );
+
+        if (NegatedExpectation::class === $expectationClass) {
+            return self::getTypeFromNegatedExpectationMethodCall($returnType, $calledOnType, $resolvedExpr, $resolvedType);
         }
 
-        return $returnType;
+        if (NullableExpectation::class === $expectationClass) {
+            return self::getTypeFromNullableExpectationMethodCall($returnType, $calledOnType, $resolvedExpr, $resolvedType);
+        }
+
+        return self::getTypeFromRegularExpectationMethodCall($returnType, $calledOnType, $resolvedExpr, $resolvedType);
     }
 
     private static function getTypeFromNegatedExpectationMethodCall(
         GenericObjectType $returnType,
         ExpectationObjectType $calledOnType,
+        ?Node\Expr $resolvedExpr,
         ?Type $resolvedType,
     ): Type {
         if (null === $resolvedType) {
@@ -103,6 +122,7 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
                 NegatedExpectation::class,
                 $returnType->getTypes(),
                 $calledOnType->getValueExpr(),
+                $resolvedExpr,
             );
         }
 
@@ -115,12 +135,18 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
             return new NeverType(true);
         }
 
-        return new ExpectationObjectType(NegatedExpectation::class, [$newType], $calledOnType->getValueExpr());
+        return new ExpectationObjectType(
+            NegatedExpectation::class,
+            [$newType],
+            $calledOnType->getValueExpr(),
+            $resolvedExpr,
+        );
     }
 
     private static function getTypeFromNullableExpectationMethodCall(
         GenericObjectType $returnType,
         ExpectationObjectType $calledOnType,
+        ?Node\Expr $resolvedExpr,
         ?Type $resolvedType,
     ): Type {
         if (null === $resolvedType) {
@@ -128,6 +154,7 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
                 NullableExpectation::class,
                 $returnType->getTypes(),
                 $calledOnType->getValueExpr(),
+                $resolvedExpr,
             );
         }
 
@@ -142,12 +169,18 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
 
         $newTypeWithNull = TypeCombinator::addNull($newType);
 
-        return new ExpectationObjectType(NullableExpectation::class, [$newTypeWithNull], $calledOnType->getValueExpr());
+        return new ExpectationObjectType(
+            NullableExpectation::class,
+            [$newTypeWithNull],
+            $calledOnType->getValueExpr(),
+            $resolvedExpr,
+        );
     }
 
     private static function getTypeFromRegularExpectationMethodCall(
         GenericObjectType $returnType,
         ExpectationObjectType $calledOnType,
+        ?Node\Expr $resolvedExpr,
         ?Type $resolvedType,
     ): Type {
         if (null === $resolvedType) {
@@ -155,6 +188,7 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
                 Expectation::class,
                 $returnType->getTypes(),
                 $calledOnType->getValueExpr(),
+                $resolvedExpr,
             );
         }
 
@@ -167,6 +201,11 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
             return new NeverType(true);
         }
 
-        return new ExpectationObjectType(Expectation::class, [$newType], $calledOnType->getValueExpr());
+        return new ExpectationObjectType(
+            Expectation::class,
+            [$newType],
+            $calledOnType->getValueExpr(),
+            $resolvedExpr,
+        );
     }
 }

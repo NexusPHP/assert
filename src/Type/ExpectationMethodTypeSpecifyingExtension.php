@@ -22,7 +22,6 @@ use PHPStan\Analyser\TypeSpecifier;
 use PHPStan\Analyser\TypeSpecifierAwareExtension;
 use PHPStan\Analyser\TypeSpecifierContext;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\MethodTypeSpecifyingExtension;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ThisType;
@@ -60,8 +59,6 @@ final class ExpectationMethodTypeSpecifyingExtension implements MethodTypeSpecif
 
         if ($calledOnType instanceof ThisType) {
             $objectType = $calledOnType->getStaticObjectType();
-            \assert($objectType instanceof GenericObjectType);
-
             $calledOnType = new ExpectationObjectType(
                 $objectType->getClassName(),
                 [new MixedType(true)],
@@ -89,6 +86,12 @@ final class ExpectationMethodTypeSpecifyingExtension implements MethodTypeSpecif
 
         if (null === $expr) {
             return new SpecifiedTypes();
+        }
+
+        $storedExpr = $calledOnType->getStoredExpr();
+
+        if (null !== $storedExpr) {
+            $expr = new Node\Expr\BinaryOp\BooleanAnd($storedExpr, $expr);
         }
 
         return $this->typeSpecifier->specifyTypesInCondition($scope, $expr, TypeSpecifierContext::createTruthy());

@@ -8,12 +8,6 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/src/Type/ExpectationDynamicMethodReturnTypeExtension.php',
 ];
 $ignoreErrors[] = [
-	'rawMessage' => 'Doing instanceof PHPStan\\Type\\Generic\\GenericObjectType is error-prone and deprecated.',
-	'identifier' => 'phpstanApi.instanceofType',
-	'count' => 1,
-	'path' => __DIR__ . '/src/Type/ExpectationMethodTypeSpecifyingExtension.php',
-];
-$ignoreErrors[] = [
 	'rawMessage' => 'Parameter #1 $className of class Nexus\\Assert\\Type\\ExpectationObjectType constructor expects class-string, string given.',
 	'identifier' => 'argument.type',
 	'count' => 1,

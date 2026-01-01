@@ -106,14 +106,11 @@ final class ExpectationMethodResolver
      */
     public function resolveType(
         TypeSpecifier $typeSpecifier,
+        ?Node\Expr $resolvedExpr,
         string $expectationClass,
-        string $methodName,
         Scope $scope,
         Node\Arg $arg,
-        Node\Arg ...$args,
     ): ?Type {
-        $resolvedExpr = $this->resolveExpr($expectationClass, $methodName, $scope, $arg, ...$args);
-
         if (null === $resolvedExpr) {
             return null;
         }

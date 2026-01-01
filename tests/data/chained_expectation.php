@@ -1,0 +1,50 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * This file is part of the Nexus Assert library.
+ *
+ * (c) 2025 John Paul E. Balandan, CPA <paulbalandan@gmail.com>
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
+namespace Nexus\Assert\Tests;
+
+use Nexus\Assert\Assert;
+
+use function PHPStan\Testing\assertType;
+
+function test_is_countable_not_is_array(mixed $value): void
+{
+    $assert = Assert::that($value)->isCountable()->not()->isArray();
+    assertType('Nexus\\Assert\\NegatedExpectation<Countable>', $assert);
+    assertType(\Countable::class, $value);
+}
+
+function test_is_numeric_string(mixed $a, mixed $b): void
+{
+    $assert1 = Assert::that($a)->isString()->isNumeric();
+    assertType('Nexus\\Assert\\Expectation<numeric-string>', $assert1);
+    assertType('numeric-string', $a);
+
+    $assert2 = Assert::that($b)->isNumeric()->isString();
+    assertType('Nexus\\Assert\\Expectation<numeric-string>', $assert2);
+    assertType('numeric-string', $b);
+}
+
+function test_is_numeric_not_is_string(mixed $value): void
+{
+    $assert = Assert::that($value)->isNumeric()->not()->isString();
+    assertType('Nexus\\Assert\\NegatedExpectation<float|int>', $assert);
+    assertType('float|int', $value);
+}
+
+function test_is_scalar_not_is_float_or_is_int(mixed $value): void
+{
+    $assert = Assert::that($value)->isScalar()->not()->isFloat()->isInt();
+    assertType('Nexus\\Assert\\NegatedExpectation<bool|string>', $assert);
+    assertType('bool|string', $value);
+}

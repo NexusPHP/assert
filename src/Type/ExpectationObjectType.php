@@ -27,6 +27,7 @@ final class ExpectationObjectType extends GenericObjectType
         string $className,
         array $types,
         private readonly Node\Expr $expr,
+        private readonly ?Node\Expr $storedExpr = null,
     ) {
         parent::__construct($className, $types);
     }
@@ -34,5 +35,10 @@ final class ExpectationObjectType extends GenericObjectType
     public function getValueExpr(): Node\Expr
     {
         return $this->expr;
+    }
+
+    public function getStoredExpr(): ?Node\Expr
+    {
+        return $this->storedExpr;
     }
 }
