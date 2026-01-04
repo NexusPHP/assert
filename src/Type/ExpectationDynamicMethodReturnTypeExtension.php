@@ -95,115 +95,37 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
         $resolvedType = $this->resolver->resolveType(
             $this->typeSpecifier,
             $resolvedExpr,
+            TypeCombinator::union(...$returnType->getTypes()),
             $expectationClass,
             $scope,
             new Node\Arg($calledOnType->getValueExpr()),
         );
 
+        if ($resolvedType instanceof NeverType) {
+            return new NeverType(true);
+        }
+
         if (NegatedExpectation::class === $expectationClass) {
-            return self::getTypeFromNegatedExpectationMethodCall($returnType, $calledOnType, $resolvedExpr, $resolvedType);
+            return new ExpectationObjectType(
+                NegatedExpectation::class,
+                [$resolvedType],
+                $calledOnType->getValueExpr(),
+                $resolvedExpr,
+            );
         }
 
         if (NullableExpectation::class === $expectationClass) {
-            return self::getTypeFromNullableExpectationMethodCall($returnType, $calledOnType, $resolvedExpr, $resolvedType);
-        }
-
-        return self::getTypeFromRegularExpectationMethodCall($returnType, $calledOnType, $resolvedExpr, $resolvedType);
-    }
-
-    private static function getTypeFromNegatedExpectationMethodCall(
-        GenericObjectType $returnType,
-        ExpectationObjectType $calledOnType,
-        ?Node\Expr $resolvedExpr,
-        ?Type $resolvedType,
-    ): Type {
-        if (null === $resolvedType) {
-            return new ExpectationObjectType(
-                NegatedExpectation::class,
-                $returnType->getTypes(),
-                $calledOnType->getValueExpr(),
-                $resolvedExpr,
-            );
-        }
-
-        $newType = TypeCombinator::remove(
-            TypeCombinator::union(...$returnType->getTypes()),
-            $resolvedType,
-        );
-
-        if ($newType instanceof NeverType) {
-            return new NeverType(true);
-        }
-
-        return new ExpectationObjectType(
-            NegatedExpectation::class,
-            [$newType],
-            $calledOnType->getValueExpr(),
-            $resolvedExpr,
-        );
-    }
-
-    private static function getTypeFromNullableExpectationMethodCall(
-        GenericObjectType $returnType,
-        ExpectationObjectType $calledOnType,
-        ?Node\Expr $resolvedExpr,
-        ?Type $resolvedType,
-    ): Type {
-        if (null === $resolvedType) {
             return new ExpectationObjectType(
                 NullableExpectation::class,
-                $returnType->getTypes(),
+                [$resolvedType],
                 $calledOnType->getValueExpr(),
                 $resolvedExpr,
             );
-        }
-
-        $newType = TypeCombinator::intersect(
-            TypeCombinator::union(...$returnType->getTypes()),
-            $resolvedType,
-        );
-
-        if ($newType instanceof NeverType) {
-            return new NeverType(true);
-        }
-
-        $newTypeWithNull = TypeCombinator::addNull($newType);
-
-        return new ExpectationObjectType(
-            NullableExpectation::class,
-            [$newTypeWithNull],
-            $calledOnType->getValueExpr(),
-            $resolvedExpr,
-        );
-    }
-
-    private static function getTypeFromRegularExpectationMethodCall(
-        GenericObjectType $returnType,
-        ExpectationObjectType $calledOnType,
-        ?Node\Expr $resolvedExpr,
-        ?Type $resolvedType,
-    ): Type {
-        if (null === $resolvedType) {
-            return new ExpectationObjectType(
-                Expectation::class,
-                $returnType->getTypes(),
-                $calledOnType->getValueExpr(),
-                $resolvedExpr,
-            );
-        }
-
-        $newType = TypeCombinator::intersect(
-            TypeCombinator::union(...$returnType->getTypes()),
-            $resolvedType,
-        );
-
-        if ($newType instanceof NeverType) {
-            return new NeverType(true);
         }
 
         return new ExpectationObjectType(
             Expectation::class,
-            [$newType],
+            [$resolvedType],
             $calledOnType->getValueExpr(),
             $resolvedExpr,
         );

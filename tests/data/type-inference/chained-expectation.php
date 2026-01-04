@@ -24,6 +24,27 @@ function test_is_countable_not_is_array(mixed $value): void
     assertType(\Countable::class, $value);
 }
 
+function test_is_int_not_is_negative_int(mixed $value): void
+{
+    $assert = Assert::that($value)->isInt()->not()->isNegativeInt();
+    assertType('Nexus\\Assert\\NegatedExpectation<int<0, max>>', $assert);
+    assertType('int<0, max>', $value);
+}
+
+function test_is_int_not_is_negative_int_or_positive_int(mixed $value): void
+{
+    $assert = Assert::that($value)->isInt()->not()->isNegativeInt()->isPositiveInt();
+    assertType('Nexus\\Assert\\NegatedExpectation<0>', $assert);
+    assertType('0', $value);
+}
+
+function test_is_int_not_is_positive_int(mixed $value): void
+{
+    $assert = Assert::that($value)->isInt()->not()->isPositiveInt();
+    assertType('Nexus\\Assert\\NegatedExpectation<int<min, 0>>', $assert);
+    assertType('int<min, 0>', $value);
+}
+
 function test_is_numeric_string(mixed $a, mixed $b): void
 {
     $assert1 = Assert::that($a)->isString()->isNumeric();

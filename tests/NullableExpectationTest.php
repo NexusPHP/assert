@@ -210,6 +210,19 @@ final class NullableExpectationTest extends TestCase
         Assert::that([0, 1, 2])->nullOr()->isMap();
     }
 
+    public function testIsNegativeInt(): void
+    {
+        $nullableExpectation = Assert::that(null)->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->isNegativeInt());
+
+        $nullableExpectation = Assert::that(-5)->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->isNegativeInt());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "3" is expected to be null or a negative int but got int instead.');
+        Assert::that(3)->nullOr()->isNegativeInt();
+    }
+
     public function testIsNull(): void
     {
         $nullableExpectation = Assert::that(null)->nullOr();
@@ -247,6 +260,19 @@ final class NullableExpectationTest extends TestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "42" is expected to be null or an object but got int instead.');
         Assert::that(42)->nullOr()->isObject();
+    }
+
+    public function testIsPositiveInt(): void
+    {
+        $nullableExpectation = Assert::that(null)->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->isPositiveInt());
+
+        $nullableExpectation = Assert::that(5)->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->isPositiveInt());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "-3" is expected to be null or a positive int but got int instead.');
+        Assert::that(-3)->nullOr()->isPositiveInt();
     }
 
     public function testIsResource(): void

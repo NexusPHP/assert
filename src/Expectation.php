@@ -33,9 +33,11 @@ final readonly class Expectation implements Expectable
     private const MESSAGE_IS_ITERABLE = 'Value "{value}" is expected to be iterable but got {type} instead.';
     private const MESSAGE_IS_LIST = 'Value "{value}" is expected to be a list but got {type} instead.';
     private const MESSAGE_IS_MAP = 'Value "{value}" is expected to be a map but got {type} instead.';
+    private const MESSAGE_IS_NEGATIVE_INT = 'Value "{value}" is expected to be a negative int but got {type} instead.';
     private const MESSAGE_IS_NULL = 'Value "{value}" is expected to be null but got {type} instead.';
     private const MESSAGE_IS_NUMERIC = 'Value "{value}" is expected to be numeric but got {type} instead.';
     private const MESSAGE_IS_OBJECT = 'Value "{value}" is expected to be an object but got {type} instead.';
+    private const MESSAGE_IS_POSITIVE_INT = 'Value "{value}" is expected to be a positive int but got {type} instead.';
     private const MESSAGE_IS_RESOURCE = 'Value "{value}" is expected to be a resource but got {type} instead.';
     private const MESSAGE_IS_SAME_AS = 'Value "{value}" is expected to be the same as {other} but they differ.';
     private const MESSAGE_IS_SCALAR = 'Value "{value}" is expected to be a scalar but got {type} instead.';
@@ -312,6 +314,26 @@ final readonly class Expectation implements Expectable
     /**
      * @return self<TValue>
      */
+    public function isNegativeInt(?string $message = null): self
+    {
+        $this->isInt($message);
+
+        if ($this->value >= 0) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_NEGATIVE_INT,
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'type' => $this->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
     public function isNull(?string $message = null): self
     {
         if (null !== $this->value) {
@@ -353,6 +375,26 @@ final readonly class Expectation implements Expectable
         if (! \is_object($this->value)) {
             throw new ExpectationFailedException(
                 $message ?? self::MESSAGE_IS_OBJECT,
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'type' => $this->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isPositiveInt(?string $message = null): self
+    {
+        $this->isInt($message);
+
+        if ($this->value <= 0) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_POSITIVE_INT,
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),

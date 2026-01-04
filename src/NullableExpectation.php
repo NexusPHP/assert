@@ -37,8 +37,10 @@ final readonly class NullableExpectation implements Expectable
     private const MESSAGE_IS_ITERABLE = 'Value "{value}" is expected to be null or iterable but got {type} instead.';
     private const MESSAGE_IS_LIST = 'Value "{value}" is expected to be null or a list but got {type} instead.';
     private const MESSAGE_IS_MAP = 'Value "{value}" is expected to be null or a map but got {type} instead.';
+    private const MESSAGE_IS_NEGATIVE_INT = 'Value "{value}" is expected to be null or a negative int but got {type} instead.';
     private const MESSAGE_IS_NUMERIC = 'Value "{value}" is expected to be null or numeric but got {type} instead.';
     private const MESSAGE_IS_OBJECT = 'Value "{value}" is expected to be null or an object but got {type} instead.';
+    private const MESSAGE_IS_POSITIVE_INT = 'Value "{value}" is expected to be null or a positive int but got {type} instead.';
     private const MESSAGE_IS_RESOURCE = 'Value "{value}" is expected to be null or a resource but got {type} instead.';
     private const MESSAGE_IS_SAME_AS = 'Value "{value}" is expected to be null or the same as {other} but they differ.';
     private const MESSAGE_IS_SCALAR = 'Value "{value}" is expected to be null or a scalar but got {type} instead.';
@@ -373,6 +375,30 @@ final readonly class NullableExpectation implements Expectable
     }
 
     /**
+     * @return self<null|TValue>
+     */
+    public function isNegativeInt(?string $message = null): self
+    {
+        if (null === $this->value) {
+            return $this;
+        }
+
+        try {
+            $this->expectation->isNegativeInt($message);
+        } catch (ExpectationFailedException) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_NEGATIVE_INT,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'type' => $this->expectation->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
      * @return self<null>
      */
     public function isNull(?string $message = null): self
@@ -420,6 +446,30 @@ final readonly class NullableExpectation implements Expectable
         } catch (ExpectationFailedException) {
             throw new ExpectationFailedException(
                 $message ?? self::MESSAGE_IS_OBJECT,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'type' => $this->expectation->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<null|TValue>
+     */
+    public function isPositiveInt(?string $message = null): self
+    {
+        if (null === $this->value) {
+            return $this;
+        }
+
+        try {
+            $this->expectation->isPositiveInt($message);
+        } catch (ExpectationFailedException) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_POSITIVE_INT,
                 [
                     'value' => $this->expectation->exporter->exportValue($this->value),
                     'type' => $this->expectation->exporter->exportType($this->value),

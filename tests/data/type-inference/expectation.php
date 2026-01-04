@@ -101,6 +101,13 @@ function test_is_map(mixed $value): void
     assertType('array<string, mixed>', $value);
 }
 
+function test_is_negative_int(mixed $value): void
+{
+    $assert = Assert::that($value)->isNegativeInt();
+    assertType('Nexus\\Assert\\Expectation<int<min, -1>>', $assert);
+    assertType('int<min, -1>', $value);
+}
+
 function test_is_null(mixed $value): void
 {
     $assert = Assert::that($value)->isNull();
@@ -120,6 +127,13 @@ function test_is_object(mixed $value): void
     $assert = Assert::that($value)->isObject();
     assertType('Nexus\\Assert\\Expectation<object>', $assert);
     assertType('object', $value);
+}
+
+function test_is_positive_int(mixed $value): void
+{
+    $assert = Assert::that($value)->isPositiveInt();
+    assertType('Nexus\\Assert\\Expectation<int<1, max>>', $assert);
+    assertType('int<1, max>', $value);
 }
 
 function test_is_resource(mixed $value): void

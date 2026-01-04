@@ -37,9 +37,11 @@ final readonly class NegatedExpectation implements Expectable
     private const MESSAGE_IS_ITERABLE = 'Value "{value}" is not expected to be iterable.';
     private const MESSAGE_IS_LIST = 'Value "{value}" is not expected to be a list.';
     private const MESSAGE_IS_MAP = 'Value "{value}" is not expected to be a map.';
+    private const MESSAGE_IS_NEGATIVE_INT = 'Value "{value}" is not expected to be a negative int.';
     private const MESSAGE_IS_NULL = 'Value "{value}" is not expected to be null.';
     private const MESSAGE_IS_NUMERIC = 'Value "{value}" is not expected to be numeric.';
     private const MESSAGE_IS_OBJECT = 'Value "{value}" is not expected to be an object.';
+    private const MESSAGE_IS_POSITIVE_INT = 'Value "{value}" is not expected to be a positive int.';
     private const MESSAGE_IS_RESOURCE = 'Value "{value}" is not expected to be a resource.';
     private const MESSAGE_IS_SAME_AS = 'Value "{value}" is not expected to be the same as {other} but they are.';
     private const MESSAGE_IS_SCALAR = 'Value "{value}" is not expected to be a scalar.';
@@ -293,6 +295,23 @@ final readonly class NegatedExpectation implements Expectable
     /**
      * @return self<TValue>
      */
+    public function isNegativeInt(?string $message = null): self
+    {
+        try {
+            $this->expectation->isNegativeInt($message);
+        } catch (ExpectationFailedException) {
+            return $this;
+        }
+
+        throw new ExpectationFailedException(
+            $message ?? self::MESSAGE_IS_NEGATIVE_INT,
+            ['value' => $this->expectation->exporter->exportValue($this->value)],
+        );
+    }
+
+    /**
+     * @return self<TValue>
+     */
     public function isNull(?string $message = null): self
     {
         try {
@@ -337,6 +356,23 @@ final readonly class NegatedExpectation implements Expectable
 
         throw new ExpectationFailedException(
             $message ?? self::MESSAGE_IS_OBJECT,
+            ['value' => $this->expectation->exporter->exportValue($this->value)],
+        );
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isPositiveInt(?string $message = null): self
+    {
+        try {
+            $this->expectation->isPositiveInt($message);
+        } catch (ExpectationFailedException) {
+            return $this;
+        }
+
+        throw new ExpectationFailedException(
+            $message ?? self::MESSAGE_IS_POSITIVE_INT,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }

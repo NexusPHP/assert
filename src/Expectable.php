@@ -152,6 +152,15 @@ interface Expectable
      *
      * @throws ExpectationFailedException
      */
+    public function isNegativeInt(?string $message = null): self;
+
+    /**
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
     public function isNull(?string $message = null): self;
 
     /**
@@ -171,6 +180,15 @@ interface Expectable
      * @throws ExpectationFailedException
      */
     public function isObject(?string $message = null): self;
+
+    /**
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
+    public function isPositiveInt(?string $message = null): self;
 
     /**
      * @param null|non-empty-string $message

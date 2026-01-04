@@ -20,6 +20,7 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Analyser\TypeSpecifier;
 use PHPStan\Analyser\TypeSpecifierContext;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
 
 final class ExpectationMethodResolver
 {
@@ -43,9 +44,11 @@ final class ExpectationMethodResolver
      *   isIterable: \Closure(Scope, Node\Arg): Node\Expr,
      *   isList: \Closure(Scope, Node\Arg): Node\Expr,
      *   isMap: \Closure(Scope, Node\Arg): Node\Expr,
+     *   isNegativeInt: \Closure(Scope, Node\Arg): Node\Expr,
      *   isNull: \Closure(Scope, Node\Arg): Node\Expr,
      *   isNumeric: \Closure(Scope, Node\Arg): Node\Expr,
      *   isObject: \Closure(Scope, Node\Arg): Node\Expr,
+     *   isPositiveInt: \Closure(Scope, Node\Arg): Node\Expr,
      *   isResource: \Closure(Scope, Node\Arg): Node\Expr,
      *   isSameAs: \Closure(Scope, Node\Arg, Node\Arg): Node\Expr,
      *   isScalar: \Closure(Scope, Node\Arg): Node\Expr,
@@ -109,12 +112,13 @@ final class ExpectationMethodResolver
     public function resolveType(
         TypeSpecifier $typeSpecifier,
         ?Node\Expr $resolvedExpr,
+        Type $originalType,
         string $expectationClass,
         Scope $scope,
         Node\Arg $arg,
-    ): ?Type {
+    ): Type {
         if (null === $resolvedExpr) {
-            return null;
+            return $originalType;
         }
 
         $context = TypeSpecifierContext::createTruthy();
@@ -123,20 +127,30 @@ final class ExpectationMethodResolver
         if (NegatedExpectation::class === $expectationClass) {
             foreach ($specifiedTypes->getSureNotTypes() as [$expr, $type]) {
                 if ($expr === $arg->value) {
-                    return $type;
+                    return TypeCombinator::remove($originalType, $type);
                 }
             }
 
-            return null;
+            foreach ($specifiedTypes->getSureTypes() as [$expr, $type]) {
+                if ($expr === $arg->value) {
+                    return TypeCombinator::intersect($originalType, $type);
+                }
+            }
+
+            return $originalType;
         }
 
         foreach ($specifiedTypes->getSureTypes() as [$expr, $type]) {
             if ($expr === $arg->value) {
+                if (NullableExpectation::class === $expectationClass) {
+                    return TypeCombinator::addNull($type);
+                }
+
                 return $type;
             }
         }
 
-        return null;
+        return $originalType;
     }
 
     private static function createExprResolvers(): void
@@ -244,6 +258,13 @@ final class ExpectationMethodResolver
                         $arg->value,
                     ),
                 ),
+                'isNegativeInt' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\BinaryOp\BooleanAnd(
+                    self::$resolvers['isInt']($scope, $arg),
+                    new Node\Expr\BinaryOp\Smaller(
+                        $arg->value,
+                        new Node\Scalar\Int_(0),
+                    ),
+                ),
                 'isNull' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\BinaryOp\Identical(
                     new Node\Expr\ConstFetch(new Node\Name('null')),
                     $arg->value,
@@ -255,6 +276,13 @@ final class ExpectationMethodResolver
                 'isObject' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\FuncCall(
                     new Node\Name\FullyQualified('is_object'),
                     [$arg],
+                ),
+                'isPositiveInt' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\BinaryOp\BooleanAnd(
+                    self::$resolvers['isInt']($scope, $arg),
+                    new Node\Expr\BinaryOp\Greater(
+                        $arg->value,
+                        new Node\Scalar\Int_(0),
+                    ),
                 ),
                 'isResource' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\FuncCall(
                     new Node\Name\FullyQualified('is_resource'),

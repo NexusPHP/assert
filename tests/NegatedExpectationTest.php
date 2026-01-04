@@ -171,6 +171,16 @@ final class NegatedExpectationTest extends TestCase
         Assert::that(['a' => 1, 'b' => 2])->not()->isMap();
     }
 
+    public function testIsNegativeInt(): void
+    {
+        $negatedExpectation = Assert::that(3)->not();
+        self::assertSame($negatedExpectation, $negatedExpectation->isNegativeInt());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "-5" is not expected to be a negative int.');
+        Assert::that(-5)->not()->isNegativeInt();
+    }
+
     public function testIsNull(): void
     {
         $negatedExpectation = Assert::that(42)->not();
@@ -199,6 +209,16 @@ final class NegatedExpectationTest extends TestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "object(stdClass)" is not expected to be an object.');
         Assert::that(new \stdClass())->not()->isObject();
+    }
+
+    public function testIsPositiveInt(): void
+    {
+        $negatedExpectation = Assert::that(-3)->not();
+        self::assertSame($negatedExpectation, $negatedExpectation->isPositiveInt());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "5" is not expected to be a positive int.');
+        Assert::that(5)->not()->isPositiveInt();
     }
 
     public function testIsResource(): void
