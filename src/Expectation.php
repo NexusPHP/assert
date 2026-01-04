@@ -217,14 +217,14 @@ final readonly class Expectation implements Expectable
     /**
      * @return self<TValue>
      */
-    public function isInstanceOf(string $class, ?string $message = null): self
+    public function isInstanceOf(object|string $class, ?string $message = null): self
     {
         if (! $this->value instanceof $class) {
             throw new ExpectationFailedException(
                 $message ?? self::MESSAGE_IS_INSTANCE_OF,
                 [
                     'value' => $this->exporter->exportValue($this->value),
-                    'class' => $class,
+                    'class' => $this->exporter->exportValue($class),
                     'type' => $this->exporter->exportType($this->value),
                 ],
             );

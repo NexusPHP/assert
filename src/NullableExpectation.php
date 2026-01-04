@@ -254,7 +254,7 @@ final readonly class NullableExpectation implements Expectable
     /**
      * @return self<null|TValue>
      */
-    public function isInstanceOf(string $class, ?string $message = null): self
+    public function isInstanceOf(object|string $class, ?string $message = null): self
     {
         if (null === $this->value) {
             return $this;
@@ -267,7 +267,7 @@ final readonly class NullableExpectation implements Expectable
                 $message ?? self::MESSAGE_IS_INSTANCE_OF,
                 [
                     'value' => $this->expectation->exporter->exportValue($this->value),
-                    'class' => $class,
+                    'class' => $this->expectation->exporter->exportValue($class),
                     'type' => $this->expectation->exporter->exportType($this->value),
                 ],
             );

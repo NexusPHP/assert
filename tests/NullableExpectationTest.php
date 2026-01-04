@@ -154,7 +154,7 @@ final class NullableExpectationTest extends TestCase
         self::assertSame($nullableExpectation, $nullableExpectation->isInstanceOf(\stdClass::class));
 
         $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage('Value "object(stdClass)" is expected to be null or an instance of Generator but got stdClass instead.');
+        $this->expectExceptionMessage('Value "object(stdClass)" is expected to be null or an instance of \'Generator\' but got stdClass instead.');
         Assert::that(new \stdClass())->nullOr()->isInstanceOf(\Generator::class);
     }
 

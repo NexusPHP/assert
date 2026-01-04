@@ -100,14 +100,14 @@ interface Expectable
     /**
      * @template T of object
      *
-     * @param class-string<T>       $class
+     * @param class-string<T>|T     $class
      * @param null|non-empty-string $message
      *
      * @return self<TValue>
      *
      * @throws ExpectationFailedException
      */
-    public function isInstanceOf(string $class, ?string $message = null): self;
+    public function isInstanceOf(object|string $class, ?string $message = null): self;
 
     /**
      * @param null|non-empty-string $message

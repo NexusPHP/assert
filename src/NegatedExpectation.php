@@ -205,7 +205,7 @@ final readonly class NegatedExpectation implements Expectable
     /**
      * @return self<TValue>
      */
-    public function isInstanceOf(string $class, ?string $message = null): self
+    public function isInstanceOf(object|string $class, ?string $message = null): self
     {
         try {
             $this->expectation->isInstanceOf($class, $message);
@@ -217,7 +217,7 @@ final readonly class NegatedExpectation implements Expectable
             $message ?? self::MESSAGE_IS_INSTANCE_OF,
             [
                 'value' => $this->expectation->exporter->exportValue($this->value),
-                'class' => $class,
+                'class' => $this->expectation->exporter->exportValue($class),
             ],
         );
     }

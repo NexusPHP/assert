@@ -127,7 +127,7 @@ final class NegatedExpectationTest extends TestCase
         self::assertSame($negatedExpectation, $negatedExpectation->isInstanceOf(\Generator::class));
 
         $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage('Value "object(stdClass)" is not expected to be an instance of stdClass.');
+        $this->expectExceptionMessage('Value "object(stdClass)" is not expected to be an instance of \'stdClass\'.');
         Assert::that(new \stdClass())->not()->isInstanceOf(\stdClass::class);
     }
 

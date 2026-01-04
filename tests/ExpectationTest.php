@@ -160,7 +160,7 @@ final class ExpectationTest extends TestCase
         self::assertSame($expectation, $expectation->isInstanceOf(\DateTimeInterface::class));
 
         $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage('Value "object(stdClass)" is expected to be an instance of DateTimeInterface but got stdClass instead.');
+        $this->expectExceptionMessage('Value "object(stdClass)" is expected to be an instance of \'DateTimeInterface\' but got stdClass instead.');
         Assert::that(new \stdClass())->isInstanceOf(\DateTimeInterface::class);
     }
 
