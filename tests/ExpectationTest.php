@@ -190,6 +190,19 @@ final class ExpectationTest extends TestCase
         Assert::that(['a' => 1, 'b' => 2])->isList();
     }
 
+    public function testIsMap(): void
+    {
+        $expectation = Assert::that(['a' => 1, 'b' => 2]);
+        self::assertSame($expectation, $expectation->isMap());
+
+        $expectation = Assert::that([]);
+        self::assertSame($expectation, $expectation->isMap());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "[1, 2]" is expected to be a map but got array instead.');
+        Assert::that([1, 2])->isMap();
+    }
+
     public function testIsNull(): void
     {
         $expectation = Assert::that(null);

@@ -36,6 +36,7 @@ final readonly class NegatedExpectation implements Expectable
     private const MESSAGE_IS_INT = 'Value "{value}" is not expected to be an int.';
     private const MESSAGE_IS_ITERABLE = 'Value "{value}" is not expected to be iterable.';
     private const MESSAGE_IS_LIST = 'Value "{value}" is not expected to be a list.';
+    private const MESSAGE_IS_MAP = 'Value "{value}" is not expected to be a map.';
     private const MESSAGE_IS_NULL = 'Value "{value}" is not expected to be null.';
     private const MESSAGE_IS_NUMERIC = 'Value "{value}" is not expected to be numeric.';
     private const MESSAGE_IS_OBJECT = 'Value "{value}" is not expected to be an object.';
@@ -268,6 +269,23 @@ final readonly class NegatedExpectation implements Expectable
 
         throw new ExpectationFailedException(
             $message ?? self::MESSAGE_IS_LIST,
+            ['value' => $this->expectation->exporter->exportValue($this->value)],
+        );
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isMap(?string $message = null): self
+    {
+        try {
+            $this->expectation->isMap($message);
+        } catch (ExpectationFailedException) {
+            return $this;
+        }
+
+        throw new ExpectationFailedException(
+            $message ?? self::MESSAGE_IS_MAP,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }

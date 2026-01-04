@@ -94,6 +94,13 @@ function test_is_list(mixed $value): void
     assertType('list<mixed>', $value);
 }
 
+function test_is_map(mixed $value): void
+{
+    $assert = Assert::that($value)->isMap();
+    assertType('Nexus\\Assert\\Expectation<array<string, mixed>>', $assert);
+    assertType('array<string, mixed>', $value);
+}
+
 function test_is_null(mixed $value): void
 {
     $assert = Assert::that($value)->isNull();

@@ -197,6 +197,19 @@ final class NullableExpectationTest extends TestCase
         Assert::that(['a' => 1, 'b' => 2])->nullOr()->isList();
     }
 
+    public function testIsMap(): void
+    {
+        $nullableExpectation = Assert::that(null)->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->isMap());
+
+        $nullableExpectation = Assert::that(['a' => 1, 'b' => 2])->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->isMap());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "[0, 1, 2]" is expected to be null or a map but got array instead.');
+        Assert::that([0, 1, 2])->nullOr()->isMap();
+    }
+
     public function testIsNull(): void
     {
         $nullableExpectation = Assert::that(null)->nullOr();

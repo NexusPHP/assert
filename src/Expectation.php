@@ -32,6 +32,7 @@ final readonly class Expectation implements Expectable
     private const MESSAGE_IS_INT = 'Value "{value}" is expected to be an int but got {type} instead.';
     private const MESSAGE_IS_ITERABLE = 'Value "{value}" is expected to be iterable but got {type} instead.';
     private const MESSAGE_IS_LIST = 'Value "{value}" is expected to be a list but got {type} instead.';
+    private const MESSAGE_IS_MAP = 'Value "{value}" is expected to be a map but got {type} instead.';
     private const MESSAGE_IS_NULL = 'Value "{value}" is expected to be null but got {type} instead.';
     private const MESSAGE_IS_NUMERIC = 'Value "{value}" is expected to be numeric but got {type} instead.';
     private const MESSAGE_IS_OBJECT = 'Value "{value}" is expected to be an object but got {type} instead.';
@@ -278,6 +279,26 @@ final readonly class Expectation implements Expectable
         if (! array_is_list($this->value)) {
             throw new ExpectationFailedException(
                 $message ?? self::MESSAGE_IS_LIST,
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'type' => $this->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isMap(?string $message = null): self
+    {
+        $this->isArray($message);
+
+        if (array_filter($this->value, is_string(...), ARRAY_FILTER_USE_KEY) !== $this->value) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_MAP,
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),

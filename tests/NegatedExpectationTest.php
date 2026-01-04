@@ -161,6 +161,16 @@ final class NegatedExpectationTest extends TestCase
         Assert::that([0, 1, 2])->not()->isList();
     }
 
+    public function testIsMap(): void
+    {
+        $negatedExpectation = Assert::that([0, 1, 2])->not();
+        self::assertSame($negatedExpectation, $negatedExpectation->isMap());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "[\'a\' => 1, \'b\' => 2]" is not expected to be a map.');
+        Assert::that(['a' => 1, 'b' => 2])->not()->isMap();
+    }
+
     public function testIsNull(): void
     {
         $negatedExpectation = Assert::that(42)->not();

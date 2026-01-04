@@ -94,6 +94,13 @@ function test_is_list(mixed $value): void
     assertType('list<mixed>|null', $value);
 }
 
+function test_is_map(mixed $value): void
+{
+    $assert = Assert::that($value)->nullOr()->isMap();
+    assertType('Nexus\\Assert\\NullableExpectation<array<string, mixed>|null>', $assert);
+    assertType('array<string, mixed>|null', $value);
+}
+
 function test_is_null(mixed $value): void
 {
     $assert = Assert::that($value)->nullOr()->isNull();

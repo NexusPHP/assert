@@ -42,6 +42,7 @@ final class ExpectationMethodResolver
      *   isInt: \Closure(Scope, Node\Arg): Node\Expr,
      *   isIterable: \Closure(Scope, Node\Arg): Node\Expr,
      *   isList: \Closure(Scope, Node\Arg): Node\Expr,
+     *   isMap: \Closure(Scope, Node\Arg): Node\Expr,
      *   isNull: \Closure(Scope, Node\Arg): Node\Expr,
      *   isNumeric: \Closure(Scope, Node\Arg): Node\Expr,
      *   isObject: \Closure(Scope, Node\Arg): Node\Expr,
@@ -222,6 +223,23 @@ final class ExpectationMethodResolver
                         new Node\Expr\FuncCall(
                             new Node\Name('array_values'),
                             [$arg],
+                        ),
+                        $arg->value,
+                    ),
+                ),
+                'isMap' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\BinaryOp\BooleanAnd(
+                    self::$resolvers['isArray']($scope, $arg),
+                    new Node\Expr\BinaryOp\Identical(
+                        new Node\Expr\FuncCall(
+                            new Node\Name('array_filter'),
+                            [
+                                $arg,
+                                new Node\Arg(new Node\Expr\FuncCall(
+                                    new Node\Name\FullyQualified('is_string'),
+                                    [new Node\VariadicPlaceholder()],
+                                )),
+                                new Node\Arg(new Node\Expr\ConstFetch(new Node\Name('ARRAY_FILTER_USE_KEY'))),
+                            ],
                         ),
                         $arg->value,
                     ),
