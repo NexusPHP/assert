@@ -16,6 +16,7 @@ namespace Nexus\Assert\Tests;
 use Nexus\Assert\Assert;
 use Nexus\Assert\Expectation;
 use Nexus\Assert\ExpectationFailedException;
+use Nexus\Assert\ExporterInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
@@ -29,6 +30,18 @@ use PHPUnit\Framework\TestCase;
 #[Group('unit')]
 final class ExpectationTest extends TestCase
 {
+    public function testCanSetDifferentExporter(): void
+    {
+        $exporter = self::createStub(ExporterInterface::class);
+        Assert::setExporter($exporter);
+
+        $expectation = Assert::that(42);
+        self::assertSame($exporter, $expectation->exporter);
+
+        Assert::setExporter(null);
+        self::assertNotSame($exporter, Assert::that(42)->exporter);
+    }
+
     public function testExpectationVariantReturns(): void
     {
         $expectation = Assert::that(42);

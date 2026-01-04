@@ -15,12 +15,19 @@ namespace Nexus\Assert;
 
 final class Assert
 {
+    private static ?ExporterInterface $exporter = null;
+
     /**
      * @codeCoverageIgnore
      */
     private function __construct()
     {
         // Explicitly prevent instantiation.
+    }
+
+    public static function setExporter(?ExporterInterface $exporter): void
+    {
+        self::$exporter = $exporter;
     }
 
     /**
@@ -34,6 +41,8 @@ final class Assert
      */
     public static function that(mixed $value): Expectation
     {
-        return new Expectation($value);
+        self::$exporter ??= new Exporter();
+
+        return new Expectation($value, self::$exporter);
     }
 }
