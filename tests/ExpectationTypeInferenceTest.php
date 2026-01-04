@@ -36,11 +36,11 @@ final class ExpectationTypeInferenceTest extends TypeInferenceTestCase
      */
     public static function provideFileAssertsCases(): iterable
     {
-        yield from self::gatherAssertTypesFromDirectory(__DIR__.'/data');
+        yield from self::gatherAssertTypesFromDirectory(__DIR__.'/data/type-inference');
     }
 
     public static function getAdditionalConfigFiles(): array
     {
-        return [__DIR__.'/../extension.neon'];
+        return [__DIR__.'/../extension.neon', ...parent::getAdditionalConfigFiles()];
     }
 }
