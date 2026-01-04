@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Nexus\Assert\Tests;
 
+use Nexus\PHPUnit\Tachycardia\Attribute\TimeLimit;
 use PHPStan\Rules\Comparison\ImpossibleCheckTypeMethodCallRule;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
@@ -28,6 +29,7 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('static-analysis')]
 final class ImpossibleCheckTypeMethodCallRuleTest extends RuleTestCase
 {
+    #[TimeLimit(2.0)]
     public function testRule(): void
     {
         $tip = 'Because the type is coming from a PHPDoc, you can turn off this check by setting <fg=cyan>treatPhpDocTypesAsCertain: false</> in your <fg=cyan>%configurationFile%</>.';
