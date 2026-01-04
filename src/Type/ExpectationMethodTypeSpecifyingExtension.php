@@ -94,6 +94,6 @@ final class ExpectationMethodTypeSpecifyingExtension implements MethodTypeSpecif
             $expr = new Node\Expr\BinaryOp\BooleanAnd($storedExpr, $expr);
         }
 
-        return $this->typeSpecifier->specifyTypesInCondition($scope, $expr, TypeSpecifierContext::createTruthy());
+        return $this->typeSpecifier->specifyTypesInCondition($scope, $expr, TypeSpecifierContext::createTruthy())->setRootExpr($expr);
     }
 }
