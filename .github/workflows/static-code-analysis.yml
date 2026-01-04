@@ -70,5 +70,8 @@ jobs:
       - name: Check - PHPStan
         run: composer phpstan:check
 
+      - name: Check - Auto-review tests
+        run: composer test:auto-review
+
       - name: Check - Static Type Analysis
         run: composer test:stan
