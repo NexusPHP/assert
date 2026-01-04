@@ -14,9 +14,6 @@ declare(strict_types=1);
 namespace Nexus\Assert\Type;
 
 use Nexus\Assert\Expectable;
-use Nexus\Assert\Expectation;
-use Nexus\Assert\NegatedExpectation;
-use Nexus\Assert\NullableExpectation;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
@@ -105,26 +102,8 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
             return new NeverType(true);
         }
 
-        if (NegatedExpectation::class === $expectationClass) {
-            return new ExpectationObjectType(
-                NegatedExpectation::class,
-                [$resolvedType],
-                $calledOnType->getValueExpr(),
-                $resolvedExpr,
-            );
-        }
-
-        if (NullableExpectation::class === $expectationClass) {
-            return new ExpectationObjectType(
-                NullableExpectation::class,
-                [$resolvedType],
-                $calledOnType->getValueExpr(),
-                $resolvedExpr,
-            );
-        }
-
         return new ExpectationObjectType(
-            Expectation::class,
+            $expectationClass,
             [$resolvedType],
             $calledOnType->getValueExpr(),
             $resolvedExpr,
