@@ -45,6 +45,11 @@ final class ImpossibleCheckTypeMethodCallRuleTest extends RuleTestCase
                 28,
                 $tip,
             ],
+            [
+                'Call to method Nexus\\Assert\\Expectation<stdClass>::isInstanceOf() with stdClass will always evaluate to true.',
+                29,
+                $tip,
+            ],
         ]);
     }
 

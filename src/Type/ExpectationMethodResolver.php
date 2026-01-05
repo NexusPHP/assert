@@ -196,7 +196,7 @@ final class ExpectationMethodResolver
                     [$arg],
                 ),
                 'isInstanceOf' => static function (Scope $scope, Node\Arg $arg, Node\Arg $class): Node\Expr {
-                    $classType = $scope->getType($class->value)->getClassStringObjectType();
+                    $classType = $scope->getType($class->value)->getObjectTypeOrClassStringObjectType();
                     $classNames = $classType->getObjectClassNames();
 
                     if ([] === $classNames) {
