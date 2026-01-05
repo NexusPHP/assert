@@ -6,7 +6,7 @@ includes:
 parameters:
   phpVersion:
     min: 80200
-    max: 80499
+    max: 80599
   level: 10
   tmpDir: build/phpstan
   paths:
@@ -21,7 +21,7 @@ parameters:
   bootstrapFiles:
     - vendor/autoload.php
   ignoreErrors:
-    - identifier: 'property.defaultValue'
+    - identifier: property.defaultValue
   exceptions:
     check:
       throwTypeCovariance: true
