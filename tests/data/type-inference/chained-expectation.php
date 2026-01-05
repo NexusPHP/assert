@@ -63,6 +63,20 @@ function test_is_numeric_not_is_string(mixed $value): void
     assertType('float|int', $value);
 }
 
+function test_is_object_not_has_method(mixed $value): void
+{
+    $assert = Assert::that($value)->isObject()->not()->hasMethod('jsonSerialize');
+    assertType('Nexus\\Assert\\NegatedExpectation<object>', $assert);
+    assertType('object', $value);
+}
+
+function test_is_object_not_has_property(mixed $value): void
+{
+    $assert = Assert::that($value)->isObject()->not()->hasProperty('id');
+    assertType('Nexus\\Assert\\NegatedExpectation<object>', $assert);
+    assertType('object', $value);
+}
+
 function test_is_scalar_not_is_float_or_is_int(mixed $value): void
 {
     $assert = Assert::that($value)->isScalar()->not()->isFloat()->isInt();
