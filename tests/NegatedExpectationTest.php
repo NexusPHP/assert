@@ -181,6 +181,16 @@ final class NegatedExpectationTest extends TestCase
         Assert::that(-5)->not()->isNegativeInt();
     }
 
+    public function testIsNonEmptyString(): void
+    {
+        $negatedExpectation = Assert::that('')->not();
+        self::assertSame($negatedExpectation, $negatedExpectation->isNonEmptyString());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'hello\'" is not expected to be a non-empty string.');
+        Assert::that('hello')->not()->isNonEmptyString();
+    }
+
     public function testIsNull(): void
     {
         $negatedExpectation = Assert::that(42)->not();

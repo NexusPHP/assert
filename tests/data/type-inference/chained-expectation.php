@@ -83,3 +83,10 @@ function test_is_scalar_not_is_float_or_is_int(mixed $value): void
     assertType('Nexus\\Assert\\NegatedExpectation<bool|string>', $assert);
     assertType('bool|string', $value);
 }
+
+function test_is_string_not_is_non_empty_string(mixed $value): void
+{
+    $assert = Assert::that($value)->isString()->not()->isNonEmptyString();
+    assertType('Nexus\\Assert\\NegatedExpectation<\'\'>', $assert);
+    assertType('\'\'', $value);
+}

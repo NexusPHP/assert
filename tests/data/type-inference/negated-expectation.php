@@ -108,6 +108,13 @@ function test_is_negative_int(mixed $value): void
     assertType('mixed~int<min, -1>', $value);
 }
 
+function test_is_non_empty_string(mixed $value): void
+{
+    $assert = Assert::that($value)->not()->isNonEmptyString();
+    assertType('Nexus\\Assert\\NegatedExpectation<mixed~non-empty-string>', $assert);
+    assertType('mixed~non-empty-string', $value);
+}
+
 function test_is_null(mixed $value): void
 {
     $assert = Assert::that($value)->not()->isNull();

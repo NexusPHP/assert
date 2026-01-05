@@ -19,6 +19,7 @@ use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Analyser\TypeSpecifier;
 use PHPStan\Analyser\TypeSpecifierContext;
+use PHPStan\Type\NeverType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 
@@ -45,6 +46,7 @@ final class ExpectationMethodResolver
      *   isList: \Closure(Scope, Node\Arg): Node\Expr,
      *   isMap: \Closure(Scope, Node\Arg): Node\Expr,
      *   isNegativeInt: \Closure(Scope, Node\Arg): Node\Expr,
+     *   isNonEmptyString: \Closure(Scope, Node\Arg): Node\Expr,
      *   isNull: \Closure(Scope, Node\Arg): Node\Expr,
      *   isNumeric: \Closure(Scope, Node\Arg): Node\Expr,
      *   isObject: \Closure(Scope, Node\Arg): Node\Expr,
@@ -140,14 +142,20 @@ final class ExpectationMethodResolver
             return $originalType;
         }
 
-        foreach ($specifiedTypes->getSureTypes() as [$expr, $type]) {
-            if ($expr === $arg->value) {
-                if (NullableExpectation::class === $expectationClass) {
-                    return TypeCombinator::addNull($type);
-                }
+        $sureNotTypes = $specifiedTypes->getSureNotTypes();
 
-                return $type;
+        foreach ($specifiedTypes->getSureTypes() as $str => [$expr, $type]) {
+            if ($expr !== $arg->value) {
+                continue;
             }
+
+            $type = TypeCombinator::remove($type, $sureNotTypes[$str][1] ?? new NeverType());
+
+            if (NullableExpectation::class === $expectationClass) {
+                return TypeCombinator::addNull($type);
+            }
+
+            return $type;
         }
 
         return $originalType;
@@ -263,6 +271,13 @@ final class ExpectationMethodResolver
                     new Node\Expr\BinaryOp\Smaller(
                         $arg->value,
                         new Node\Scalar\Int_(0),
+                    ),
+                ),
+                'isNonEmptyString' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\BinaryOp\BooleanAnd(
+                    self::$resolvers['isString']($scope, $arg),
+                    new Node\Expr\BinaryOp\NotIdentical(
+                        new Node\Scalar\String_(''),
+                        $arg->value,
                     ),
                 ),
                 'isNull' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\BinaryOp\Identical(

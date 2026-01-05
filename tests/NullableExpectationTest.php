@@ -223,6 +223,19 @@ final class NullableExpectationTest extends TestCase
         Assert::that(3)->nullOr()->isNegativeInt();
     }
 
+    public function testIsNonEmptyString(): void
+    {
+        $nullableExpectation = Assert::that(null)->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->isNonEmptyString());
+
+        $nullableExpectation = Assert::that('hello')->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->isNonEmptyString());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'\'" is expected to be null or a non-empty string but got string instead.');
+        Assert::that('')->nullOr()->isNonEmptyString();
+    }
+
     public function testIsNull(): void
     {
         $nullableExpectation = Assert::that(null)->nullOr();

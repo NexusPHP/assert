@@ -38,6 +38,7 @@ final readonly class NullableExpectation implements Expectable
     private const MESSAGE_IS_LIST = 'Value "{value}" is expected to be null or a list but got {type} instead.';
     private const MESSAGE_IS_MAP = 'Value "{value}" is expected to be null or a map but got {type} instead.';
     private const MESSAGE_IS_NEGATIVE_INT = 'Value "{value}" is expected to be null or a negative int but got {type} instead.';
+    private const MESSAGE_IS_NON_EMPTY_STRING = 'Value "{value}" is expected to be null or a non-empty string but got {type} instead.';
     private const MESSAGE_IS_NUMERIC = 'Value "{value}" is expected to be null or numeric but got {type} instead.';
     private const MESSAGE_IS_OBJECT = 'Value "{value}" is expected to be null or an object but got {type} instead.';
     private const MESSAGE_IS_POSITIVE_INT = 'Value "{value}" is expected to be null or a positive int but got {type} instead.';
@@ -388,6 +389,30 @@ final readonly class NullableExpectation implements Expectable
         } catch (ExpectationFailedException) {
             throw new ExpectationFailedException(
                 $message ?? self::MESSAGE_IS_NEGATIVE_INT,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'type' => $this->expectation->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<null|TValue>
+     */
+    public function isNonEmptyString(?string $message = null): self
+    {
+        if (null === $this->value) {
+            return $this;
+        }
+
+        try {
+            $this->expectation->isNonEmptyString($message);
+        } catch (ExpectationFailedException) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_NON_EMPTY_STRING,
                 [
                     'value' => $this->expectation->exporter->exportValue($this->value),
                     'type' => $this->expectation->exporter->exportType($this->value),

@@ -34,6 +34,7 @@ final readonly class Expectation implements Expectable
     private const MESSAGE_IS_LIST = 'Value "{value}" is expected to be a list but got {type} instead.';
     private const MESSAGE_IS_MAP = 'Value "{value}" is expected to be a map but got {type} instead.';
     private const MESSAGE_IS_NEGATIVE_INT = 'Value "{value}" is expected to be a negative int but got {type} instead.';
+    private const MESSAGE_IS_NON_EMPTY_STRING = 'Value "{value}" is expected to be a non-empty string but got {type} instead.';
     private const MESSAGE_IS_NULL = 'Value "{value}" is expected to be null but got {type} instead.';
     private const MESSAGE_IS_NUMERIC = 'Value "{value}" is expected to be numeric but got {type} instead.';
     private const MESSAGE_IS_OBJECT = 'Value "{value}" is expected to be an object but got {type} instead.';
@@ -321,6 +322,26 @@ final readonly class Expectation implements Expectable
         if ($this->value >= 0) {
             throw new ExpectationFailedException(
                 $message ?? self::MESSAGE_IS_NEGATIVE_INT,
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'type' => $this->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isNonEmptyString(?string $message = null): self
+    {
+        $this->isString($message);
+
+        if ('' === $this->value) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_NON_EMPTY_STRING,
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),
