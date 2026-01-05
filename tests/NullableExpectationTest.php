@@ -210,6 +210,19 @@ final class NullableExpectationTest extends TestCase
         Assert::that([0, 1, 2])->nullOr()->isMap();
     }
 
+    public function testIsNaturalInt(): void
+    {
+        $nullableExpectation = Assert::that(null)->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->isNaturalInt());
+
+        $nullableExpectation = Assert::that(5)->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->isNaturalInt());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "-3" is expected to be null or a natural int but got int instead.');
+        Assert::that(-3)->nullOr()->isNaturalInt();
+    }
+
     public function testIsNegativeInt(): void
     {
         $nullableExpectation = Assert::that(null)->nullOr();

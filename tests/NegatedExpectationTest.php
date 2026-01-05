@@ -171,6 +171,16 @@ final class NegatedExpectationTest extends TestCase
         Assert::that(['a' => 1, 'b' => 2])->not()->isMap();
     }
 
+    public function testIsNaturalInt(): void
+    {
+        $negatedExpectation = Assert::that(-3)->not();
+        self::assertSame($negatedExpectation, $negatedExpectation->isNaturalInt());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "5" is not expected to be a natural int.');
+        Assert::that(5)->not()->isNaturalInt();
+    }
+
     public function testIsNegativeInt(): void
     {
         $negatedExpectation = Assert::that(3)->not();

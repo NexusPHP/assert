@@ -45,6 +45,7 @@ final class ExpectationMethodResolver
      *   isIterable: \Closure(Scope, Node\Arg): Node\Expr,
      *   isList: \Closure(Scope, Node\Arg): Node\Expr,
      *   isMap: \Closure(Scope, Node\Arg): Node\Expr,
+     *   isNaturalInt: \Closure(Scope, Node\Arg): Node\Expr,
      *   isNegativeInt: \Closure(Scope, Node\Arg): Node\Expr,
      *   isNonEmptyString: \Closure(Scope, Node\Arg): Node\Expr,
      *   isNull: \Closure(Scope, Node\Arg): Node\Expr,
@@ -264,6 +265,13 @@ final class ExpectationMethodResolver
                             ],
                         ),
                         $arg->value,
+                    ),
+                ),
+                'isNaturalInt' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\BinaryOp\BooleanAnd(
+                    self::$resolvers['isInt']($scope, $arg),
+                    new Node\Expr\BinaryOp\GreaterOrEqual(
+                        $arg->value,
+                        new Node\Scalar\Int_(0),
                     ),
                 ),
                 'isNegativeInt' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\BinaryOp\BooleanAnd(

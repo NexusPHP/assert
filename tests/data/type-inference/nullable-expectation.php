@@ -101,6 +101,13 @@ function test_is_map(mixed $value): void
     assertType('array<string, mixed>|null', $value);
 }
 
+function test_is_natural_int(mixed $value): void
+{
+    $assert = Assert::that($value)->nullOr()->isNaturalInt();
+    assertType('Nexus\\Assert\\NullableExpectation<int<0, max>|null>', $assert);
+    assertType('int<0, max>|null', $value);
+}
+
 function test_is_negative_int(mixed $value): void
 {
     $assert = Assert::that($value)->nullOr()->isNegativeInt();

@@ -216,6 +216,19 @@ final class ExpectationTest extends TestCase
         Assert::that([1, 2])->isMap();
     }
 
+    public function testIsNaturalInt(): void
+    {
+        $expectation = Assert::that(0);
+        self::assertSame($expectation, $expectation->isNaturalInt());
+
+        $expectation = Assert::that(5);
+        self::assertSame($expectation, $expectation->isNaturalInt());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "-3" is expected to be a natural int but got int instead.');
+        Assert::that(-3)->isNaturalInt();
+    }
+
     public function testIsNegativeInt(): void
     {
         $expectation = Assert::that(-5);
