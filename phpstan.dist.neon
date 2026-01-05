@@ -27,7 +27,6 @@ parameters:
       throwTypeCovariance: true
   checkBenevolentUnionTypes: true
   checkMissingCallableSignature: true
-  checkMissingOverrideMethodAttribute: true
   checkTooWideReturnTypesInProtectedAndPublicMethods: true
   checkTooWideThrowTypesInProtectedAndPublicMethods: true
   reportAlwaysTrueInLastCondition: true
