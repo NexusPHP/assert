@@ -1,5 +1,7 @@
 /.* export-ignore
-/build/ export-ignore
+/bin/ export-ignore
 /tests/ export-ignore
+/tools/ export-ignore
+/phpstan-baseline.php export-ignore
 /phpstan.dist.neon export-ignore
-/src/ComposerScripts.php export-ignore
+/phpunit.dist.xml export-ignore
