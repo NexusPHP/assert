@@ -10,6 +10,7 @@ on:
     paths:
       - '**.php'
       - .github/workflows/static-code-analysis.yml
+      - tools/resources/README.md.tpl
       - composer.json
       - '**.neon'
 

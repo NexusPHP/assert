@@ -65,7 +65,7 @@ with the message formatted depending on the available context. By default, there
 
 **NOTES:**
 - The `value` context is always value-exported except when appended by `+` which means it is type-exported instead.
-- The `type` context is always type-exported.
+- The `type` context is always type-exported. In negated expectations, this context is omitted.
 - Other context values are value-exported except when appended by `=` which means it is integrated as-is.
 
 ## Available Expectation Classes
