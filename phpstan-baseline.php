@@ -8,6 +8,36 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/src/Type/ExpectationDynamicMethodReturnTypeExtension.php',
 ];
 $ignoreErrors[] = [
+	'rawMessage' => 'Method Nexus\\Assert\\Type\\ExpectationMethodResolver::resolveExpr() should return PhpParser\\Node\\Expr|null but returns mixed.',
+	'identifier' => 'return.type',
+	'count' => 1,
+	'path' => __DIR__ . '/src/Type/ExpectationMethodResolver.php',
+];
+$ignoreErrors[] = [
+	'rawMessage' => 'Parameter #1 $expr of class PhpParser\\Node\\Expr\\BooleanNot constructor expects PhpParser\\Node\\Expr, mixed given.',
+	'identifier' => 'argument.type',
+	'count' => 1,
+	'path' => __DIR__ . '/src/Type/ExpectationMethodResolver.php',
+];
+$ignoreErrors[] = [
+	'rawMessage' => 'Parameter #1 $left of class PhpParser\\Node\\Expr\\BinaryOp\\BooleanAnd constructor expects PhpParser\\Node\\Expr, mixed given.',
+	'identifier' => 'argument.type',
+	'count' => 8,
+	'path' => __DIR__ . '/src/Type/ExpectationMethodResolver.php',
+];
+$ignoreErrors[] = [
+	'rawMessage' => 'Parameter #2 $right of class PhpParser\\Node\\Expr\\BinaryOp\\BooleanOr constructor expects PhpParser\\Node\\Expr, mixed given.',
+	'identifier' => 'argument.type',
+	'count' => 1,
+	'path' => __DIR__ . '/src/Type/ExpectationMethodResolver.php',
+];
+$ignoreErrors[] = [
+	'rawMessage' => 'Property Nexus\\Assert\\Type\\ExpectationMethodResolver::$resolvers type has no signature specified for callable.',
+	'identifier' => 'missingType.callable',
+	'count' => 1,
+	'path' => __DIR__ . '/src/Type/ExpectationMethodResolver.php',
+];
+$ignoreErrors[] = [
 	'rawMessage' => 'Parameter #1 $className of class Nexus\\Assert\\Type\\ExpectationObjectType constructor expects class-string, string given.',
 	'identifier' => 'argument.type',
 	'count' => 1,
