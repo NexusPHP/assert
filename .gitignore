@@ -1,5 +1,7 @@
 /build/
+/tmp/*
+!/tmp/.gitkeep
 /vendor/
-/composer.lock
 /.php-cs-fixer.php
+/composer.lock
 /phpstan.neon

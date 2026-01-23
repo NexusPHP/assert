@@ -1,6 +1,7 @@
 /.* export-ignore
 /bin/ export-ignore
 /tests/ export-ignore
+/tmp/ export-ignore
 /tools/ export-ignore
 /phpstan-baseline.php export-ignore
 /phpstan.dist.neon export-ignore
