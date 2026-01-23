@@ -49,10 +49,10 @@ use Nexus\Assert\Assert;
 function test(mixed $a, mixed $b, mixed $c): void
 {
     Assert::that($a)->isString();
-    // at this point, $a is now known as string
+    // $a is now understood as string
 
     Assert::that($b)->isString()->isNumeric();
-    // $b is now known as numeric string
+    // $b is now understood as numeric string
 
     Assert::that($c)->isInt()->not()->isNegativeInt();
     // $c is understood as int<0, max>
@@ -68,7 +68,7 @@ with the message formatted depending on the available context. By default, there
 | `value` | The exported value of the argument passed to `that()` |
 | `type`  | The exported type of the argument passed to `that()`  |
 
-## List of Type Expectations
+## List of Expectations
 
 | Methods                                                             | Available Context        |
 | ------------------------------------------------------------------- | ------------------------ |
@@ -99,10 +99,10 @@ with the message formatted depending on the available context. By default, there
 | `isString(string $message = null): self`                            | `value`, `type`          |
 | `isTrue(string $message = null): self`                              | `value`, `type`          |
 
-**NOTES:**
-- The `value` context is always value-exported except when appended by `+` which means it is type-exported instead.
-- The `type` context is always type-exported. In negated expectations, this context is omitted.
-- Other context values are value-exported except when appended by `=` which means it is integrated as-is.
+> [!NOTE]
+> - The `value` context is always value-exported except when appended by `+` which means it is type-exported instead.
+> - The `type` context is always type-exported. In negated expectations, this context is omitted.
+> - Other context values are value-exported except when appended by `=` which means it is integrated as-is.
 
 ## Available Expectation Classes
 
@@ -116,13 +116,10 @@ If you want to have a negated expectation, you can invoke `not()` on the expecta
 
 use Nexus\Assert\Assert;
 
-function test(mixed $a, mixed $b, mixed $c): void
+function test(mixed $a): void
 {
-    Assert::that($a)->isString();
-    // at this point, $a is now known as string
-
-    Assert::that($b)->isNumeric()->not()->isString();
-    // $b is now known as either int or float
+    Assert::that($a)->isNumeric()->not()->isString();
+    // $a is narrowed as either int or float
 }
 
 ```
@@ -137,13 +134,13 @@ use Nexus\Assert\Assert;
 function test(mixed $a): void
 {
     Assert::that($a)->nullOr()->isString();
-    // at this point, $a is now known as string or null
+    // $a is now understood as either string or null
 }
 
 ```
 
 > [!NOTE]
-> At this point, the `not()` and `nullOr()` methods can only be invoked on the base `Expectation` object.
+> Currently, the `not()` and `nullOr()` methods can only be invoked on the base `Expectation` object.
 > It is not yet available on the variant expectations. It can be considered in future versions.
 
 ## Customising the Exporter
@@ -180,12 +177,15 @@ use Nexus\Assert\Assert;
 
 function test(mixed $a): void
 {
-    $message = 'Value "{value} is not of type string'.
+    $message = 'Value "{value}" is not of type string'.
     Assert::that($a)->isString($message);
     // if this fails, the message would be something like:
     // Value "42" is not of type string.
 }
 ```
+
+When creating your custom messages, you are not compelled to use all available context. However, adding
+an unknown context for an expectation method will be useless as that won't be interpolated.
 
 ## Resources
 
