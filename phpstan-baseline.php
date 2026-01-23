@@ -67,5 +67,11 @@ $ignoreErrors[] = [
 	'count' => 1,
 	'path' => __DIR__ . '/tools/src/ExpectationVariantsGenerator.php',
 ];
+$ignoreErrors[] = [
+	'rawMessage' => 'Parameter #1 $type of static method Nexus\\Assert\\Tools\\ReadmeGenerator::typeAsString() expects ReflectionType, ReflectionType|null given.',
+	'identifier' => 'argument.type',
+	'count' => 1,
+	'path' => __DIR__ . '/tools/src/ReadmeGenerator.php',
+];
 
 return ['parameters' => ['ignoreErrors' => $ignoreErrors]];

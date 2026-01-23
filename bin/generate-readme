@@ -1,0 +1,21 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/**
+ * This file is part of the Nexus Assert library.
+ *
+ * (c) 2025 John Paul E. Balandan, CPA <paulbalandan@gmail.com>
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
+require __DIR__.'/../vendor/autoload.php';
+
+use Nexus\Assert\Tools\ReadmeGenerator;
+
+file_put_contents(ReadmeGenerator::OUTPUT_PATH, (new ReadmeGenerator())->generate());
+
+echo "\033[42m OK \033[0m README.md generated successfully.\n";

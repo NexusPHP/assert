@@ -22,6 +22,20 @@ use Nexus\Assert\Expectation;
  */
 final class ExpectationVariantsGenerator
 {
+    /**
+     * Methods which message requires more than the default ['value', 'type'] context.
+     *
+     * NOTES:
+     * - Append '=' to parameter names to mean they are not value-exported.
+     * - Append '+' to parameter names to mean they are type-exported.
+     */
+    public const NON_DEFAULT_CONTEXT = [
+        'hasMethod' => ['value+', 'method='],
+        'hasProperty' => ['value+', 'property='],
+        'isInstanceOf' => ['value', 'class', 'type'],
+        'isSameAs' => ['value', 'other', 'type'],
+    ];
+
     private const EXPECTATION_CLASS_TEMPLATE = <<<'PHP'
         <?php
 
@@ -70,21 +84,6 @@ final class ExpectationVariantsGenerator
             'description' => 'An expectation that allows null values in addition to the original expectation.',
         ],
     ];
-
-    /**
-     * Methods which message requires more than the default ['value', 'type'] context.
-     *
-     * NOTES:
-     * - Append '=' to parameter names to mean they are not value-exported.
-     * - Append '+' to parameter names to mean they are type-exported.
-     */
-    private const NON_DEFAULT_CONTEXT = [
-        'hasMethod' => ['value+', 'method='],
-        'hasProperty' => ['value+', 'property='],
-        'isInstanceOf' => ['value', 'class', 'type'],
-        'isSameAs' => ['value', 'other', 'type'],
-    ];
-
     private const NEGATED_EXPECTATION_REPLACEMENTS = [
         'is expected to' => 'is not expected to',
         ' but got {type} instead.' => '.',

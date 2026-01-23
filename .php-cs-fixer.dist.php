@@ -27,6 +27,7 @@ $finder = Finder::create()
     ->append([
         __FILE__,
         __DIR__.'/bin/generate',
+        __DIR__.'/bin/generate-readme',
     ])
 ;
 
