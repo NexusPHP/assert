@@ -22,6 +22,25 @@ parameters:
     - vendor/autoload.php
   ignoreErrors:
     - identifier: property.defaultValue
+    # these errors are needed for testing runtime behaviour
+    -
+      identifier: method.alreadyNarrowedType
+      path: tests/ExpectationTest.php
+    -
+      identifier: method.impossibleType
+      path: tests/ExpectationTest.php
+    -
+      identifier: method.alreadyNarrowedType
+      path: tests/NegatedExpectationTest.php
+    -
+      identifier: method.impossibleType
+      path: tests/NegatedExpectationTest.php
+    -
+      identifier: method.alreadyNarrowedType
+      path: tests/NullableExpectationTest.php
+    -
+      identifier: method.impossibleType
+      path: tests/NullableExpectationTest.php
   exceptions:
     check:
       throwTypeCovariance: true
@@ -31,4 +50,3 @@ parameters:
   checkTooWideThrowTypesInProtectedAndPublicMethods: true
   reportAlwaysTrueInLastCondition: true
   reportAnyTypeWideningInVarTag: true
-  treatPhpDocTypesAsCertain: false

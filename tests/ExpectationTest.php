@@ -56,8 +56,7 @@ final class ExpectationTest extends TestCase
 
     public function testHasMethod(): void
     {
-        $expectation = Assert::that(new \Exception('Test'));
-        self::assertSame($expectation, $expectation->hasMethod('__toString'));
+        self::assertNoErrorsThrown(static fn() => Assert::that(new \Exception('Test'))->hasMethod('__toString'));
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Object of class "stdClass" is expected to have method "nonExistentMethod".');
@@ -66,8 +65,7 @@ final class ExpectationTest extends TestCase
 
     public function testHasOffset(): void
     {
-        $expectation = Assert::that(['a' => 1, 'b' => 2]);
-        self::assertSame($expectation, $expectation->hasOffset('a'));
+        self::assertNoErrorsThrown(static fn() => Assert::that(['a' => 1, 'b' => 2])->hasOffset('a'));
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Array "[\'a\' => 1, \'b\' => 2]" is expected to have offset "c".');
@@ -79,7 +77,7 @@ final class ExpectationTest extends TestCase
         $expectation = Assert::that(new class {
             public int $value = 42;
         });
-        self::assertSame($expectation, $expectation->hasProperty('value'));
+        self::assertNoErrorsThrown(static fn() => $expectation->hasProperty('value'));
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Object of class "stdClass" is expected to have property "nonExistentProperty".');
@@ -88,11 +86,8 @@ final class ExpectationTest extends TestCase
 
     public function testIsArray(): void
     {
-        $expectation = Assert::that([]);
-        self::assertSame($expectation, $expectation->isArray());
-
-        $expectation = Assert::that([1, 2, 3]);
-        self::assertSame($expectation, $expectation->isArray());
+        self::assertNoErrorsThrown(static fn() => Assert::that([])->isArray());
+        self::assertNoErrorsThrown(static fn() => Assert::that([1, 2, 3])->isArray());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "42" is expected to be an array but got int instead.');
@@ -101,11 +96,8 @@ final class ExpectationTest extends TestCase
 
     public function testIsBool(): void
     {
-        $expectation = Assert::that(true);
-        self::assertSame($expectation, $expectation->isBool());
-
-        $expectation = Assert::that(false);
-        self::assertSame($expectation, $expectation->isBool());
+        self::assertNoErrorsThrown(static fn() => Assert::that(true)->isBool());
+        self::assertNoErrorsThrown(static fn() => Assert::that(false)->isBool());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "1" is expected to be a bool but got int instead.');
@@ -114,14 +106,9 @@ final class ExpectationTest extends TestCase
 
     public function testIsCallable(): void
     {
-        $expectation = Assert::that(static fn(): bool => true);
-        self::assertSame($expectation, $expectation->isCallable());
-
-        $expectation = Assert::that('trim');
-        self::assertSame($expectation, $expectation->isCallable());
-
-        $expectation = Assert::that([new \Exception('Hi'), '__toString']);
-        self::assertSame($expectation, $expectation->isCallable());
+        self::assertNoErrorsThrown(static fn() => Assert::that(static fn(): bool => true)->isCallable());
+        self::assertNoErrorsThrown(static fn() => Assert::that('trim')->isCallable());
+        self::assertNoErrorsThrown(static fn() => Assert::that([new \Exception('Hi'), '__toString'])->isCallable());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "42" is expected to be callable but got int instead.');
@@ -130,11 +117,8 @@ final class ExpectationTest extends TestCase
 
     public function testIsCountable(): void
     {
-        $expectation = Assert::that([]);
-        self::assertSame($expectation, $expectation->isCountable());
-
-        $expectation = Assert::that(new \ArrayObject([1, 2, 3]));
-        self::assertSame($expectation, $expectation->isCountable());
+        self::assertNoErrorsThrown(static fn() => Assert::that([])->isCountable());
+        self::assertNoErrorsThrown(static fn() => Assert::that(new \ArrayObject([1, 2, 3]))->isCountable());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "42" is expected to be countable but got int instead.');
@@ -143,8 +127,7 @@ final class ExpectationTest extends TestCase
 
     public function testIsFalse(): void
     {
-        $expectation = Assert::that(false);
-        self::assertSame($expectation, $expectation->isFalse());
+        self::assertNoErrorsThrown(static fn() => Assert::that(false)->isFalse());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "\'\'" is expected to be false but got string instead.');
@@ -153,11 +136,8 @@ final class ExpectationTest extends TestCase
 
     public function testIsFloat(): void
     {
-        $expectation = Assert::that(3.14);
-        self::assertSame($expectation, $expectation->isFloat());
-
-        $expectation = Assert::that(0.0);
-        self::assertSame($expectation, $expectation->isFloat());
+        self::assertNoErrorsThrown(static fn() => Assert::that(3.14)->isFloat());
+        self::assertNoErrorsThrown(static fn() => Assert::that(0.0)->isFloat());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "\'hello\'" is expected to be a float but got string instead.');
@@ -166,8 +146,7 @@ final class ExpectationTest extends TestCase
 
     public function testIsInstanceOf(): void
     {
-        $expectation = Assert::that(new \DateTimeImmutable());
-        self::assertSame($expectation, $expectation->isInstanceOf(\DateTimeInterface::class));
+        self::assertNoErrorsThrown(static fn() => Assert::that(new \DateTimeImmutable())->isInstanceOf(\DateTimeInterface::class));
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "object(stdClass)" is expected to be an instance of \'DateTimeInterface\' but got stdClass instead.');
@@ -176,11 +155,8 @@ final class ExpectationTest extends TestCase
 
     public function testIsInt(): void
     {
-        $expectation = Assert::that(1);
-        self::assertSame($expectation, $expectation->isInt());
-
-        $expectation = Assert::that(0);
-        self::assertSame($expectation, $expectation->isInt());
+        self::assertNoErrorsThrown(static fn() => Assert::that(1)->isInt());
+        self::assertNoErrorsThrown(static fn() => Assert::that(0)->isInt());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "true" is expected to be an int but got bool instead.');
@@ -189,11 +165,8 @@ final class ExpectationTest extends TestCase
 
     public function testIsIterable(): void
     {
-        $expectation = Assert::that([]);
-        self::assertSame($expectation, $expectation->isIterable());
-
-        $expectation = Assert::that(new \ArrayIterator([1, 2, 3]));
-        self::assertSame($expectation, $expectation->isIterable());
+        self::assertNoErrorsThrown(static fn() => Assert::that([])->isIterable());
+        self::assertNoErrorsThrown(static fn() => Assert::that(new \ArrayIterator([1, 2, 3]))->isIterable());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "42" is expected to be iterable but got int instead.');
@@ -202,11 +175,8 @@ final class ExpectationTest extends TestCase
 
     public function testIsList(): void
     {
-        $expectation = Assert::that([1, 2, 3]);
-        self::assertSame($expectation, $expectation->isList());
-
-        $expectation = Assert::that([]);
-        self::assertSame($expectation, $expectation->isList());
+        self::assertNoErrorsThrown(static fn() => Assert::that([1, 2, 3])->isList());
+        self::assertNoErrorsThrown(static fn() => Assert::that([])->isList());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "[\'a\' => 1, \'b\' => 2]" is expected to be a list but got array instead.');
@@ -215,11 +185,8 @@ final class ExpectationTest extends TestCase
 
     public function testIsMap(): void
     {
-        $expectation = Assert::that(['a' => 1, 'b' => 2]);
-        self::assertSame($expectation, $expectation->isMap());
-
-        $expectation = Assert::that([]);
-        self::assertSame($expectation, $expectation->isMap());
+        self::assertNoErrorsThrown(static fn() => Assert::that(['a' => 1, 'b' => 2])->isMap());
+        self::assertNoErrorsThrown(static fn() => Assert::that([])->isMap());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "[1, 2]" is expected to be a map but got array instead.');
@@ -228,11 +195,8 @@ final class ExpectationTest extends TestCase
 
     public function testIsNaturalInt(): void
     {
-        $expectation = Assert::that(0);
-        self::assertSame($expectation, $expectation->isNaturalInt());
-
-        $expectation = Assert::that(5);
-        self::assertSame($expectation, $expectation->isNaturalInt());
+        self::assertNoErrorsThrown(static fn() => Assert::that(0)->isNaturalInt());
+        self::assertNoErrorsThrown(static fn() => Assert::that(5)->isNaturalInt());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "-3" is expected to be a natural int but got int instead.');
@@ -241,8 +205,7 @@ final class ExpectationTest extends TestCase
 
     public function testIsNegativeInt(): void
     {
-        $expectation = Assert::that(-5);
-        self::assertSame($expectation, $expectation->isNegativeInt());
+        self::assertNoErrorsThrown(static fn() => Assert::that(-5)->isNegativeInt());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "3" is expected to be a negative int but got int instead.');
@@ -251,8 +214,7 @@ final class ExpectationTest extends TestCase
 
     public function testIsNonEmptyString(): void
     {
-        $expectation = Assert::that('hello');
-        self::assertSame($expectation, $expectation->isNonEmptyString());
+        self::assertNoErrorsThrown(static fn() => Assert::that('hello')->isNonEmptyString());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "\'\'" is expected to be a non-empty string but got string instead.');
@@ -261,8 +223,7 @@ final class ExpectationTest extends TestCase
 
     public function testIsNull(): void
     {
-        $expectation = Assert::that(null);
-        self::assertSame($expectation, $expectation->isNull());
+        self::assertNoErrorsThrown(static fn() => Assert::that(null)->isNull());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "0" is expected to be null but got int instead.');
@@ -271,17 +232,10 @@ final class ExpectationTest extends TestCase
 
     public function testIsNumeric(): void
     {
-        $expectation = Assert::that(42);
-        self::assertSame($expectation, $expectation->isNumeric());
-
-        $expectation = Assert::that(3.14);
-        self::assertSame($expectation, $expectation->isNumeric());
-
-        $expectation = Assert::that('42');
-        self::assertSame($expectation, $expectation->isNumeric());
-
-        $expectation = Assert::that('3.14');
-        self::assertSame($expectation, $expectation->isNumeric());
+        self::assertNoErrorsThrown(static fn() => Assert::that(42)->isNumeric());
+        self::assertNoErrorsThrown(static fn() => Assert::that(3.14)->isNumeric());
+        self::assertNoErrorsThrown(static fn() => Assert::that('42')->isNumeric());
+        self::assertNoErrorsThrown(static fn() => Assert::that('3.14')->isNumeric());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "true" is expected to be numeric but got bool instead.');
@@ -290,8 +244,7 @@ final class ExpectationTest extends TestCase
 
     public function testIsObject(): void
     {
-        $expectation = Assert::that(new \stdClass());
-        self::assertSame($expectation, $expectation->isObject());
+        self::assertNoErrorsThrown(static fn() => Assert::that(new \stdClass())->isObject());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "42" is expected to be an object but got int instead.');
@@ -300,8 +253,7 @@ final class ExpectationTest extends TestCase
 
     public function testIsPositiveInt(): void
     {
-        $expectation = Assert::that(5);
-        self::assertSame($expectation, $expectation->isPositiveInt());
+        self::assertNoErrorsThrown(static fn() => Assert::that(5)->isPositiveInt());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "-3" is expected to be a positive int but got int instead.');
@@ -313,8 +265,7 @@ final class ExpectationTest extends TestCase
         $resource = fopen('php://temp', 'rb');
         self::assertNotFalse($resource);
 
-        $expectation = Assert::that($resource);
-        self::assertSame($expectation, $expectation->isResource());
+        self::assertNoErrorsThrown(static fn() => Assert::that($resource)->isResource());
         fclose($resource);
 
         $this->expectException(ExpectationFailedException::class);
@@ -325,8 +276,7 @@ final class ExpectationTest extends TestCase
     #[DataProvider('provideIsSameAsCases')]
     public function testIsSameAs(mixed $value, mixed $other): void
     {
-        $expectation = Assert::that($value);
-        self::assertSame($expectation, $expectation->isSameAs($other));
+        self::assertNoErrorsThrown(static fn() => Assert::that($value)->isSameAs($other));
 
         $this->expectException(ExpectationFailedException::class);
         Assert::that($value)->isSameAs('different');
@@ -351,17 +301,10 @@ final class ExpectationTest extends TestCase
 
     public function testIsScalar(): void
     {
-        $expectation = Assert::that(42);
-        self::assertSame($expectation, $expectation->isScalar());
-
-        $expectation = Assert::that(3.14);
-        self::assertSame($expectation, $expectation->isScalar());
-
-        $expectation = Assert::that('hello');
-        self::assertSame($expectation, $expectation->isScalar());
-
-        $expectation = Assert::that(true);
-        self::assertSame($expectation, $expectation->isScalar());
+        self::assertNoErrorsThrown(static fn() => Assert::that(42)->isScalar());
+        self::assertNoErrorsThrown(static fn() => Assert::that(3.14)->isScalar());
+        self::assertNoErrorsThrown(static fn() => Assert::that('hello')->isScalar());
+        self::assertNoErrorsThrown(static fn() => Assert::that(true)->isScalar());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "[]" is expected to be a scalar but got array instead.');
@@ -370,11 +313,8 @@ final class ExpectationTest extends TestCase
 
     public function testIsString(): void
     {
-        $expectation = Assert::that('hello');
-        self::assertSame($expectation, $expectation->isString());
-
-        $expectation = Assert::that('');
-        self::assertSame($expectation, $expectation->isString());
+        self::assertNoErrorsThrown(static fn() => Assert::that('hello')->isString());
+        self::assertNoErrorsThrown(static fn() => Assert::that('')->isString());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "3.14" is expected to be a string but got float instead.');
@@ -383,11 +323,24 @@ final class ExpectationTest extends TestCase
 
     public function testIsTrue(): void
     {
-        $expectation = Assert::that(true);
-        self::assertSame($expectation, $expectation->isTrue());
+        self::assertNoErrorsThrown(static fn() => Assert::that(true)->isTrue());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "12" is expected to be true but got int instead.');
         Assert::that(12)->isTrue();
+    }
+
+    /**
+     * @template T
+     *
+     * @param \Closure(): Expectation<T> $callback
+     */
+    private static function assertNoErrorsThrown(\Closure $callback): void
+    {
+        try {
+            $callback();
+        } catch (ExpectationFailedException) {
+            self::fail('Expected no exception to be thrown.');
+        }
     }
 }

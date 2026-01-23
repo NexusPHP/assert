@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Nexus\Assert\Type;
 
 use Nexus\Assert\Expectable;
+use Nexus\Assert\NullableExpectation;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
@@ -56,6 +57,15 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
 
         if (! $calledOnType instanceof ExpectationObjectType) {
             return null;
+        }
+
+        if ($methodReflection->getName() === 'nullOr') {
+            return new ExpectationObjectType(
+                NullableExpectation::class,
+                [TypeCombinator::addNull(...$calledOnType->getTypes())],
+                $calledOnType->getValueExpr(),
+                $calledOnType->getStoredExpr(),
+            );
         }
 
         $returnType = ParametersAcceptorSelector::selectFromArgs(

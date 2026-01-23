@@ -58,7 +58,7 @@ final class ExpectationMethodResolver
      *   isScalar: \Closure(Scope, Node\Arg): Node\Expr,
      *   isString: \Closure(Scope, Node\Arg): Node\Expr,
      *   isTrue: \Closure(Scope, Node\Arg): Node\Expr,
-     * }
+     * }|array{}
      */
     private static array $resolvers = [];
 
@@ -152,6 +152,7 @@ final class ExpectationMethodResolver
             }
 
             $type = TypeCombinator::remove($type, $sureNotTypes[$str][1] ?? new NeverType());
+            $type = TypeCombinator::intersect($originalType, $type);
 
             if (NullableExpectation::class === $expectationClass) {
                 return TypeCombinator::addNull($type);

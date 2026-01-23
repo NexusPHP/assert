@@ -41,8 +41,7 @@ final class NegatedExpectationTest extends TestCase
 
     public function testHasMethod(): void
     {
-        $negatedExpectation = Assert::that(new \stdClass())->not();
-        self::assertSame($negatedExpectation, $negatedExpectation->hasMethod('nonExistentMethod'));
+        self::assertNoErrorsThrown(static fn() => Assert::that(new \stdClass())->not()->hasMethod('nonExistentMethod'));
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Object of class "Exception" is not expected to have method "__toString".');
@@ -51,8 +50,7 @@ final class NegatedExpectationTest extends TestCase
 
     public function testHasOffset(): void
     {
-        $negatedExpectation = Assert::that(['a' => 1, 'b' => 2])->not();
-        self::assertSame($negatedExpectation, $negatedExpectation->hasOffset('c'));
+        self::assertNoErrorsThrown(static fn() => Assert::that(['a' => 1, 'b' => 2])->not()->hasOffset('c'));
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Array "[\'a\' => 1, \'b\' => 2]" is not expected to have offset "a".');
@@ -61,8 +59,7 @@ final class NegatedExpectationTest extends TestCase
 
     public function testHasProperty(): void
     {
-        $negatedExpectation = Assert::that(new \stdClass())->not();
-        self::assertSame($negatedExpectation, $negatedExpectation->hasProperty('nonExistentProperty'));
+        self::assertNoErrorsThrown(static fn() => Assert::that(new \stdClass())->not()->hasProperty('nonExistentProperty'));
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Object of class "stdClass" is not expected to have property "existingProperty".');
@@ -73,8 +70,7 @@ final class NegatedExpectationTest extends TestCase
 
     public function testIsArray(): void
     {
-        $negatedExpectation = Assert::that(42)->not();
-        self::assertSame($negatedExpectation, $negatedExpectation->isArray());
+        self::assertNoErrorsThrown(static fn() => Assert::that(42)->not()->isArray());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "[]" is not expected to be an array.');
@@ -83,8 +79,7 @@ final class NegatedExpectationTest extends TestCase
 
     public function testIsBool(): void
     {
-        $negatedExpectation = Assert::that(42)->not();
-        self::assertSame($negatedExpectation, $negatedExpectation->isBool());
+        self::assertNoErrorsThrown(static fn() => Assert::that(42)->not()->isBool());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "true" is not expected to be a bool.');
@@ -93,8 +88,7 @@ final class NegatedExpectationTest extends TestCase
 
     public function testIsCallable(): void
     {
-        $negatedExpectation = Assert::that(42)->not();
-        self::assertSame($negatedExpectation, $negatedExpectation->isCallable());
+        self::assertNoErrorsThrown(static fn() => Assert::that(42)->not()->isCallable());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "object(Closure)" is not expected to be callable.');
@@ -103,8 +97,7 @@ final class NegatedExpectationTest extends TestCase
 
     public function testIsCountable(): void
     {
-        $negatedExpectation = Assert::that(42)->not();
-        self::assertSame($negatedExpectation, $negatedExpectation->isCountable());
+        self::assertNoErrorsThrown(static fn() => Assert::that(42)->not()->isCountable());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "[]" is not expected to be countable.');
@@ -113,8 +106,7 @@ final class NegatedExpectationTest extends TestCase
 
     public function testIsFalse(): void
     {
-        $negatedExpectation = Assert::that(true)->not();
-        self::assertSame($negatedExpectation, $negatedExpectation->isFalse());
+        self::assertNoErrorsThrown(static fn() => Assert::that(true)->not()->isFalse());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "false" is not expected to be false.');
@@ -123,8 +115,7 @@ final class NegatedExpectationTest extends TestCase
 
     public function testIsFloat(): void
     {
-        $negatedExpectation = Assert::that(42)->not();
-        self::assertSame($negatedExpectation, $negatedExpectation->isFloat());
+        self::assertNoErrorsThrown(static fn() => Assert::that(42)->not()->isFloat());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "3.14" is not expected to be a float.');
@@ -133,8 +124,7 @@ final class NegatedExpectationTest extends TestCase
 
     public function testIsInstanceOf(): void
     {
-        $negatedExpectation = Assert::that(new \stdClass())->not();
-        self::assertSame($negatedExpectation, $negatedExpectation->isInstanceOf(\Generator::class));
+        self::assertNoErrorsThrown(static fn() => Assert::that(new \stdClass())->not()->isInstanceOf(\Generator::class));
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "object(stdClass)" is not expected to be an instance of \'stdClass\'.');
@@ -143,8 +133,7 @@ final class NegatedExpectationTest extends TestCase
 
     public function testIsInt(): void
     {
-        $negatedExpectation = Assert::that(3.14)->not();
-        self::assertSame($negatedExpectation, $negatedExpectation->isInt());
+        self::assertNoErrorsThrown(static fn() => Assert::that(3.14)->not()->isInt());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "42" is not expected to be an int.');
@@ -153,8 +142,7 @@ final class NegatedExpectationTest extends TestCase
 
     public function testIsIterable(): void
     {
-        $negatedExpectation = Assert::that(42)->not();
-        self::assertSame($negatedExpectation, $negatedExpectation->isIterable());
+        self::assertNoErrorsThrown(static fn() => Assert::that(42)->not()->isIterable());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "[1]" is not expected to be iterable.');
@@ -163,8 +151,7 @@ final class NegatedExpectationTest extends TestCase
 
     public function testIsList(): void
     {
-        $negatedExpectation = Assert::that(['a' => 1, 'b' => 2])->not();
-        self::assertSame($negatedExpectation, $negatedExpectation->isList());
+        self::assertNoErrorsThrown(static fn() => Assert::that(['a' => 1, 'b' => 2])->not()->isList());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "[0, 1, 2]" is not expected to be a list.');
@@ -173,8 +160,7 @@ final class NegatedExpectationTest extends TestCase
 
     public function testIsMap(): void
     {
-        $negatedExpectation = Assert::that([0, 1, 2])->not();
-        self::assertSame($negatedExpectation, $negatedExpectation->isMap());
+        self::assertNoErrorsThrown(static fn() => Assert::that([0, 1, 2])->not()->isMap());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "[\'a\' => 1, \'b\' => 2]" is not expected to be a map.');
@@ -183,8 +169,7 @@ final class NegatedExpectationTest extends TestCase
 
     public function testIsNaturalInt(): void
     {
-        $negatedExpectation = Assert::that(-3)->not();
-        self::assertSame($negatedExpectation, $negatedExpectation->isNaturalInt());
+        self::assertNoErrorsThrown(static fn() => Assert::that(-3)->not()->isNaturalInt());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "5" is not expected to be a natural int.');
@@ -193,8 +178,7 @@ final class NegatedExpectationTest extends TestCase
 
     public function testIsNegativeInt(): void
     {
-        $negatedExpectation = Assert::that(3)->not();
-        self::assertSame($negatedExpectation, $negatedExpectation->isNegativeInt());
+        self::assertNoErrorsThrown(static fn() => Assert::that(3)->not()->isNegativeInt());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "-5" is not expected to be a negative int.');
@@ -203,8 +187,7 @@ final class NegatedExpectationTest extends TestCase
 
     public function testIsNonEmptyString(): void
     {
-        $negatedExpectation = Assert::that('')->not();
-        self::assertSame($negatedExpectation, $negatedExpectation->isNonEmptyString());
+        self::assertNoErrorsThrown(static fn() => Assert::that('')->not()->isNonEmptyString());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "\'hello\'" is not expected to be a non-empty string.');
@@ -213,8 +196,7 @@ final class NegatedExpectationTest extends TestCase
 
     public function testIsNull(): void
     {
-        $negatedExpectation = Assert::that(42)->not();
-        self::assertSame($negatedExpectation, $negatedExpectation->isNull());
+        self::assertNoErrorsThrown(static fn() => Assert::that(42)->not()->isNull());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "null" is not expected to be null.');
@@ -223,8 +205,7 @@ final class NegatedExpectationTest extends TestCase
 
     public function testIsNumeric(): void
     {
-        $negatedExpectation = Assert::that('foo')->not();
-        self::assertSame($negatedExpectation, $negatedExpectation->isNumeric());
+        self::assertNoErrorsThrown(static fn() => Assert::that('foo')->not()->isNumeric());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "42" is not expected to be numeric.');
@@ -233,8 +214,7 @@ final class NegatedExpectationTest extends TestCase
 
     public function testIsObject(): void
     {
-        $negatedExpectation = Assert::that(42)->not();
-        self::assertSame($negatedExpectation, $negatedExpectation->isObject());
+        self::assertNoErrorsThrown(static fn() => Assert::that(42)->not()->isObject());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "object(stdClass)" is not expected to be an object.');
@@ -243,8 +223,7 @@ final class NegatedExpectationTest extends TestCase
 
     public function testIsPositiveInt(): void
     {
-        $negatedExpectation = Assert::that(-3)->not();
-        self::assertSame($negatedExpectation, $negatedExpectation->isPositiveInt());
+        self::assertNoErrorsThrown(static fn() => Assert::that(-3)->not()->isPositiveInt());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "5" is not expected to be a positive int.');
@@ -257,8 +236,7 @@ final class NegatedExpectationTest extends TestCase
         self::assertNotFalse($resource);
 
         try {
-            $negatedExpectation = Assert::that(42)->not();
-            self::assertSame($negatedExpectation, $negatedExpectation->isResource());
+            self::assertNoErrorsThrown(static fn() => Assert::that(42)->not()->isResource());
 
             $this->expectException(ExpectationFailedException::class);
             $this->expectExceptionMessage('Value "resource (stream)" is not expected to be a resource.');
@@ -271,8 +249,7 @@ final class NegatedExpectationTest extends TestCase
     #[DataProvider('provideIsSameAsCases')]
     public function testIsSameAs(mixed $value, mixed $other): void
     {
-        $negatedExpectation = Assert::that($value)->not();
-        self::assertSame($negatedExpectation, $negatedExpectation->isSameAs($other));
+        self::assertNoErrorsThrown(static fn() => Assert::that($value)->not()->isSameAs($other));
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage(\sprintf(
@@ -295,8 +272,7 @@ final class NegatedExpectationTest extends TestCase
 
     public function testIsScalar(): void
     {
-        $negatedExpectation = Assert::that([])->not();
-        self::assertSame($negatedExpectation, $negatedExpectation->isScalar());
+        self::assertNoErrorsThrown(static fn() => Assert::that([])->not()->isScalar());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "42" is not expected to be a scalar.');
@@ -305,8 +281,7 @@ final class NegatedExpectationTest extends TestCase
 
     public function testIsString(): void
     {
-        $negatedExpectation = Assert::that(42)->not();
-        self::assertSame($negatedExpectation, $negatedExpectation->isString());
+        self::assertNoErrorsThrown(static fn() => Assert::that(42)->not()->isString());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "\'hello\'" is not expected to be a string.');
@@ -315,11 +290,24 @@ final class NegatedExpectationTest extends TestCase
 
     public function testIsTrue(): void
     {
-        $negatedExpectation = Assert::that(false)->not();
-        self::assertSame($negatedExpectation, $negatedExpectation->isTrue());
+        self::assertNoErrorsThrown(static fn() => Assert::that(false)->not()->isTrue());
 
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "true" is not expected to be true.');
         Assert::that(true)->not()->isTrue();
+    }
+
+    /**
+     * @template T
+     *
+     * @param \Closure(): NegatedExpectation<T> $callback
+     */
+    private static function assertNoErrorsThrown(\Closure $callback): void
+    {
+        try {
+            $callback();
+        } catch (ExpectationFailedException) {
+            self::fail('Expected no exception to be thrown.');
+        }
     }
 }
