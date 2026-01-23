@@ -52,6 +52,20 @@ final class NullableExpectationTest extends TestCase
         Assert::that(new \stdClass())->nullOr()->hasMethod('__toString');
     }
 
+    public function testHasOffset(): void
+    {
+        $nullableExpectation = Assert::that(null)->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->hasOffset('nonExistentKey'));
+
+        $array = ['existingKey' => 'value'];
+        $nullableExpectation = Assert::that($array)->nullOr();
+        self::assertSame($nullableExpectation, $nullableExpectation->hasOffset('existingKey'));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Array "[\'existingKey\' => \'value\']" is expected to be null or to have offset "nonExistentKey".');
+        Assert::that($array)->nullOr()->hasOffset('nonExistentKey');
+    }
+
     public function testHasProperty(): void
     {
         $nullableExpectation = Assert::that(null)->nullOr();

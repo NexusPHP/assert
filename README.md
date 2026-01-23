@@ -73,6 +73,7 @@ with the message formatted depending on the available context. By default, there
 | Methods                                                             | Available Context        |
 | ------------------------------------------------------------------- | ------------------------ |
 | `hasMethod(string $method, string $message = null): self`           | `value+`, `method=`      |
+| `hasOffset(string\|int $key, string $message = null): self`         | `value`, `key=`          |
 | `hasProperty(string $property, string $message = null): self`       | `value+`, `property=`    |
 | `isArray(string $message = null): self`                             | `value`, `type`          |
 | `isBool(string $message = null): self`                              | `value`, `type`          |

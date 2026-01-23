@@ -64,6 +64,16 @@ final class ExpectationTest extends TestCase
         Assert::that(new \stdClass())->hasMethod('nonExistentMethod');
     }
 
+    public function testHasOffset(): void
+    {
+        $expectation = Assert::that(['a' => 1, 'b' => 2]);
+        self::assertSame($expectation, $expectation->hasOffset('a'));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Array "[\'a\' => 1, \'b\' => 2]" is expected to have offset "c".');
+        Assert::that(['a' => 1, 'b' => 2])->hasOffset('c');
+    }
+
     public function testHasProperty(): void
     {
         $expectation = Assert::that(new class {

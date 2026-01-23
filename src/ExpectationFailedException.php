@@ -16,8 +16,8 @@ namespace Nexus\Assert;
 final class ExpectationFailedException extends \InvalidArgumentException
 {
     /**
-     * @param non-empty-string      $template
-     * @param array<string, string> $context
+     * @param non-empty-string          $template
+     * @param array<string, int|string> $context
      */
     public function __construct(
         private readonly string $template,
@@ -37,7 +37,7 @@ final class ExpectationFailedException extends \InvalidArgumentException
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, int|string>
      */
     public function getContext(): array
     {

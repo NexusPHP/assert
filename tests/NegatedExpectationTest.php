@@ -49,6 +49,16 @@ final class NegatedExpectationTest extends TestCase
         Assert::that(new \Exception('Test'))->not()->hasMethod('__toString');
     }
 
+    public function testHasOffset(): void
+    {
+        $negatedExpectation = Assert::that(['a' => 1, 'b' => 2])->not();
+        self::assertSame($negatedExpectation, $negatedExpectation->hasOffset('c'));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Array "[\'a\' => 1, \'b\' => 2]" is not expected to have offset "a".');
+        Assert::that(['a' => 1, 'b' => 2])->not()->hasOffset('a');
+    }
+
     public function testHasProperty(): void
     {
         $negatedExpectation = Assert::that(new \stdClass())->not();

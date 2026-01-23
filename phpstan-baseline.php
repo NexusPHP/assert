@@ -22,7 +22,7 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
 	'rawMessage' => 'Parameter #1 $left of class PhpParser\\Node\\Expr\\BinaryOp\\BooleanAnd constructor expects PhpParser\\Node\\Expr, mixed given.',
 	'identifier' => 'argument.type',
-	'count' => 8,
+	'count' => 9,
 	'path' => __DIR__ . '/src/Type/ExpectationMethodResolver.php',
 ];
 $ignoreErrors[] = [

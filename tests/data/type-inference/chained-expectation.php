@@ -17,6 +17,13 @@ use Nexus\Assert\Assert;
 
 use function PHPStan\Testing\assertType;
 
+function test_is_array_not_has_offset(mixed $value): void
+{
+    $assert = Assert::that($value)->isArray()->not()->hasOffset('id');
+    assertType('Nexus\\Assert\\NegatedExpectation<array<mixed, mixed>>', $assert);
+    assertType('array<mixed, mixed>', $value);
+}
+
 function test_is_countable_not_is_array(mixed $value): void
 {
     $assert = Assert::that($value)->isCountable()->not()->isArray();

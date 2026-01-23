@@ -31,6 +31,7 @@ final class ExpectationVariantsGenerator
      */
     public const NON_DEFAULT_CONTEXT = [
         'hasMethod' => ['value+', 'method='],
+        'hasOffset' => ['value', 'key='],
         'hasProperty' => ['value+', 'property='],
         'isInstanceOf' => ['value', 'class', 'type'],
         'isSameAs' => ['value', 'other', 'type'],

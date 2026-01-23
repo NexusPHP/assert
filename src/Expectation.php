@@ -21,6 +21,7 @@ namespace Nexus\Assert;
 final readonly class Expectation implements Expectable
 {
     private const MESSAGE_HAS_METHOD = 'Object of class "{value}" is expected to have method "{method}".';
+    private const MESSAGE_HAS_OFFSET = 'Array "{value}" is expected to have offset "{key}".';
     private const MESSAGE_HAS_PROPERTY = 'Object of class "{value}" is expected to have property "{property}".';
     private const MESSAGE_IS_ARRAY = 'Value "{value}" is expected to be an array but got {type} instead.';
     private const MESSAGE_IS_BOOL = 'Value "{value}" is expected to be a bool but got {type} instead.';
@@ -83,6 +84,26 @@ final readonly class Expectation implements Expectable
                 [
                     'value' => $this->exporter->exportType($this->value),
                     'method' => $method,
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function hasOffset(int|string $key, ?string $message = null): self
+    {
+        $this->isArray($message);
+
+        if (! \array_key_exists($key, $this->value)) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_HAS_OFFSET,
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'key' => $key,
                 ],
             );
         }

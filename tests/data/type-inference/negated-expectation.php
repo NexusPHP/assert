@@ -24,6 +24,13 @@ function test_has_method(mixed $value): void
     assertType('mixed', $value);
 }
 
+function test_has_offset(mixed $value): void
+{
+    $assert = Assert::that($value)->not()->hasOffset('id');
+    assertType('Nexus\\Assert\\NegatedExpectation<mixed>', $assert);
+    assertType('mixed', $value);
+}
+
 function test_has_property(mixed $value): void
 {
     $assert = Assert::that($value)->not()->hasProperty('length');

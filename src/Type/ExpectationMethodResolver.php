@@ -33,6 +33,7 @@ final class ExpectationMethodResolver
     /**
      * @var array{
      *   hasMethod: \Closure(Scope, Node\Arg, Node\Arg): Node\Expr,
+     *   hasOffset: \Closure(Scope, Node\Arg, Node\Arg): Node\Expr,
      *   hasProperty: \Closure(Scope, Node\Arg, Node\Arg): Node\Expr,
      *   isArray: \Closure(Scope, Node\Arg): Node\Expr,
      *   isBool: \Closure(Scope, Node\Arg): Node\Expr,
@@ -171,6 +172,13 @@ final class ExpectationMethodResolver
                     new Node\Expr\FuncCall(
                         new Node\Name('method_exists'),
                         [$arg, $method],
+                    ),
+                ),
+                'hasOffset' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $key): Node\Expr => new Node\Expr\BinaryOp\BooleanAnd(
+                    self::$resolvers['isArray']($scope, $arg),
+                    new Node\Expr\FuncCall(
+                        new Node\Name\FullyQualified('array_key_exists'),
+                        [$key, $arg],
                     ),
                 ),
                 'hasProperty' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $property): Node\Expr => new Node\Expr\BinaryOp\BooleanAnd(
