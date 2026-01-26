@@ -75,8 +75,8 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
         )->getReturnType();
         \assert($returnType instanceof GenericObjectType);
 
-        /** @var class-string $expectationClass */
         $expectationClass = $returnType->getClassName();
+        \assert(class_exists($expectationClass));
 
         // When calling `not()` or `nullOr()`, the stored expr gets lost,
         // so we need to get it from the $calledOnType.

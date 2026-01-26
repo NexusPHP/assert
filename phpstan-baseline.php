@@ -8,12 +8,6 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/src/Type/ExpectationDynamicMethodReturnTypeExtension.php',
 ];
 $ignoreErrors[] = [
-	'rawMessage' => 'Parameter #1 $className of class Nexus\\Assert\\Type\\ExpectationObjectType constructor expects class-string, string given.',
-	'identifier' => 'argument.type',
-	'count' => 1,
-	'path' => __DIR__ . '/src/Type/ExpectationMethodTypeSpecifyingExtension.php',
-];
-$ignoreErrors[] = [
 	'rawMessage' => 'Generator expects value type array{string, string, mixed}, array<mixed> given.',
 	'identifier' => 'generator.valueType',
 	'count' => 1,

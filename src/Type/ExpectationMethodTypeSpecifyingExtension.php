@@ -59,8 +59,12 @@ final class ExpectationMethodTypeSpecifyingExtension implements MethodTypeSpecif
 
         if ($calledOnType instanceof ThisType) {
             $objectType = $calledOnType->getStaticObjectType();
+
+            $className = $objectType->getClassName();
+            \assert(class_exists($className));
+
             $calledOnType = new ExpectationObjectType(
-                $objectType->getClassName(),
+                $className,
                 [new MixedType(true)],
                 new Node\Expr\PropertyFetch($node->var, 'value'),
             );
@@ -74,8 +78,9 @@ final class ExpectationMethodTypeSpecifyingExtension implements MethodTypeSpecif
             return new SpecifiedTypes();
         }
 
-        /** @var class-string $expectationClass */
         $expectationClass = $calledOnType->getClassName();
+        \assert(class_exists($expectationClass));
+
         $expr = $this->resolver->resolveExpr(
             $expectationClass,
             $methodReflection->getName(),
