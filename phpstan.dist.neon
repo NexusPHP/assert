@@ -21,7 +21,6 @@ parameters:
   bootstrapFiles:
     - vendor/autoload.php
   ignoreErrors:
-    - identifier: property.defaultValue
     # these errors are needed for testing runtime behaviour
     -
       identifier: method.alreadyNarrowedType
