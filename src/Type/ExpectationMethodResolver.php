@@ -180,6 +180,10 @@ final class ExpectationMethodResolver
                     new Node\Name\FullyQualified('is_array'),
                     [$arg],
                 ),
+                'isArrayKey' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\BinaryOp\BooleanOr(
+                    self::$resolvers['isInt']($scope, $arg),
+                    self::$resolvers['isString']($scope, $arg),
+                ),
                 'isBool' => static fn(Scope $scope, Node\Arg $arg): Node\Expr => new Node\Expr\FuncCall(
                     new Node\Name\FullyQualified('is_bool'),
                     [$arg],

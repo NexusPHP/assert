@@ -45,6 +45,13 @@ function test_is_array(mixed $value): void
     assertType('mixed~array<mixed, mixed>', $value);
 }
 
+function test_is_array_key(mixed $value): void
+{
+    $assert = Assert::that($value)->not()->isArrayKey();
+    assertType('Nexus\\Assert\\NegatedExpectation<mixed~(int|string)>', $assert);
+    assertType('mixed~(int|string)', $value);
+}
+
 function test_is_bool(mixed $value): void
 {
     $assert = Assert::that($value)->not()->isBool();

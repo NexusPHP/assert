@@ -82,6 +82,17 @@ final class NullableExpectationTest extends TestCase
         Assert::that(42)->nullOr()->isArray();
     }
 
+    public function testIsArrayKey(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->isArrayKey());
+        self::assertNoErrorsThrown(static fn() => Assert::that(42)->nullOr()->isArrayKey());
+        self::assertNoErrorsThrown(static fn() => Assert::that('key')->nullOr()->isArrayKey());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "3.14" is expected to be null or an array key but got float instead.');
+        Assert::that(3.14)->nullOr()->isArrayKey();
+    }
+
     public function testIsBool(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->isBool());

@@ -24,6 +24,7 @@ final readonly class Expectation implements Expectable
     private const MESSAGE_HAS_OFFSET = 'Array "{value}" is expected to have offset "{key}".';
     private const MESSAGE_HAS_PROPERTY = 'Object of class "{value}" is expected to have property "{property}".';
     private const MESSAGE_IS_ARRAY = 'Value "{value}" is expected to be an array but got {type} instead.';
+    private const MESSAGE_IS_ARRAY_KEY = 'Value "{value}" is expected to be an array key but got {type} instead.';
     private const MESSAGE_IS_BOOL = 'Value "{value}" is expected to be a bool but got {type} instead.';
     private const MESSAGE_IS_CALLABLE = 'Value "{value}" is expected to be callable but got {type} instead.';
     private const MESSAGE_IS_COUNTABLE = 'Value "{value}" is expected to be countable but got {type} instead.';
@@ -140,6 +141,24 @@ final readonly class Expectation implements Expectable
         if (! \is_array($this->value)) {
             throw new ExpectationFailedException(
                 $message ?? self::MESSAGE_IS_ARRAY,
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'type' => $this->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isArrayKey(?string $message = null): self
+    {
+        if (! \is_int($this->value) && ! \is_string($this->value)) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_ARRAY_KEY,
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),

@@ -45,6 +45,13 @@ function test_is_array(mixed $value): void
     assertType('array<mixed, mixed>|null', $value);
 }
 
+function test_is_array_key(mixed $value): void
+{
+    $assert = Assert::that($value)->nullOr()->isArrayKey();
+    assertType('Nexus\\Assert\\NullableExpectation<int|string|null>', $assert);
+    assertType('int|string|null', $value);
+}
+
 function test_is_bool(mixed $value): void
 {
     $assert = Assert::that($value)->nullOr()->isBool();

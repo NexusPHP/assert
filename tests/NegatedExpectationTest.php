@@ -77,6 +77,15 @@ final class NegatedExpectationTest extends TestCase
         Assert::that([])->not()->isArray();
     }
 
+    public function testIsArrayKey(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(3.14)->not()->isArrayKey());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "42" is not expected to be an array key.');
+        Assert::that(42)->not()->isArrayKey();
+    }
+
     public function testIsBool(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(42)->not()->isBool());

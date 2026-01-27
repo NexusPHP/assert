@@ -94,6 +94,16 @@ final class ExpectationTest extends TestCase
         Assert::that(42)->isArray();
     }
 
+    public function testIsArrayKey(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(42)->isArrayKey());
+        self::assertNoErrorsThrown(static fn() => Assert::that('key')->isArrayKey());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "3.14" is expected to be an array key but got float instead.');
+        Assert::that(3.14)->isArrayKey();
+    }
+
     public function testIsBool(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(true)->isBool());

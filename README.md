@@ -76,6 +76,7 @@ with the message formatted depending on the available context. By default, there
 | `hasOffset(int\|string $key, ?string $message = null): self`               | `value`, `key=`          |
 | `hasProperty(string $property, ?string $message = null): self`             | `value+`, `property=`    |
 | `isArray(?string $message = null): self`                                   | `value`, `type`          |
+| `isArrayKey(?string $message = null): self`                                | `value`, `type`          |
 | `isBool(?string $message = null): self`                                    | `value`, `type`          |
 | `isCallable(?string $message = null): self`                                | `value`, `type`          |
 | `isCountable(?string $message = null): self`                               | `value`, `type`          |
