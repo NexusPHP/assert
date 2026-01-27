@@ -64,6 +64,10 @@
         ],
         "cs:check": "php-cs-fixer check --verbose --ansi --diff",
         "cs:fix": "php-cs-fixer fix --verbose --ansi --diff",
+        "generate:docs": [
+            "bin/generate --all",
+            "bin/generate-readme"
+        ],
         "phpstan:baseline": "phpstan analyse --verbose --ansi --generate-baseline=phpstan-baseline.php",
         "phpstan:check": "phpstan analyse --verbose --ansi",
         "test:all": [
@@ -80,6 +84,7 @@
     "scripts-descriptions": {
         "cs:check": "Checks for coding style violations",
         "cs:fix": "Fixes coding style violations",
+        "generate:docs": "Generates documentation",
         "phpstan:baseline": "Runs PHPStan and dumps resulting errors to baseline",
         "phpstan:check": "Runs PHPStan with identifiers support",
         "test:all": "Runs all tests",
