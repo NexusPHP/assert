@@ -104,3 +104,10 @@ function test_is_string_not_is_non_empty_string(mixed $value): void
     assertType('Nexus\\Assert\\NegatedExpectation<\'\'>', $assert);
     assertType('\'\'', $value);
 }
+
+function test_is_string_not_matches_regular_expression(mixed $value, string $pattern): void
+{
+    $assert = Assert::that($value)->isString()->not()->matchesRegularExpression($pattern);
+    assertType('Nexus\\Assert\\NegatedExpectation<string>', $assert);
+    assertType('string', $value);
+}

@@ -262,4 +262,14 @@ interface Expectable
      * @throws ExpectationFailedException
      */
     public function isTrue(?string $message = null): self;
+
+    /**
+     * @param non-empty-string      $pattern
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
+    public function matchesRegularExpression(string $pattern, ?string $message = null): self;
 }

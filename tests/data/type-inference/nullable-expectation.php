@@ -184,3 +184,10 @@ function test_is_true(mixed $value): void
     assertType('Nexus\\Assert\\NullableExpectation<true|null>', $assert);
     assertType('true|null', $value);
 }
+
+function test_matches_regular_expression(mixed $value, string $pattern): void
+{
+    $assert = Assert::that($value)->nullOr()->matchesRegularExpression($pattern);
+    assertType('Nexus\\Assert\\NullableExpectation<string|null>', $assert);
+    assertType('string|null', $value);
+}

@@ -50,6 +50,7 @@ final readonly class NegatedExpectation implements Expectable
     private const MESSAGE_IS_SCALAR = 'Value "{value}" is not expected to be a scalar.';
     private const MESSAGE_IS_STRING = 'Value "{value}" is not expected to be a string.';
     private const MESSAGE_IS_TRUE = 'Value "{value}" is not expected to be true.';
+    private const MESSAGE_MATCHES_REGULAR_EXPRESSION = 'Value "{value}" is not expected to match the PCRE pattern "{pattern}".';
 
     /**
      * @var TValue
@@ -519,6 +520,26 @@ final readonly class NegatedExpectation implements Expectable
         throw new ExpectationFailedException(
             $message ?? self::MESSAGE_IS_TRUE,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
+        );
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function matchesRegularExpression(string $pattern, ?string $message = null): self
+    {
+        try {
+            $this->expectation->matchesRegularExpression($pattern, $message);
+        } catch (ExpectationFailedException) {
+            return $this;
+        }
+
+        throw new ExpectationFailedException(
+            $message ?? self::MESSAGE_MATCHES_REGULAR_EXPRESSION,
+            [
+                'value' => $this->expectation->exporter->exportValue($this->value),
+                'pattern' => $pattern,
+            ],
         );
     }
 }

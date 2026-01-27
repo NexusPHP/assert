@@ -330,6 +330,15 @@ final class ExpectationTest extends TestCase
         Assert::that(12)->isTrue();
     }
 
+    public function testMatchesRegularExpression(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that('hello123')->matchesRegularExpression('/^hello\d+$/'));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'test\'" is expected to match the PCRE pattern "/^hello\d+$/".');
+        Assert::that('test')->matchesRegularExpression('/^hello\d+$/');
+    }
+
     /**
      * @template T
      *

@@ -184,3 +184,10 @@ function test_is_true(mixed $value): void
     assertType('Nexus\\Assert\\Expectation<true>', $assert);
     assertType('true', $value);
 }
+
+function test_matches_regular_expression(mixed $value, string $pattern): void
+{
+    $assert = Assert::that($value)->matchesRegularExpression($pattern);
+    assertType('Nexus\\Assert\\Expectation<string>', $assert);
+    assertType('string', $value);
+}

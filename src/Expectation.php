@@ -46,6 +46,7 @@ final readonly class Expectation implements Expectable
     private const MESSAGE_IS_SCALAR = 'Value "{value}" is expected to be a scalar but got {type} instead.';
     private const MESSAGE_IS_STRING = 'Value "{value}" is expected to be a string but got {type} instead.';
     private const MESSAGE_IS_TRUE = 'Value "{value}" is expected to be true but got {type} instead.';
+    private const MESSAGE_MATCHES_REGULAR_EXPRESSION = 'Value "{value}" is expected to match the PCRE pattern "{pattern}".';
 
     /**
      * @param TValue $value
@@ -551,6 +552,29 @@ final readonly class Expectation implements Expectable
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param non-empty-string      $pattern
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     */
+    public function matchesRegularExpression(string $pattern, ?string $message = null): self
+    {
+        $this->isString($message);
+
+        if (preg_match($pattern, $this->value) !== 1) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_MATCHES_REGULAR_EXPRESSION,
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'pattern' => $pattern,
                 ],
             );
         }

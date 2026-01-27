@@ -328,6 +328,16 @@ final class NullableExpectationTest extends TestCase
         Assert::that(false)->nullOr()->isTrue();
     }
 
+    public function testMatchesRegularExpression(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->matchesRegularExpression('/^hello\d+$/'));
+        self::assertNoErrorsThrown(static fn() => Assert::that('hello123')->nullOr()->matchesRegularExpression('/^hello\d+$/'));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'test\'" is expected to be null or to match the PCRE pattern "/^hello\d+$/".');
+        Assert::that('test')->nullOr()->matchesRegularExpression('/^hello\d+$/');
+    }
+
     /**
      * @template T
      *

@@ -28,3 +28,9 @@ function test_is_instance_of(\stdClass $value): void
     Assert::that($value)->isInstanceOf(\stdClass::class);
     Assert::that($value)->isInstanceOf($value);
 }
+
+function test_matches_regular_expression(string $value): void
+{
+    Assert::that($value)->matchesRegularExpression('/^test-/');
+    Assert::that($value)->matchesRegularExpression('/^test-/');
+}

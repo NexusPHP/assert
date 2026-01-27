@@ -35,6 +35,7 @@ final class ExpectationVariantsGenerator
         'hasProperty' => ['value+', 'property='],
         'isInstanceOf' => ['value', 'class', 'type'],
         'isSameAs' => ['value', 'other', 'type'],
+        'matchesRegularExpression' => ['value', 'pattern='],
     ];
 
     private const EXPECTATION_CLASS_TEMPLATE = <<<'PHP'
@@ -92,7 +93,7 @@ final class ExpectationVariantsGenerator
     ];
     private const NULLABLE_EXPECTATION_REPLACEMENTS = [
         'is expected to be' => 'is expected to be null or',
-        'is expected to have' => 'is expected to be null or to have',
+        'is expected to' => 'is expected to be null or to',
     ];
     private const UNSUPPORTED_METHODS = [
         'not',

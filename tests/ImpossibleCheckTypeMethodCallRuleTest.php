@@ -50,6 +50,11 @@ final class ImpossibleCheckTypeMethodCallRuleTest extends RuleTestCase
                 29,
                 $tip,
             ],
+            [
+                'Call to method Nexus\\Assert\\Expectation<string>::matchesRegularExpression() with \'/^test-/\' will always evaluate to true.',
+                35,
+                $tip,
+            ],
         ]);
     }
 

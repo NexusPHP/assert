@@ -297,6 +297,15 @@ final class NegatedExpectationTest extends TestCase
         Assert::that(true)->not()->isTrue();
     }
 
+    public function testMatchesRegularExpression(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that('test')->not()->matchesRegularExpression('/^hello\d+$/'));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'hello123\'" is not expected to match the PCRE pattern "/^hello\d+$/".');
+        Assert::that('hello123')->not()->matchesRegularExpression('/^hello\d+$/');
+    }
+
     /**
      * @template T
      *

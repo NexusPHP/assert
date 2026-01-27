@@ -26,6 +26,9 @@ use PHPStan\Type\TypeCombinator;
 
 final class ExpectationMethodResolver
 {
+    public const METHODS_USING_PRIMARY_RESOLVERS = [
+        'matchesRegularExpression' => 'isString',
+    ];
     private const UNSUPPORTED_EXPECTATION_METHODS = [
         'not',
         'nullOr',
@@ -44,7 +47,7 @@ final class ExpectationMethodResolver
     public function isSupported(string $methodName): bool
     {
         return ! \in_array($methodName, self::UNSUPPORTED_EXPECTATION_METHODS, true)
-            && isset(self::$resolvers[$methodName]);
+            && \array_key_exists($methodName, self::$resolvers);
     }
 
     /**
@@ -63,6 +66,16 @@ final class ExpectationMethodResolver
         }
 
         $expr = self::$resolvers[$methodName]($scope, $arg, ...$args);
+
+        if (\array_key_exists($methodName, self::METHODS_USING_PRIMARY_RESOLVERS)) {
+            $expr = new Node\Expr\BinaryOp\BooleanAnd(
+                $expr,
+                new Node\Expr\FuncCall(
+                    new Node\Name(\sprintf('FAUX_FUNCTION_%s', $methodName)),
+                    [$arg, ...$args],
+                ),
+            );
+        }
 
         if (NegatedExpectation::class === $expectationClass) {
             $expr = new Node\Expr\BooleanNot($expr);
@@ -311,6 +324,10 @@ final class ExpectationMethodResolver
                     $arg->value,
                 ),
             ];
+
+            foreach (self::METHODS_USING_PRIMARY_RESOLVERS as $methodName => $primaryResolverName) {
+                self::$resolvers[$methodName] = self::$resolvers[$primaryResolverName];
+            }
         }
     }
 }

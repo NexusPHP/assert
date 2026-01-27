@@ -49,6 +49,7 @@ final readonly class NullableExpectation implements Expectable
     private const MESSAGE_IS_SCALAR = 'Value "{value}" is expected to be null or a scalar but got {type} instead.';
     private const MESSAGE_IS_STRING = 'Value "{value}" is expected to be null or a string but got {type} instead.';
     private const MESSAGE_IS_TRUE = 'Value "{value}" is expected to be null or true but got {type} instead.';
+    private const MESSAGE_MATCHES_REGULAR_EXPRESSION = 'Value "{value}" is expected to be null or to match the PCRE pattern "{pattern}".';
 
     /**
      * @var TValue
@@ -669,6 +670,30 @@ final readonly class NullableExpectation implements Expectable
                 [
                     'value' => $this->expectation->exporter->exportValue($this->value),
                     'type' => $this->expectation->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<null|TValue>
+     */
+    public function matchesRegularExpression(string $pattern, ?string $message = null): self
+    {
+        if (null === $this->value) {
+            return $this;
+        }
+
+        try {
+            $this->expectation->matchesRegularExpression($pattern, $message);
+        } catch (ExpectationFailedException) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_MATCHES_REGULAR_EXPRESSION,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'pattern' => $pattern,
                 ],
             );
         }

@@ -22,6 +22,7 @@ use PHPStan\Analyser\TypeSpecifier;
 use PHPStan\Analyser\TypeSpecifierAwareExtension;
 use PHPStan\Analyser\TypeSpecifierContext;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\Type\Constant\ConstantBooleanType;
 use PHPStan\Type\MethodTypeSpecifyingExtension;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ThisType;
@@ -90,9 +91,14 @@ final class ExpectationMethodTypeSpecifyingExtension implements MethodTypeSpecif
             ...$node->getArgs(),
         );
 
-        return $this->typeSpecifier
-            ->specifyTypesInCondition($scope, $expr, TypeSpecifierContext::createTruthy())
-            ->setRootExpr($expr)
-        ;
+        $context = TypeSpecifierContext::createTruthy();
+        $specifiedTypes = $this->typeSpecifier->specifyTypesInCondition($scope, $expr, $context)->setRootExpr($expr);
+
+        if (! \array_key_exists($methodReflection->getName(), ExpectationMethodResolver::METHODS_USING_PRIMARY_RESOLVERS)) {
+            return $specifiedTypes;
+        }
+
+        // make consecutive calls to the faux function to always return true
+        return $specifiedTypes->unionWith($this->typeSpecifier->create($expr, new ConstantBooleanType(true), $context, $scope));
     }
 }
