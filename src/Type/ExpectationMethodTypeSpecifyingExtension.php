@@ -84,20 +84,11 @@ final class ExpectationMethodTypeSpecifyingExtension implements MethodTypeSpecif
         $expr = $this->resolver->resolveExpr(
             $expectationClass,
             $methodReflection->getName(),
+            $calledOnType->getStoredExpr(),
             $scope,
             new Node\Arg($calledOnType->getValueExpr()),
             ...$node->getArgs(),
         );
-
-        if (null === $expr) {
-            return new SpecifiedTypes();
-        }
-
-        $storedExpr = $calledOnType->getStoredExpr();
-
-        if (null !== $storedExpr) {
-            $expr = new Node\Expr\BinaryOp\BooleanAnd($storedExpr, $expr);
-        }
 
         return $this->typeSpecifier
             ->specifyTypesInCondition($scope, $expr, TypeSpecifierContext::createTruthy())

@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Nexus\Assert\Type;
 
 use Nexus\Assert\Expectable;
+use Nexus\Assert\NegatedExpectation;
 use Nexus\Assert\NullableExpectation;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
@@ -59,6 +60,15 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
             return null;
         }
 
+        if ($methodReflection->getName() === 'not') {
+            return new ExpectationObjectType(
+                NegatedExpectation::class,
+                $calledOnType->getTypes(),
+                $calledOnType->getValueExpr(),
+                $calledOnType->getStoredExpr(),
+            );
+        }
+
         if ($methodReflection->getName() === 'nullOr') {
             return new ExpectationObjectType(
                 NullableExpectation::class,
@@ -78,27 +88,14 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
         $expectationClass = $returnType->getClassName();
         \assert(class_exists($expectationClass));
 
-        // When calling `not()` or `nullOr()`, the stored expr gets lost,
-        // so we need to get it from the $calledOnType.
         $resolvedExpr = $this->resolver->resolveExpr(
             $expectationClass,
             $methodReflection->getName(),
+            $calledOnType->getStoredExpr(),
             $scope,
             new Node\Arg($calledOnType->getValueExpr()),
             ...$methodCall->getArgs(),
         );
-        $resolvedExpr = array_reduce(
-            [$resolvedExpr],
-            static function (?Node\Expr $carry, ?Node\Expr $expr): ?Node\Expr {
-                if (null === $carry || null === $expr) {
-                    return $expr ?? $carry;
-                }
-
-                return new Node\Expr\BinaryOp\BooleanAnd($carry, $expr);
-            },
-            $calledOnType->getStoredExpr(),
-        );
-
         $resolvedType = $this->resolver->resolveType(
             $this->typeSpecifier,
             $resolvedExpr,

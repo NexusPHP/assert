@@ -19,6 +19,7 @@ use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Analyser\TypeSpecifier;
 use PHPStan\Analyser\TypeSpecifierContext;
+use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\NeverType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
@@ -52,22 +53,21 @@ final class ExpectationMethodResolver
     public function resolveExpr(
         string $expectationClass,
         string $methodName,
+        ?Node\Expr $storedExpr,
         Scope $scope,
         Node\Arg $arg,
         Node\Arg ...$args,
-    ): ?Node\Expr {
+    ): Node\Expr {
         if (! $this->isSupported($methodName)) {
-            return null;
+            throw new ShouldNotHappenException(\sprintf('Expectation method %s::%s is not supported.', $expectationClass, $methodName));
         }
 
         $expr = self::$resolvers[$methodName]($scope, $arg, ...$args);
 
         if (NegatedExpectation::class === $expectationClass) {
-            return new Node\Expr\BooleanNot($expr);
-        }
-
-        if (NullableExpectation::class === $expectationClass) {
-            return new Node\Expr\BinaryOp\BooleanOr(
+            $expr = new Node\Expr\BooleanNot($expr);
+        } elseif (NullableExpectation::class === $expectationClass) {
+            $expr = new Node\Expr\BinaryOp\BooleanOr(
                 new Node\Expr\BinaryOp\Identical(
                     new Node\Expr\ConstFetch(new Node\Name('null')),
                     $arg->value,
@@ -76,7 +76,7 @@ final class ExpectationMethodResolver
             );
         }
 
-        return $expr;
+        return self::reduceExprWithStoredExpr($storedExpr, $expr);
     }
 
     /**
@@ -84,16 +84,12 @@ final class ExpectationMethodResolver
      */
     public function resolveType(
         TypeSpecifier $typeSpecifier,
-        ?Node\Expr $resolvedExpr,
+        Node\Expr $resolvedExpr,
         Type $originalType,
         string $expectationClass,
         Scope $scope,
         Node\Arg $arg,
     ): Type {
-        if (null === $resolvedExpr) {
-            return $originalType;
-        }
-
         $context = TypeSpecifierContext::createTruthy();
         $specifiedTypes = $typeSpecifier->specifyTypesInCondition($scope, $resolvedExpr, $context);
 
@@ -131,6 +127,15 @@ final class ExpectationMethodResolver
         }
 
         return $originalType;
+    }
+
+    private static function reduceExprWithStoredExpr(?Node\Expr $storedExpr, Node\Expr $expr): Node\Expr
+    {
+        if (null === $storedExpr) {
+            return $expr;
+        }
+
+        return new Node\Expr\BinaryOp\BooleanAnd($storedExpr, $expr);
     }
 
     private static function createExprResolvers(): void
