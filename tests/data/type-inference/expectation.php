@@ -11,7 +11,7 @@ declare(strict_types=1);
  * the LICENSE file that was distributed with this source code.
  */
 
-namespace Nexus\Assert\Tests;
+namespace Nexus\Assert\Tests\TypeInference\Expectation;
 
 use Nexus\Assert\Assert;
 
