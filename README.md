@@ -70,34 +70,34 @@ with the message formatted depending on the available context. By default, there
 
 ## List of Expectations
 
-| Methods                                                             | Available Context        |
-| ------------------------------------------------------------------- | ------------------------ |
-| `hasMethod(string $method, string $message = null): self`           | `value+`, `method=`      |
-| `hasOffset(string\|int $key, string $message = null): self`         | `value`, `key=`          |
-| `hasProperty(string $property, string $message = null): self`       | `value+`, `property=`    |
-| `isArray(string $message = null): self`                             | `value`, `type`          |
-| `isBool(string $message = null): self`                              | `value`, `type`          |
-| `isCallable(string $message = null): self`                          | `value`, `type`          |
-| `isCountable(string $message = null): self`                         | `value`, `type`          |
-| `isFalse(string $message = null): self`                             | `value`, `type`          |
-| `isFloat(string $message = null): self`                             | `value`, `type`          |
-| `isInstanceOf(object\|string $class, string $message = null): self` | `value`, `class`, `type` |
-| `isInt(string $message = null): self`                               | `value`, `type`          |
-| `isIterable(string $message = null): self`                          | `value`, `type`          |
-| `isList(string $message = null): self`                              | `value`, `type`          |
-| `isMap(string $message = null): self`                               | `value`, `type`          |
-| `isNaturalInt(string $message = null): self`                        | `value`, `type`          |
-| `isNegativeInt(string $message = null): self`                       | `value`, `type`          |
-| `isNonEmptyString(string $message = null): self`                    | `value`, `type`          |
-| `isNull(string $message = null): self`                              | `value`, `type`          |
-| `isNumeric(string $message = null): self`                           | `value`, `type`          |
-| `isObject(string $message = null): self`                            | `value`, `type`          |
-| `isPositiveInt(string $message = null): self`                       | `value`, `type`          |
-| `isResource(string $message = null): self`                          | `value`, `type`          |
-| `isSameAs(mixed $other, string $message = null): self`              | `value`, `other`, `type` |
-| `isScalar(string $message = null): self`                            | `value`, `type`          |
-| `isString(string $message = null): self`                            | `value`, `type`          |
-| `isTrue(string $message = null): self`                              | `value`, `type`          |
+| Methods                                                              | Available Context        |
+| -------------------------------------------------------------------- | ------------------------ |
+| `hasMethod(string $method, ?string $message = null): self`           | `value+`, `method=`      |
+| `hasOffset(int\|string $key, ?string $message = null): self`         | `value`, `key=`          |
+| `hasProperty(string $property, ?string $message = null): self`       | `value+`, `property=`    |
+| `isArray(?string $message = null): self`                             | `value`, `type`          |
+| `isBool(?string $message = null): self`                              | `value`, `type`          |
+| `isCallable(?string $message = null): self`                          | `value`, `type`          |
+| `isCountable(?string $message = null): self`                         | `value`, `type`          |
+| `isFalse(?string $message = null): self`                             | `value`, `type`          |
+| `isFloat(?string $message = null): self`                             | `value`, `type`          |
+| `isInstanceOf(object\|string $class, ?string $message = null): self` | `value`, `class`, `type` |
+| `isInt(?string $message = null): self`                               | `value`, `type`          |
+| `isIterable(?string $message = null): self`                          | `value`, `type`          |
+| `isList(?string $message = null): self`                              | `value`, `type`          |
+| `isMap(?string $message = null): self`                               | `value`, `type`          |
+| `isNaturalInt(?string $message = null): self`                        | `value`, `type`          |
+| `isNegativeInt(?string $message = null): self`                       | `value`, `type`          |
+| `isNonEmptyString(?string $message = null): self`                    | `value`, `type`          |
+| `isNull(?string $message = null): self`                              | `value`, `type`          |
+| `isNumeric(?string $message = null): self`                           | `value`, `type`          |
+| `isObject(?string $message = null): self`                            | `value`, `type`          |
+| `isPositiveInt(?string $message = null): self`                       | `value`, `type`          |
+| `isResource(?string $message = null): self`                          | `value`, `type`          |
+| `isSameAs(?mixed $other, ?string $message = null): self`             | `value`, `other`, `type` |
+| `isScalar(?string $message = null): self`                            | `value`, `type`          |
+| `isString(?string $message = null): self`                            | `value`, `type`          |
+| `isTrue(?string $message = null): self`                              | `value`, `type`          |
 
 > [!NOTE]
 > - The `value` context is always value-exported except when appended by `+` which means it is type-exported instead.

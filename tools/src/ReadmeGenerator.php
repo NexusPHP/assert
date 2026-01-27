@@ -44,14 +44,15 @@ final class ReadmeGenerator
             array_map(static fn(\ReflectionMethod $method): string => \sprintf(
                 '%s(%s): self',
                 $method->getName(),
-                implode(', ', array_map(static function (\ReflectionParameter $param) use ($exporter): string {
-                    $type = $param->hasType() ? self::typeAsString($param->getType()).' ' : '';
-                    $byRef = $param->isPassedByReference() ? '&' : '';
-                    $variadic = $param->isVariadic() ? '...' : '';
-                    $default = $param->isOptional() ? ' = '.$exporter->exportValue($param->getDefaultValue()) : '';
-
-                    return \sprintf('%s%s%s$%s%s', $type, $byRef, $variadic, $param->getName(), $default);
-                }, $method->getParameters())),
+                implode(', ', array_map(static fn(\ReflectionParameter $param): string => \sprintf(
+                    '%s%s%s%s$%s%s',
+                    $param->hasType() && $param->allowsNull() ? '?' : '',
+                    $param->hasType() ? self::typeAsString($param->getType()).' ' : '',
+                    $param->isPassedByReference() ? '&' : '',
+                    $param->isVariadic() ? '...' : '',
+                    $param->getName(),
+                    $param->isOptional() ? ' = '.$exporter->exportValue($param->getDefaultValue()) : '',
+                ), $method->getParameters())),
             ), $methods),
         );
 
@@ -90,19 +91,19 @@ final class ReadmeGenerator
 
     private static function typeAsString(\ReflectionType $type): string
     {
-        if ($type instanceof \ReflectionUnionType) {
-            return implode('\|', array_map(self::typeAsString(...), $type->getTypes()));
-        }
-
-        if ($type instanceof \ReflectionIntersectionType) {
-            return implode('&', array_map(self::typeAsString(...), $type->getTypes()));
-        }
-
         if ($type instanceof \ReflectionNamedType) {
             return $type->getName();
         }
 
-        return 'mixed';
+        if (! $type instanceof \ReflectionUnionType && ! $type instanceof \ReflectionIntersectionType) {
+            throw new \LogicException('Unsupported reflection type encountered.');
+        }
+
+        $separator = $type instanceof \ReflectionUnionType ? '\|' : '&';
+        $types = array_map(self::typeAsString(...), $type->getTypes());
+        sort($types);
+
+        return implode($separator, $types);
     }
 
     /**
