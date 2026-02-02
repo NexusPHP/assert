@@ -49,7 +49,7 @@ final readonly class Expectation implements Expectable
     private const MESSAGE_IS_SCALAR = 'Value "{value}" is expected to be a scalar but got {type} instead.';
     private const MESSAGE_IS_STRING = 'Value "{value}" is expected to be a string but got {type} instead.';
     private const MESSAGE_IS_TRUE = 'Value "{value}" is expected to be true but got {type} instead.';
-    private const MESSAGE_MATCHES_REGULAR_EXPRESSION = 'Value "{value}" is expected to match the PCRE pattern "{pattern}".';
+    private const MESSAGE_MATCHES_REGULAR_EXPRESSION = 'Value "{value}" is expected to match the PCRE pattern \'{pattern}\'.';
     private const MESSAGE_STARTS_WITH = 'Value "{value}" is expected to start with "{needle}".';
 
     /**

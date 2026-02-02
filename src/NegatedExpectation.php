@@ -53,7 +53,7 @@ final readonly class NegatedExpectation implements Expectable
     private const MESSAGE_IS_SCALAR = 'Value "{value}" is not expected to be a scalar.';
     private const MESSAGE_IS_STRING = 'Value "{value}" is not expected to be a string.';
     private const MESSAGE_IS_TRUE = 'Value "{value}" is not expected to be true.';
-    private const MESSAGE_MATCHES_REGULAR_EXPRESSION = 'Value "{value}" is not expected to match the PCRE pattern "{pattern}".';
+    private const MESSAGE_MATCHES_REGULAR_EXPRESSION = 'Value "{value}" is not expected to match the PCRE pattern \'{pattern}\'.';
     private const MESSAGE_STARTS_WITH = 'Value "{value}" is not expected to start with "{needle}".';
 
     /**
