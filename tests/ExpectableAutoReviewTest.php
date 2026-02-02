@@ -95,7 +95,25 @@ final class ExpectableAutoReviewTest extends TestCase
         ));
         $sortedMethods = $publicMethods;
 
-        usort($sortedMethods, static fn(\ReflectionMethod $a, \ReflectionMethod $b): int => strcmp($a->getName(), $b->getName()));
+        $expectationReflection = new \ReflectionClass(Expectation::class);
+
+        usort(
+            $sortedMethods,
+            static function (\ReflectionMethod $a, \ReflectionMethod $b) use ($expectationReflection): int {
+                $methodA = lcfirst(substr($a->getName(), 4));
+                $methodB = lcfirst(substr($b->getName(), 4));
+
+                if ($expectationReflection->hasMethod($methodA) && ! $expectationReflection->hasMethod($methodB)) {
+                    return 1;
+                }
+
+                if (! $expectationReflection->hasMethod($methodA) && $expectationReflection->hasMethod($methodB)) {
+                    return -1;
+                }
+
+                return strcmp($a->getName(), $b->getName());
+            },
+        );
 
         $publicMethods = array_map(
             static fn(\ReflectionMethod $method): string => $method->getName(),
