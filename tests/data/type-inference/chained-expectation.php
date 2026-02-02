@@ -98,6 +98,17 @@ function test_is_scalar_not_is_float_or_is_int(mixed $value): void
     assertType('bool|string', $value);
 }
 
+function test_is_string_not_contains(mixed $a, mixed $b): void
+{
+    $assert1 = Assert::that($a)->isString()->not()->contains('foo');
+    assertType('Nexus\\Assert\\NegatedExpectation<string>', $assert1);
+    assertType('string', $a);
+
+    $assert2 = Assert::that($b)->isString()->not()->contains('');
+    assertType('Nexus\\Assert\\NegatedExpectation<string>', $assert2);
+    assertType('string', $b);
+}
+
 function test_is_string_not_is_non_empty_string(mixed $value): void
 {
     $assert = Assert::that($value)->isString()->not()->isNonEmptyString();

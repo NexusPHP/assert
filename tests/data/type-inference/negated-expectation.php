@@ -17,6 +17,17 @@ use Nexus\Assert\Assert;
 
 use function PHPStan\Testing\assertType;
 
+function test_contains(mixed $a, mixed $b): void
+{
+    $assertA = Assert::that($a)->not()->contains('needle');
+    assertType('Nexus\\Assert\\NegatedExpectation<mixed>', $assertA);
+    assertType('mixed', $a);
+
+    $assertB = Assert::that($b)->not()->contains('');
+    assertType('Nexus\\Assert\\NegatedExpectation<mixed>', $assertB);
+    assertType('mixed', $b);
+}
+
 function test_has_method(mixed $value): void
 {
     $assert = Assert::that($value)->not()->hasMethod('jsonSerialize');

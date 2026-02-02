@@ -29,8 +29,11 @@ function test_is_instance_of(\stdClass $value): void
     Assert::that($value)->isInstanceOf($value);
 }
 
-function test_matches_regular_expression(string $value): void
+function test_string_methods_using_faux_functions(string $a, string $b): void
 {
-    Assert::that($value)->matchesRegularExpression('/^test-/');
-    Assert::that($value)->matchesRegularExpression('/^test-/');
+    Assert::that($a)->matchesRegularExpression('/^test-/');
+    Assert::that($a)->matchesRegularExpression('/^test-/'); // error
+
+    Assert::that($b)->contains('needle');
+    Assert::that($b)->contains('needle'); // error
 }

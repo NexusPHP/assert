@@ -17,6 +17,17 @@ use Nexus\Assert\Assert;
 
 use function PHPStan\Testing\assertType;
 
+function test_contains(mixed $a, mixed $b): void
+{
+    $assertA = Assert::that($a)->nullOr()->contains('needle');
+    assertType('Nexus\\Assert\\NullableExpectation<non-empty-string|null>', $assertA);
+    assertType('non-empty-string|null', $a);
+
+    $assertB = Assert::that($b)->nullOr()->contains('');
+    assertType('Nexus\\Assert\\NullableExpectation<string|null>', $assertB);
+    assertType('string|null', $b);
+}
+
 function test_has_method(mixed $value): void
 {
     $assert = Assert::that($value)->nullOr()->hasMethod('jsonSerialize');

@@ -24,6 +24,7 @@ namespace Nexus\Assert;
  */
 final readonly class NullableExpectation implements Expectable
 {
+    private const MESSAGE_CONTAINS = 'Value "{value}" is expected to be null or to contain "{needle}".';
     private const MESSAGE_HAS_METHOD = 'Object of class "{value}" is expected to be null or to have method "{method}".';
     private const MESSAGE_HAS_OFFSET = 'Array "{value}" is expected to be null or to have offset "{key}".';
     private const MESSAGE_HAS_PROPERTY = 'Object of class "{value}" is expected to be null or to have property "{property}".';
@@ -64,6 +65,30 @@ final readonly class NullableExpectation implements Expectable
         public Expectation $expectation,
     ) {
         $this->value = $expectation->value;
+    }
+
+    /**
+     * @return self<null|TValue>
+     */
+    public function contains(string $needle, ?string $message = null): self
+    {
+        if (null === $this->value) {
+            return $this;
+        }
+
+        try {
+            $this->expectation->contains($needle, $message);
+        } catch (ExpectationFailedException) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_CONTAINS,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'needle' => $this->expectation->exporter->exportValue($needle),
+                ],
+            );
+        }
+
+        return $this;
     }
 
     /**

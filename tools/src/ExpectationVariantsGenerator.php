@@ -30,6 +30,7 @@ final class ExpectationVariantsGenerator
      * - Append '+' to parameter names to mean they are type-exported.
      */
     public const NON_DEFAULT_CONTEXT = [
+        'contains' => ['value', 'needle'],
         'hasMethod' => ['value+', 'method='],
         'hasOffset' => ['value', 'key='],
         'hasProperty' => ['value+', 'property='],

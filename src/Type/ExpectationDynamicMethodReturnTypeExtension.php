@@ -94,7 +94,7 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
             $calledOnType->getStoredExpr(),
             $scope,
             new Node\Arg($calledOnType->getValueExpr()),
-            ...$methodCall->getArgs(),
+            $methodCall->getArgs()[0] ?? new Node\Arg(new Node\Scalar\Int_(1)),
         );
 
         if (null === $resolvedExpr) {

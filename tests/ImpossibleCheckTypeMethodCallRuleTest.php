@@ -55,6 +55,11 @@ final class ImpossibleCheckTypeMethodCallRuleTest extends RuleTestCase
                 35,
                 $tip,
             ],
+            [
+                'Call to method Nexus\\Assert\\Expectation<string>::contains() with \'needle\' will always evaluate to true.',
+                38,
+                $tip,
+            ],
         ]);
     }
 

@@ -39,6 +39,16 @@ final class NullableExpectationTest extends TestCase
         $this->exporter = new Exporter();
     }
 
+    public function testContains(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->contains('world'));
+        self::assertNoErrorsThrown(static fn() => Assert::that('hello world')->nullOr()->contains('world'));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'hello world\'" is expected to be null or to contain "\'planet\'".');
+        Assert::that('hello world')->nullOr()->contains('planet');
+    }
+
     public function testHasMethod(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->hasMethod('__toString'));

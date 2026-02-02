@@ -39,6 +39,15 @@ final class NegatedExpectationTest extends TestCase
         $this->exporter = new Exporter();
     }
 
+    public function testContains(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that('hello world')->not()->contains('planet'));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'hello world\'" is not expected to contain "\'world\'".');
+        Assert::that('hello world')->not()->contains('world');
+    }
+
     public function testHasMethod(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(new \stdClass())->not()->hasMethod('nonExistentMethod'));

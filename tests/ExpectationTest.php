@@ -54,6 +54,15 @@ final class ExpectationTest extends TestCase
         self::assertSame($nullableExpectation, $nullableExpectation->isArray());
     }
 
+    public function testContains(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that('hello world')->contains('world'));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'hello world\'" is expected to contain "\'planet\'".');
+        Assert::that('hello world')->contains('planet');
+    }
+
     public function testHasMethod(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(new \Exception('Test'))->hasMethod('__toString'));

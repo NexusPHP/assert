@@ -24,6 +24,15 @@ namespace Nexus\Assert;
 interface Expectable
 {
     /**
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
+    public function contains(string $needle, ?string $message = null): self;
+
+    /**
      * @param non-empty-string      $method
      * @param null|non-empty-string $message
      *

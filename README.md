@@ -72,6 +72,7 @@ with the message formatted depending on the available context. By default, there
 
 | Methods                                                                    | Available Context        |
 | -------------------------------------------------------------------------- | ------------------------ |
+| `contains(string $needle, ?string $message = null): self`                  | `value`, `needle`        |
 | `hasMethod(string $method, ?string $message = null): self`                 | `value+`, `method=`      |
 | `hasOffset(int\|string $key, ?string $message = null): self`               | `value`, `key=`          |
 | `hasProperty(string $property, ?string $message = null): self`             | `value+`, `property=`    |
