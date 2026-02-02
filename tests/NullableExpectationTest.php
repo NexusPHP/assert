@@ -153,6 +153,35 @@ final class NullableExpectationTest extends TestCase
         Assert::that(42)->nullOr()->isFloat();
     }
 
+    #[DataProvider('provideIsIdenticalCases')]
+    public function testIsIdentical(mixed $value, mixed $other): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->isIdentical($other));
+        self::assertNoErrorsThrown(static fn() => Assert::that($other)->nullOr()->isIdentical($other));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage(\sprintf(
+            'Value "%s" is expected to be null or identical to "\'different\'".',
+            $this->exporter->exportValue($value),
+        ));
+        Assert::that($value)->nullOr()->isIdentical('different');
+    }
+
+    public static function provideIsIdenticalCases(): iterable
+    {
+        $object = new \stdClass();
+
+        yield 'object' => [$object, $object];
+
+        yield 'int' => [42, 42];
+
+        yield 'float' => [3.14, 3.14];
+
+        yield 'string' => ['hello', 'hello'];
+
+        yield 'array' => [[], []];
+    }
+
     public function testIsInstanceOf(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->isInstanceOf(\stdClass::class));
@@ -286,35 +315,6 @@ final class NullableExpectationTest extends TestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "42" is expected to be null or a resource but got int instead.');
         Assert::that(42)->nullOr()->isResource();
-    }
-
-    #[DataProvider('provideIsSameAsCases')]
-    public function testIsSameAs(mixed $value, mixed $other): void
-    {
-        self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->isSameAs($other));
-        self::assertNoErrorsThrown(static fn() => Assert::that($other)->nullOr()->isSameAs($other));
-
-        $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage(\sprintf(
-            'Value "%s" is expected to be null or the same as \'different\' but they differ.',
-            $this->exporter->exportValue($value),
-        ));
-        Assert::that($value)->nullOr()->isSameAs('different');
-    }
-
-    public static function provideIsSameAsCases(): iterable
-    {
-        $object = new \stdClass();
-
-        yield 'object' => [$object, $object];
-
-        yield 'int' => [42, 42];
-
-        yield 'float' => [3.14, 3.14];
-
-        yield 'string' => ['hello', 'hello'];
-
-        yield 'array' => [[], []];
     }
 
     public function testIsScalar(): void

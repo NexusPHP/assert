@@ -140,6 +140,30 @@ final class NegatedExpectationTest extends TestCase
         Assert::that(3.14)->not()->isFloat();
     }
 
+    #[DataProvider('provideIsIdenticalCases')]
+    public function testIsIdentical(mixed $value, mixed $other): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that($value)->not()->isIdentical($other));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage(\sprintf(
+            'Value "%1$s" is not expected to be identical to "%1$s".',
+            $this->exporter->exportValue($value),
+        ));
+        Assert::that($value)->not()->isIdentical($value);
+    }
+
+    public static function provideIsIdenticalCases(): iterable
+    {
+        yield 'int vs string' => [42, '42'];
+
+        yield 'float vs int' => [3.14, 3];
+
+        yield 'string vs bool' => ['true', true];
+
+        yield 'array vs object' => [[], new \stdClass()];
+    }
+
     public function testIsInstanceOf(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(new \stdClass())->not()->isInstanceOf(\Generator::class));
@@ -262,30 +286,6 @@ final class NegatedExpectationTest extends TestCase
         } finally {
             fclose($resource);
         }
-    }
-
-    #[DataProvider('provideIsSameAsCases')]
-    public function testIsSameAs(mixed $value, mixed $other): void
-    {
-        self::assertNoErrorsThrown(static fn() => Assert::that($value)->not()->isSameAs($other));
-
-        $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage(\sprintf(
-            'Value "%1$s" is not expected to be the same as %1$s but they are.',
-            $this->exporter->exportValue($value),
-        ));
-        Assert::that($value)->not()->isSameAs($value);
-    }
-
-    public static function provideIsSameAsCases(): iterable
-    {
-        yield 'int vs string' => [42, '42'];
-
-        yield 'float vs int' => [3.14, 3];
-
-        yield 'string vs bool' => ['true', true];
-
-        yield 'array vs object' => [[], new \stdClass()];
     }
 
     public function testIsScalar(): void

@@ -209,6 +209,10 @@ final class ExpectationMethodResolver
                     new Node\Name\FullyQualified('is_float'),
                     [$arg],
                 ),
+                'isIdentical' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $expected): Node\Expr => new Node\Expr\BinaryOp\Identical(
+                    $arg->value,
+                    $expected->value,
+                ),
                 'isInstanceOf' => static function (Scope $scope, Node\Arg $arg, Node\Arg $class): Node\Expr {
                     $classType = $scope->getType($class->value)->getObjectTypeOrClassStringObjectType();
                     $classNames = $classType->getObjectClassNames();
@@ -315,10 +319,6 @@ final class ExpectationMethodResolver
                 'isResource' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\FuncCall(
                     new Node\Name\FullyQualified('is_resource'),
                     [$arg],
-                ),
-                'isSameAs' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $expected): Node\Expr => new Node\Expr\BinaryOp\Identical(
-                    $arg->value,
-                    $expected->value,
                 ),
                 'isScalar' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\FuncCall(
                     new Node\Name\FullyQualified('is_scalar'),

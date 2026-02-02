@@ -126,6 +126,15 @@ interface Expectable
     public function isFloat(?string $message = null): self;
 
     /**
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
+    public function isIdentical(mixed $other, ?string $message = null): self;
+
+    /**
      * @template T of object
      *
      * @param class-string<T>|T     $class
@@ -244,15 +253,6 @@ interface Expectable
      * @throws ExpectationFailedException
      */
     public function isResource(?string $message = null): self;
-
-    /**
-     * @param null|non-empty-string $message
-     *
-     * @return self<TValue>
-     *
-     * @throws ExpectationFailedException
-     */
-    public function isSameAs(mixed $other, ?string $message = null): self;
 
     /**
      * @param null|non-empty-string $message

@@ -34,8 +34,8 @@ final class ExpectationVariantsGenerator
         'hasMethod' => ['value+', 'method='],
         'hasOffset' => ['value', 'key='],
         'hasProperty' => ['value+', 'property='],
+        'isIdentical' => ['value', 'other', 'type'],
         'isInstanceOf' => ['value', 'class', 'type'],
-        'isSameAs' => ['value', 'other', 'type'],
         'matchesRegularExpression' => ['value', 'pattern='],
     ];
 
@@ -90,7 +90,6 @@ final class ExpectationVariantsGenerator
     private const NEGATED_EXPECTATION_REPLACEMENTS = [
         'is expected to' => 'is not expected to',
         ' but got {type} instead.' => '.',
-        ' but they differ.' => ' but they are.',
     ];
     private const NULLABLE_EXPECTATION_REPLACEMENTS = [
         'is expected to be' => 'is expected to be null or',

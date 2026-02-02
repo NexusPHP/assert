@@ -31,6 +31,7 @@ final readonly class Expectation implements Expectable
     private const MESSAGE_IS_COUNTABLE = 'Value "{value}" is expected to be countable but got {type} instead.';
     private const MESSAGE_IS_FALSE = 'Value "{value}" is expected to be false but got {type} instead.';
     private const MESSAGE_IS_FLOAT = 'Value "{value}" is expected to be a float but got {type} instead.';
+    private const MESSAGE_IS_IDENTICAL = 'Value "{value}" is expected to be identical to "{other}".';
     private const MESSAGE_IS_INSTANCE_OF = 'Value "{value}" is expected to be an instance of {class} but got {type} instead.';
     private const MESSAGE_IS_INT = 'Value "{value}" is expected to be an int but got {type} instead.';
     private const MESSAGE_IS_ITERABLE = 'Value "{value}" is expected to be iterable but got {type} instead.';
@@ -44,7 +45,6 @@ final readonly class Expectation implements Expectable
     private const MESSAGE_IS_OBJECT = 'Value "{value}" is expected to be an object but got {type} instead.';
     private const MESSAGE_IS_POSITIVE_INT = 'Value "{value}" is expected to be a positive int but got {type} instead.';
     private const MESSAGE_IS_RESOURCE = 'Value "{value}" is expected to be a resource but got {type} instead.';
-    private const MESSAGE_IS_SAME_AS = 'Value "{value}" is expected to be the same as {other} but they differ.';
     private const MESSAGE_IS_SCALAR = 'Value "{value}" is expected to be a scalar but got {type} instead.';
     private const MESSAGE_IS_STRING = 'Value "{value}" is expected to be a string but got {type} instead.';
     private const MESSAGE_IS_TRUE = 'Value "{value}" is expected to be true but got {type} instead.';
@@ -273,6 +273,24 @@ final readonly class Expectation implements Expectable
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isIdentical(mixed $other, ?string $message = null): self
+    {
+        if ($this->value !== $other) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_IDENTICAL,
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'other' => $this->exporter->exportValue($other),
                 ],
             );
         }
@@ -520,24 +538,6 @@ final readonly class Expectation implements Expectable
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),
-                ],
-            );
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return self<TValue>
-     */
-    public function isSameAs(mixed $other, ?string $message = null): self
-    {
-        if ($this->value !== $other) {
-            throw new ExpectationFailedException(
-                $message ?? self::MESSAGE_IS_SAME_AS,
-                [
-                    'value' => $this->exporter->exportValue($this->value),
-                    'other' => $this->exporter->exportValue($other),
                 ],
             );
         }

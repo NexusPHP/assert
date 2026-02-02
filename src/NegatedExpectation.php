@@ -35,6 +35,7 @@ final readonly class NegatedExpectation implements Expectable
     private const MESSAGE_IS_COUNTABLE = 'Value "{value}" is not expected to be countable.';
     private const MESSAGE_IS_FALSE = 'Value "{value}" is not expected to be false.';
     private const MESSAGE_IS_FLOAT = 'Value "{value}" is not expected to be a float.';
+    private const MESSAGE_IS_IDENTICAL = 'Value "{value}" is not expected to be identical to "{other}".';
     private const MESSAGE_IS_INSTANCE_OF = 'Value "{value}" is not expected to be an instance of {class}.';
     private const MESSAGE_IS_INT = 'Value "{value}" is not expected to be an int.';
     private const MESSAGE_IS_ITERABLE = 'Value "{value}" is not expected to be iterable.';
@@ -48,7 +49,6 @@ final readonly class NegatedExpectation implements Expectable
     private const MESSAGE_IS_OBJECT = 'Value "{value}" is not expected to be an object.';
     private const MESSAGE_IS_POSITIVE_INT = 'Value "{value}" is not expected to be a positive int.';
     private const MESSAGE_IS_RESOURCE = 'Value "{value}" is not expected to be a resource.';
-    private const MESSAGE_IS_SAME_AS = 'Value "{value}" is not expected to be the same as {other} but they are.';
     private const MESSAGE_IS_SCALAR = 'Value "{value}" is not expected to be a scalar.';
     private const MESSAGE_IS_STRING = 'Value "{value}" is not expected to be a string.';
     private const MESSAGE_IS_TRUE = 'Value "{value}" is not expected to be true.';
@@ -264,6 +264,26 @@ final readonly class NegatedExpectation implements Expectable
         throw new ExpectationFailedException(
             $message ?? self::MESSAGE_IS_FLOAT,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
+        );
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isIdentical(mixed $other, ?string $message = null): self
+    {
+        try {
+            $this->expectation->isIdentical($other, $message);
+        } catch (ExpectationFailedException) {
+            return $this;
+        }
+
+        throw new ExpectationFailedException(
+            $message ?? self::MESSAGE_IS_IDENTICAL,
+            [
+                'value' => $this->expectation->exporter->exportValue($this->value),
+                'other' => $this->expectation->exporter->exportValue($other),
+            ],
         );
     }
 
@@ -488,26 +508,6 @@ final readonly class NegatedExpectation implements Expectable
         throw new ExpectationFailedException(
             $message ?? self::MESSAGE_IS_RESOURCE,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
-        );
-    }
-
-    /**
-     * @return self<TValue>
-     */
-    public function isSameAs(mixed $other, ?string $message = null): self
-    {
-        try {
-            $this->expectation->isSameAs($other, $message);
-        } catch (ExpectationFailedException) {
-            return $this;
-        }
-
-        throw new ExpectationFailedException(
-            $message ?? self::MESSAGE_IS_SAME_AS,
-            [
-                'value' => $this->expectation->exporter->exportValue($this->value),
-                'other' => $this->expectation->exporter->exportValue($other),
-            ],
         );
     }
 

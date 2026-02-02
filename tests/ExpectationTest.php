@@ -163,6 +163,32 @@ final class ExpectationTest extends TestCase
         Assert::that('hello')->isFloat();
     }
 
+    #[DataProvider('provideIsIdenticalCases')]
+    public function testIsIdentical(mixed $value, mixed $other): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that($value)->isIdentical($other));
+
+        $this->expectException(ExpectationFailedException::class);
+        Assert::that($value)->isIdentical('different');
+    }
+
+    public static function provideIsIdenticalCases(): iterable
+    {
+        $object = new \stdClass();
+
+        yield 'int' => [42, 42];
+
+        yield 'float' => [3.14, 3.14];
+
+        yield 'string' => ['hello', 'hello'];
+
+        yield 'null' => [null, null];
+
+        yield 'array' => [[1, 2, 3], [1, 2, 3]];
+
+        yield 'object' => [$object, $object];
+    }
+
     public function testIsInstanceOf(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(new \DateTimeImmutable())->isInstanceOf(\DateTimeInterface::class));
@@ -290,32 +316,6 @@ final class ExpectationTest extends TestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "42" is expected to be a resource but got int instead.');
         Assert::that(42)->isResource();
-    }
-
-    #[DataProvider('provideIsSameAsCases')]
-    public function testIsSameAs(mixed $value, mixed $other): void
-    {
-        self::assertNoErrorsThrown(static fn() => Assert::that($value)->isSameAs($other));
-
-        $this->expectException(ExpectationFailedException::class);
-        Assert::that($value)->isSameAs('different');
-    }
-
-    public static function provideIsSameAsCases(): iterable
-    {
-        $object = new \stdClass();
-
-        yield 'int' => [42, 42];
-
-        yield 'float' => [3.14, 3.14];
-
-        yield 'string' => ['hello', 'hello'];
-
-        yield 'null' => [null, null];
-
-        yield 'array' => [[1, 2, 3], [1, 2, 3]];
-
-        yield 'object' => [$object, $object];
     }
 
     public function testIsScalar(): void

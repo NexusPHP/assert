@@ -46,7 +46,7 @@ final class ReadmeGenerator
                 $method->getName(),
                 implode(', ', array_map(static fn(\ReflectionParameter $param): string => \sprintf(
                     '%s%s%s%s$%s%s',
-                    $param->hasType() && $param->allowsNull() ? '?' : '',
+                    $param->hasType() && $param->allowsNull() && self::typeAsString($param->getType()) !== 'mixed' ? '?' : '',
                     $param->hasType() ? self::typeAsString($param->getType()).' ' : '',
                     $param->isPassedByReference() ? '&' : '',
                     $param->isVariadic() ? '...' : '',

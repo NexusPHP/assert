@@ -83,6 +83,7 @@ with the message formatted depending on the available context. By default, there
 | `isCountable(?string $message = null): self`                               | `value`, `type`          |
 | `isFalse(?string $message = null): self`                                   | `value`, `type`          |
 | `isFloat(?string $message = null): self`                                   | `value`, `type`          |
+| `isIdentical(mixed $other, ?string $message = null): self`                 | `value`, `other`, `type` |
 | `isInstanceOf(object\|string $class, ?string $message = null): self`       | `value`, `class`, `type` |
 | `isInt(?string $message = null): self`                                     | `value`, `type`          |
 | `isIterable(?string $message = null): self`                                | `value`, `type`          |
@@ -96,7 +97,6 @@ with the message formatted depending on the available context. By default, there
 | `isObject(?string $message = null): self`                                  | `value`, `type`          |
 | `isPositiveInt(?string $message = null): self`                             | `value`, `type`          |
 | `isResource(?string $message = null): self`                                | `value`, `type`          |
-| `isSameAs(?mixed $other, ?string $message = null): self`                   | `value`, `other`, `type` |
 | `isScalar(?string $message = null): self`                                  | `value`, `type`          |
 | `isString(?string $message = null): self`                                  | `value`, `type`          |
 | `isTrue(?string $message = null): self`                                    | `value`, `type`          |
