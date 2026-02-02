@@ -60,6 +60,16 @@ final class ImpossibleCheckTypeMethodCallRuleTest extends RuleTestCase
                 38,
                 $tip,
             ],
+            [
+                'Call to method Nexus\\Assert\\Expectation<string>::endsWith() with \'world\' will always evaluate to true.',
+                41,
+                $tip,
+            ],
+            [
+                'Call to method Nexus\\Assert\\Expectation<string>::startsWith() with \'hello\' will always evaluate to true.',
+                44,
+                $tip,
+            ],
         ]);
     }
 

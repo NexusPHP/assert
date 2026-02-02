@@ -109,6 +109,17 @@ function test_is_string_not_contains(mixed $a, mixed $b): void
     assertType('string', $b);
 }
 
+function test_is_string_not_ends_with(mixed $a, mixed $b): void
+{
+    $assert1 = Assert::that($a)->isString()->not()->endsWith('foo');
+    assertType('Nexus\\Assert\\NegatedExpectation<string>', $assert1);
+    assertType('string', $a);
+
+    $assert2 = Assert::that($b)->isString()->not()->endsWith('');
+    assertType('Nexus\\Assert\\NegatedExpectation<string>', $assert2);
+    assertType('string', $b);
+}
+
 function test_is_string_not_is_non_empty_string(mixed $value): void
 {
     $assert = Assert::that($value)->isString()->not()->isNonEmptyString();
@@ -121,4 +132,15 @@ function test_is_string_not_matches_regular_expression(mixed $value, string $pat
     $assert = Assert::that($value)->isString()->not()->matchesRegularExpression($pattern);
     assertType('Nexus\\Assert\\NegatedExpectation<string>', $assert);
     assertType('string', $value);
+}
+
+function test_is_string_not_starts_with(mixed $a, mixed $b): void
+{
+    $assert1 = Assert::that($a)->isString()->not()->startsWith('hello');
+    assertType('Nexus\\Assert\\NegatedExpectation<string>', $assert1);
+    assertType('string', $a);
+
+    $assert2 = Assert::that($b)->isString()->not()->startsWith('');
+    assertType('Nexus\\Assert\\NegatedExpectation<string>', $assert2);
+    assertType('string', $b);
 }

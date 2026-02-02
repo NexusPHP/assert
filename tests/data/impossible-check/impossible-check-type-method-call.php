@@ -36,4 +36,10 @@ function test_string_methods_using_faux_functions(string $a, string $b): void
 
     Assert::that($b)->contains('needle');
     Assert::that($b)->contains('needle'); // error
+
+    Assert::that($a)->endsWith('world');
+    Assert::that($a)->endsWith('world'); // error
+
+    Assert::that($a)->startsWith('hello');
+    Assert::that($a)->startsWith('hello'); // error
 }

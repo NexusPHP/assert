@@ -28,6 +28,17 @@ function test_contains(mixed $a, mixed $b): void
     assertType('string|null', $b);
 }
 
+function test_ends_with(mixed $a, mixed $b): void
+{
+    $assertA = Assert::that($a)->nullOr()->endsWith('world');
+    assertType('Nexus\\Assert\\NullableExpectation<non-empty-string|null>', $assertA);
+    assertType('non-empty-string|null', $a);
+
+    $assertB = Assert::that($b)->nullOr()->endsWith('');
+    assertType('Nexus\\Assert\\NullableExpectation<string|null>', $assertB);
+    assertType('string|null', $b);
+}
+
 function test_has_method(mixed $value): void
 {
     $assert = Assert::that($value)->nullOr()->hasMethod('jsonSerialize');
@@ -208,4 +219,15 @@ function test_matches_regular_expression(mixed $value, string $pattern): void
     $assert = Assert::that($value)->nullOr()->matchesRegularExpression($pattern);
     assertType('Nexus\\Assert\\NullableExpectation<string|null>', $assert);
     assertType('string|null', $value);
+}
+
+function test_starts_with(mixed $a, mixed $b): void
+{
+    $assertA = Assert::that($a)->nullOr()->startsWith('hello');
+    assertType('Nexus\\Assert\\NullableExpectation<non-empty-string|null>', $assertA);
+    assertType('non-empty-string|null', $a);
+
+    $assertB = Assert::that($b)->nullOr()->startsWith('');
+    assertType('Nexus\\Assert\\NullableExpectation<string|null>', $assertB);
+    assertType('string|null', $b);
 }

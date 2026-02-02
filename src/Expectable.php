@@ -33,6 +33,15 @@ interface Expectable
     public function contains(string $needle, ?string $message = null): self;
 
     /**
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
+    public function endsWith(string $needle, ?string $message = null): self;
+
+    /**
      * @param non-empty-string      $method
      * @param null|non-empty-string $message
      *
@@ -290,4 +299,13 @@ interface Expectable
      * @throws ExpectationFailedException
      */
     public function matchesRegularExpression(string $pattern, ?string $message = null): self;
+
+    /**
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
+    public function startsWith(string $needle, ?string $message = null): self;
 }

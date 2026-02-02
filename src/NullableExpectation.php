@@ -25,6 +25,7 @@ namespace Nexus\Assert;
 final readonly class NullableExpectation implements Expectable
 {
     private const MESSAGE_CONTAINS = 'Value "{value}" is expected to be null or to contain "{needle}".';
+    private const MESSAGE_ENDS_WITH = 'Value "{value}" is expected to be null or to end with "{needle}".';
     private const MESSAGE_HAS_METHOD = 'Object of class "{value}" is expected to be null or to have method "{method}".';
     private const MESSAGE_HAS_OFFSET = 'Array "{value}" is expected to be null or to have offset "{key}".';
     private const MESSAGE_HAS_PROPERTY = 'Object of class "{value}" is expected to be null or to have property "{property}".';
@@ -52,6 +53,7 @@ final readonly class NullableExpectation implements Expectable
     private const MESSAGE_IS_STRING = 'Value "{value}" is expected to be null or a string but got {type} instead.';
     private const MESSAGE_IS_TRUE = 'Value "{value}" is expected to be null or true but got {type} instead.';
     private const MESSAGE_MATCHES_REGULAR_EXPRESSION = 'Value "{value}" is expected to be null or to match the PCRE pattern "{pattern}".';
+    private const MESSAGE_STARTS_WITH = 'Value "{value}" is expected to be null or to start with "{needle}".';
 
     /**
      * @var TValue
@@ -81,6 +83,30 @@ final readonly class NullableExpectation implements Expectable
         } catch (ExpectationFailedException) {
             throw new ExpectationFailedException(
                 $message ?? self::MESSAGE_CONTAINS,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'needle' => $this->expectation->exporter->exportValue($needle),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<null|TValue>
+     */
+    public function endsWith(string $needle, ?string $message = null): self
+    {
+        if (null === $this->value) {
+            return $this;
+        }
+
+        try {
+            $this->expectation->endsWith($needle, $message);
+        } catch (ExpectationFailedException) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_ENDS_WITH,
                 [
                     'value' => $this->expectation->exporter->exportValue($this->value),
                     'needle' => $this->expectation->exporter->exportValue($needle),
@@ -744,6 +770,30 @@ final readonly class NullableExpectation implements Expectable
                 [
                     'value' => $this->expectation->exporter->exportValue($this->value),
                     'pattern' => $pattern,
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<null|TValue>
+     */
+    public function startsWith(string $needle, ?string $message = null): self
+    {
+        if (null === $this->value) {
+            return $this;
+        }
+
+        try {
+            $this->expectation->startsWith($needle, $message);
+        } catch (ExpectationFailedException) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_STARTS_WITH,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'needle' => $this->expectation->exporter->exportValue($needle),
                 ],
             );
         }

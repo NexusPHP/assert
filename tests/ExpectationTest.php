@@ -63,6 +63,15 @@ final class ExpectationTest extends TestCase
         Assert::that('hello world')->contains('planet');
     }
 
+    public function testEndsWith(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that('hello world')->endsWith('world'));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'hello world\'" is expected to end with "\'planet\'".');
+        Assert::that('hello world')->endsWith('planet');
+    }
+
     public function testHasMethod(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(new \Exception('Test'))->hasMethod('__toString'));
@@ -356,6 +365,15 @@ final class ExpectationTest extends TestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "\'test\'" is expected to match the PCRE pattern "/^hello\d+$/".');
         Assert::that('test')->matchesRegularExpression('/^hello\d+$/');
+    }
+
+    public function testStartsWith(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that('hello world')->startsWith('hello'));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'hello world\'" is expected to start with "\'planet\'".');
+        Assert::that('hello world')->startsWith('planet');
     }
 
     /**

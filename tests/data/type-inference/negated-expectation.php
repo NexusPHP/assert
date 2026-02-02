@@ -28,6 +28,17 @@ function test_contains(mixed $a, mixed $b): void
     assertType('mixed', $b);
 }
 
+function test_ends_with(mixed $a, mixed $b): void
+{
+    $assertA = Assert::that($a)->not()->endsWith('world');
+    assertType('Nexus\\Assert\\NegatedExpectation<mixed>', $assertA);
+    assertType('mixed', $a);
+
+    $assertB = Assert::that($b)->not()->endsWith('');
+    assertType('Nexus\\Assert\\NegatedExpectation<mixed>', $assertB);
+    assertType('mixed', $b);
+}
+
 function test_has_method(mixed $value): void
 {
     $assert = Assert::that($value)->not()->hasMethod('jsonSerialize');
@@ -210,4 +221,15 @@ function test_matches_regular_expression(mixed $value, string $pattern): void
     $assert = Assert::that($value)->not()->matchesRegularExpression($pattern);
     assertType('Nexus\\Assert\\NegatedExpectation<mixed>', $assert);
     assertType('mixed', $value);
+}
+
+function test_starts_with(mixed $a, mixed $b): void
+{
+    $assertA = Assert::that($a)->not()->startsWith('hello');
+    assertType('Nexus\\Assert\\NegatedExpectation<mixed>', $assertA);
+    assertType('mixed', $a);
+
+    $assertB = Assert::that($b)->not()->startsWith('');
+    assertType('Nexus\\Assert\\NegatedExpectation<mixed>', $assertB);
+    assertType('mixed', $b);
 }

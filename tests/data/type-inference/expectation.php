@@ -28,6 +28,17 @@ function test_contains(mixed $a, mixed $b): void
     assertType('string', $b);
 }
 
+function test_ends_with(mixed $a, mixed $b): void
+{
+    $assert = Assert::that($a)->endsWith('world');
+    assertType('Nexus\\Assert\\Expectation<non-empty-string>', $assert);
+    assertType('non-empty-string', $a);
+
+    $assertB = Assert::that($b)->endsWith('');
+    assertType('Nexus\\Assert\\Expectation<string>', $assertB);
+    assertType('string', $b);
+}
+
 function test_has_method(mixed $value): void
 {
     $assert = Assert::that($value)->hasMethod('jsonSerialize');
@@ -208,4 +219,15 @@ function test_matches_regular_expression(mixed $value, string $pattern): void
     $assert = Assert::that($value)->matchesRegularExpression($pattern);
     assertType('Nexus\\Assert\\Expectation<string>', $assert);
     assertType('string', $value);
+}
+
+function test_starts_with(mixed $a, mixed $b): void
+{
+    $assert = Assert::that($a)->startsWith('hello');
+    assertType('Nexus\\Assert\\Expectation<non-empty-string>', $assert);
+    assertType('non-empty-string', $a);
+
+    $assertB = Assert::that($b)->startsWith('');
+    assertType('Nexus\\Assert\\Expectation<string>', $assertB);
+    assertType('string', $b);
 }

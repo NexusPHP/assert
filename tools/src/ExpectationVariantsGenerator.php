@@ -31,12 +31,14 @@ final class ExpectationVariantsGenerator
      */
     public const NON_DEFAULT_CONTEXT = [
         'contains' => ['value', 'needle'],
+        'endsWith' => ['value', 'needle'],
         'hasMethod' => ['value+', 'method='],
         'hasOffset' => ['value', 'key='],
         'hasProperty' => ['value+', 'property='],
         'isIdentical' => ['value', 'other', 'type'],
         'isInstanceOf' => ['value', 'class', 'type'],
         'matchesRegularExpression' => ['value', 'pattern='],
+        'startsWith' => ['value', 'needle'],
     ];
 
     private const EXPECTATION_CLASS_TEMPLATE = <<<'PHP'

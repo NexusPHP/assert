@@ -73,6 +73,7 @@ with the message formatted depending on the available context. By default, there
 | Methods                                                                    | Available Context        |
 | -------------------------------------------------------------------------- | ------------------------ |
 | `contains(string $needle, ?string $message = null): self`                  | `value`, `needle`        |
+| `endsWith(string $needle, ?string $message = null): self`                  | `value`, `needle`        |
 | `hasMethod(string $method, ?string $message = null): self`                 | `value+`, `method=`      |
 | `hasOffset(int\|string $key, ?string $message = null): self`               | `value`, `key=`          |
 | `hasProperty(string $property, ?string $message = null): self`             | `value+`, `property=`    |
@@ -101,6 +102,7 @@ with the message formatted depending on the available context. By default, there
 | `isString(?string $message = null): self`                                  | `value`, `type`          |
 | `isTrue(?string $message = null): self`                                    | `value`, `type`          |
 | `matchesRegularExpression(string $pattern, ?string $message = null): self` | `value`, `pattern=`      |
+| `startsWith(string $needle, ?string $message = null): self`                | `value`, `needle`        |
 
 > [!NOTE]
 > - The `value` context is always value-exported except when appended by `+` which means it is type-exported instead.

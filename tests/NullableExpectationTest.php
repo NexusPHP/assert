@@ -49,6 +49,16 @@ final class NullableExpectationTest extends TestCase
         Assert::that('hello world')->nullOr()->contains('planet');
     }
 
+    public function testEndsWith(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->endsWith('world'));
+        self::assertNoErrorsThrown(static fn() => Assert::that('hello world')->nullOr()->endsWith('world'));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'hello world\'" is expected to be null or to end with "\'planet\'".');
+        Assert::that('hello world')->nullOr()->endsWith('planet');
+    }
+
     public function testHasMethod(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->hasMethod('__toString'));
@@ -357,6 +367,16 @@ final class NullableExpectationTest extends TestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "\'test\'" is expected to be null or to match the PCRE pattern "/^hello\d+$/".');
         Assert::that('test')->nullOr()->matchesRegularExpression('/^hello\d+$/');
+    }
+
+    public function testStartsWith(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->startsWith('hello'));
+        self::assertNoErrorsThrown(static fn() => Assert::that('hello world')->nullOr()->startsWith('hello'));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'hello world\'" is expected to be null or to start with "\'planet\'".');
+        Assert::that('hello world')->nullOr()->startsWith('planet');
     }
 
     /**

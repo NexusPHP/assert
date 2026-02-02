@@ -30,6 +30,8 @@ final class ExpectationMethodResolver
     ];
     public const METHODS_USING_STRING_RESOLVERS = [
         'contains',
+        'endsWith',
+        'startsWith',
     ];
     private const UNSUPPORTED_EXPECTATION_METHODS = [
         'not',

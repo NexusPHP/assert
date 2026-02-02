@@ -48,6 +48,15 @@ final class NegatedExpectationTest extends TestCase
         Assert::that('hello world')->not()->contains('world');
     }
 
+    public function testEndsWith(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that('hello world')->not()->endsWith('planet'));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'hello world\'" is not expected to end with "\'world\'".');
+        Assert::that('hello world')->not()->endsWith('world');
+    }
+
     public function testHasMethod(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(new \stdClass())->not()->hasMethod('nonExistentMethod'));
@@ -322,6 +331,15 @@ final class NegatedExpectationTest extends TestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "\'hello123\'" is not expected to match the PCRE pattern "/^hello\d+$/".');
         Assert::that('hello123')->not()->matchesRegularExpression('/^hello\d+$/');
+    }
+
+    public function testStartsWith(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that('hello world')->not()->startsWith('planet'));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'hello world\'" is not expected to start with "\'hello\'".');
+        Assert::that('hello world')->not()->startsWith('hello');
     }
 
     /**

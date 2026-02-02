@@ -25,6 +25,7 @@ namespace Nexus\Assert;
 final readonly class NegatedExpectation implements Expectable
 {
     private const MESSAGE_CONTAINS = 'Value "{value}" is not expected to contain "{needle}".';
+    private const MESSAGE_ENDS_WITH = 'Value "{value}" is not expected to end with "{needle}".';
     private const MESSAGE_HAS_METHOD = 'Object of class "{value}" is not expected to have method "{method}".';
     private const MESSAGE_HAS_OFFSET = 'Array "{value}" is not expected to have offset "{key}".';
     private const MESSAGE_HAS_PROPERTY = 'Object of class "{value}" is not expected to have property "{property}".';
@@ -53,6 +54,7 @@ final readonly class NegatedExpectation implements Expectable
     private const MESSAGE_IS_STRING = 'Value "{value}" is not expected to be a string.';
     private const MESSAGE_IS_TRUE = 'Value "{value}" is not expected to be true.';
     private const MESSAGE_MATCHES_REGULAR_EXPRESSION = 'Value "{value}" is not expected to match the PCRE pattern "{pattern}".';
+    private const MESSAGE_STARTS_WITH = 'Value "{value}" is not expected to start with "{needle}".';
 
     /**
      * @var TValue
@@ -81,6 +83,26 @@ final readonly class NegatedExpectation implements Expectable
 
         throw new ExpectationFailedException(
             $message ?? self::MESSAGE_CONTAINS,
+            [
+                'value' => $this->expectation->exporter->exportValue($this->value),
+                'needle' => $this->expectation->exporter->exportValue($needle),
+            ],
+        );
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function endsWith(string $needle, ?string $message = null): self
+    {
+        try {
+            $this->expectation->endsWith($needle, $message);
+        } catch (ExpectationFailedException) {
+            return $this;
+        }
+
+        throw new ExpectationFailedException(
+            $message ?? self::MESSAGE_ENDS_WITH,
             [
                 'value' => $this->expectation->exporter->exportValue($this->value),
                 'needle' => $this->expectation->exporter->exportValue($needle),
@@ -578,6 +600,26 @@ final readonly class NegatedExpectation implements Expectable
             [
                 'value' => $this->expectation->exporter->exportValue($this->value),
                 'pattern' => $pattern,
+            ],
+        );
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function startsWith(string $needle, ?string $message = null): self
+    {
+        try {
+            $this->expectation->startsWith($needle, $message);
+        } catch (ExpectationFailedException) {
+            return $this;
+        }
+
+        throw new ExpectationFailedException(
+            $message ?? self::MESSAGE_STARTS_WITH,
+            [
+                'value' => $this->expectation->exporter->exportValue($this->value),
+                'needle' => $this->expectation->exporter->exportValue($needle),
             ],
         );
     }
