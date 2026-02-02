@@ -19,7 +19,6 @@ use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Analyser\TypeSpecifier;
 use PHPStan\Analyser\TypeSpecifierContext;
-use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\NeverType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
@@ -60,9 +59,9 @@ final class ExpectationMethodResolver
         Scope $scope,
         Node\Arg $arg,
         Node\Arg ...$args,
-    ): Node\Expr {
+    ): ?Node\Expr {
         if (! $this->isSupported($methodName)) {
-            throw new ShouldNotHappenException(\sprintf('Expectation method %s::%s is not supported.', $expectationClass, $methodName));
+            return null; // do not throw on yet unsupported methods
         }
 
         $expr = self::$resolvers[$methodName]($scope, $arg, ...$args);

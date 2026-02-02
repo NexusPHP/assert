@@ -91,6 +91,10 @@ final class ExpectationMethodTypeSpecifyingExtension implements MethodTypeSpecif
             ...$node->getArgs(),
         );
 
+        if (null === $expr) {
+            return new SpecifiedTypes();
+        }
+
         $context = TypeSpecifierContext::createTruthy();
         $specifiedTypes = $this->typeSpecifier->specifyTypesInCondition($scope, $expr, $context)->setRootExpr($expr);
 

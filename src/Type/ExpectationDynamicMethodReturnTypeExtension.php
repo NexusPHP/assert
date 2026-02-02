@@ -96,6 +96,11 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
             new Node\Arg($calledOnType->getValueExpr()),
             ...$methodCall->getArgs(),
         );
+
+        if (null === $resolvedExpr) {
+            return null;
+        }
+
         $resolvedType = $this->resolver->resolveType(
             $this->typeSpecifier,
             $resolvedExpr,
