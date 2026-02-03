@@ -189,6 +189,15 @@ interface Expectable
      *
      * @throws ExpectationFailedException
      */
+    public function isLowercaseString(?string $message = null): self;
+
+    /**
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
     public function isMap(?string $message = null): self;
 
     /**
@@ -289,6 +298,15 @@ interface Expectable
      * @throws ExpectationFailedException
      */
     public function isTrue(?string $message = null): self;
+
+    /**
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
+    public function isUppercaseString(?string $message = null): self;
 
     /**
      * @param non-empty-string      $pattern

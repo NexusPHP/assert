@@ -37,6 +37,7 @@ final readonly class Expectation implements Expectable
     private const MESSAGE_IS_INT = 'Value "{value}" is expected to be an int but got {type} instead.';
     private const MESSAGE_IS_ITERABLE = 'Value "{value}" is expected to be iterable but got {type} instead.';
     private const MESSAGE_IS_LIST = 'Value "{value}" is expected to be a list but got {type} instead.';
+    private const MESSAGE_IS_LOWERCASE_STRING = 'Value "{value}" is expected to be a lowercase string but got {type} instead.';
     private const MESSAGE_IS_MAP = 'Value "{value}" is expected to be a map but got {type} instead.';
     private const MESSAGE_IS_NATURAL_INT = 'Value "{value}" is expected to be a natural int but got {type} instead.';
     private const MESSAGE_IS_NEGATIVE_INT = 'Value "{value}" is expected to be a negative int but got {type} instead.';
@@ -49,6 +50,7 @@ final readonly class Expectation implements Expectable
     private const MESSAGE_IS_SCALAR = 'Value "{value}" is expected to be a scalar but got {type} instead.';
     private const MESSAGE_IS_STRING = 'Value "{value}" is expected to be a string but got {type} instead.';
     private const MESSAGE_IS_TRUE = 'Value "{value}" is expected to be true but got {type} instead.';
+    private const MESSAGE_IS_UPPERCASE_STRING = 'Value "{value}" is expected to be an uppercase string but got {type} instead.';
     private const MESSAGE_MATCHES_REGULAR_EXPRESSION = 'Value "{value}" is expected to match the PCRE pattern \'{pattern}\'.';
     private const MESSAGE_STARTS_WITH = 'Value "{value}" is expected to start with "{needle}".';
 
@@ -398,6 +400,26 @@ final readonly class Expectation implements Expectable
     /**
      * @return self<TValue>
      */
+    public function isLowercaseString(?string $message = null): self
+    {
+        $this->isString($message);
+
+        if (strtolower($this->value) !== $this->value) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_LOWERCASE_STRING,
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'type' => $this->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
     public function isMap(?string $message = null): self
     {
         $this->isArray($message);
@@ -611,6 +633,26 @@ final readonly class Expectation implements Expectable
         if (true !== $this->value) {
             throw new ExpectationFailedException(
                 $message ?? self::MESSAGE_IS_TRUE,
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'type' => $this->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isUppercaseString(?string $message = null): self
+    {
+        $this->isString($message);
+
+        if (strtoupper($this->value) !== $this->value) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_UPPERCASE_STRING,
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),

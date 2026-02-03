@@ -209,6 +209,15 @@ final class NegatedExpectationTest extends TestCase
         Assert::that([0, 1, 2])->not()->isList();
     }
 
+    public function testIsLowercaseString(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that('Hello')->not()->isLowercaseString());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'hello\'" is not expected to be a lowercase string.');
+        Assert::that('hello')->not()->isLowercaseString();
+    }
+
     public function testIsMap(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that([0, 1, 2])->not()->isMap());
@@ -322,6 +331,15 @@ final class NegatedExpectationTest extends TestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "true" is not expected to be true.');
         Assert::that(true)->not()->isTrue();
+    }
+
+    public function testIsUppercaseString(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that('Hello')->not()->isUppercaseString());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'HELLO\'" is not expected to be an uppercase string.');
+        Assert::that('HELLO')->not()->isUppercaseString();
     }
 
     public function testMatchesRegularExpression(): void

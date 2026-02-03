@@ -261,6 +261,16 @@ final class ExpectationMethodResolver
                         $arg->value,
                     ),
                 ),
+                'isLowercaseString' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\BinaryOp\BooleanAnd(
+                    self::$resolvers['isString']($scope, $arg, $other),
+                    new Node\Expr\BinaryOp\Identical(
+                        new Node\Expr\FuncCall(
+                            new Node\Name('strtolower'),
+                            [$arg],
+                        ),
+                        $arg->value,
+                    ),
+                ),
                 'isMap' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\BinaryOp\BooleanAnd(
                     self::$resolvers['isArray']($scope, $arg, $other),
                     new Node\Expr\BinaryOp\Identical(
@@ -333,6 +343,16 @@ final class ExpectationMethodResolver
                 'isTrue' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\BinaryOp\Identical(
                     new Node\Expr\ConstFetch(new Node\Name('true')),
                     $arg->value,
+                ),
+                'isUppercaseString' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\BinaryOp\BooleanAnd(
+                    self::$resolvers['isString']($scope, $arg, $other),
+                    new Node\Expr\BinaryOp\Identical(
+                        new Node\Expr\FuncCall(
+                            new Node\Name('strtoupper'),
+                            [$arg],
+                        ),
+                        $arg->value,
+                    ),
                 ),
             ];
 

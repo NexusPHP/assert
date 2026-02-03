@@ -237,6 +237,15 @@ final class ExpectationTest extends TestCase
         Assert::that(['a' => 1, 'b' => 2])->isList();
     }
 
+    public function testIsLowercaseString(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that('hello')->isLowercaseString());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'Hello\'" is expected to be a lowercase string but got string instead.');
+        Assert::that('Hello')->isLowercaseString();
+    }
+
     public function testIsMap(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(['a' => 1, 'b' => 2])->isMap());
@@ -356,6 +365,15 @@ final class ExpectationTest extends TestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "12" is expected to be true but got int instead.');
         Assert::that(12)->isTrue();
+    }
+
+    public function testIsUppercaseString(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that('HELLO')->isUppercaseString());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'Hello\'" is expected to be an uppercase string but got string instead.');
+        Assert::that('Hello')->isUppercaseString();
     }
 
     public function testMatchesRegularExpression(): void

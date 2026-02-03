@@ -41,6 +41,7 @@ final readonly class NegatedExpectation implements Expectable
     private const MESSAGE_IS_INT = 'Value "{value}" is not expected to be an int.';
     private const MESSAGE_IS_ITERABLE = 'Value "{value}" is not expected to be iterable.';
     private const MESSAGE_IS_LIST = 'Value "{value}" is not expected to be a list.';
+    private const MESSAGE_IS_LOWERCASE_STRING = 'Value "{value}" is not expected to be a lowercase string.';
     private const MESSAGE_IS_MAP = 'Value "{value}" is not expected to be a map.';
     private const MESSAGE_IS_NATURAL_INT = 'Value "{value}" is not expected to be a natural int.';
     private const MESSAGE_IS_NEGATIVE_INT = 'Value "{value}" is not expected to be a negative int.';
@@ -53,6 +54,7 @@ final readonly class NegatedExpectation implements Expectable
     private const MESSAGE_IS_SCALAR = 'Value "{value}" is not expected to be a scalar.';
     private const MESSAGE_IS_STRING = 'Value "{value}" is not expected to be a string.';
     private const MESSAGE_IS_TRUE = 'Value "{value}" is not expected to be true.';
+    private const MESSAGE_IS_UPPERCASE_STRING = 'Value "{value}" is not expected to be an uppercase string.';
     private const MESSAGE_MATCHES_REGULAR_EXPRESSION = 'Value "{value}" is not expected to match the PCRE pattern \'{pattern}\'.';
     private const MESSAGE_STARTS_WITH = 'Value "{value}" is not expected to start with "{needle}".';
 
@@ -383,6 +385,23 @@ final readonly class NegatedExpectation implements Expectable
     /**
      * @return self<TValue>
      */
+    public function isLowercaseString(?string $message = null): self
+    {
+        try {
+            $this->expectation->isLowercaseString($message);
+        } catch (ExpectationFailedException) {
+            return $this;
+        }
+
+        throw new ExpectationFailedException(
+            $message ?? self::MESSAGE_IS_LOWERCASE_STRING,
+            ['value' => $this->expectation->exporter->exportValue($this->value)],
+        );
+    }
+
+    /**
+     * @return self<TValue>
+     */
     public function isMap(?string $message = null): self
     {
         try {
@@ -580,6 +599,23 @@ final readonly class NegatedExpectation implements Expectable
 
         throw new ExpectationFailedException(
             $message ?? self::MESSAGE_IS_TRUE,
+            ['value' => $this->expectation->exporter->exportValue($this->value)],
+        );
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isUppercaseString(?string $message = null): self
+    {
+        try {
+            $this->expectation->isUppercaseString($message);
+        } catch (ExpectationFailedException) {
+            return $this;
+        }
+
+        throw new ExpectationFailedException(
+            $message ?? self::MESSAGE_IS_UPPERCASE_STRING,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }

@@ -120,6 +120,13 @@ function test_is_string_not_ends_with(mixed $a, mixed $b): void
     assertType('string', $b);
 }
 
+function test_is_string_not_is_lowercase_string(mixed $value): void
+{
+    $assert = Assert::that($value)->isString()->not()->isLowercaseString();
+    assertType('Nexus\\Assert\\NegatedExpectation<string>', $assert);
+    assertType('string', $value);
+}
+
 function test_is_string_not_is_non_empty_string(mixed $value): void
 {
     $assert = Assert::that($value)->isString()->not()->isNonEmptyString();
@@ -143,4 +150,11 @@ function test_is_string_not_starts_with(mixed $a, mixed $b): void
     $assert2 = Assert::that($b)->isString()->not()->startsWith('');
     assertType('Nexus\\Assert\\NegatedExpectation<string>', $assert2);
     assertType('string', $b);
+}
+
+function test_is_string_not_is_uppercase_string(mixed $value): void
+{
+    $assert = Assert::that($value)->isString()->not()->isUppercaseString();
+    assertType('Nexus\\Assert\\NegatedExpectation<string>', $assert);
+    assertType('string', $value);
 }

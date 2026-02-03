@@ -130,6 +130,13 @@ function test_is_list(mixed $value): void
     assertType('list<mixed>', $value);
 }
 
+function test_is_lowercase_string(mixed $value): void
+{
+    $assert = Assert::that($value)->isLowercaseString();
+    assertType('Nexus\\Assert\\Expectation<lowercase-string>', $assert);
+    assertType('lowercase-string', $value);
+}
+
 function test_is_map(mixed $value): void
 {
     $assert = Assert::that($value)->isMap();
@@ -212,6 +219,13 @@ function test_is_true(mixed $value): void
     $assert = Assert::that($value)->isTrue();
     assertType('Nexus\\Assert\\Expectation<true>', $assert);
     assertType('true', $value);
+}
+
+function test_is_uppercase_string(mixed $value): void
+{
+    $assert = Assert::that($value)->isUppercaseString();
+    assertType('Nexus\\Assert\\Expectation<uppercase-string>', $assert);
+    assertType('uppercase-string', $value);
 }
 
 function test_matches_regular_expression(mixed $value, string $pattern): void

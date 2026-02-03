@@ -232,6 +232,16 @@ final class NullableExpectationTest extends TestCase
         Assert::that(['a' => 1, 'b' => 2])->nullOr()->isList();
     }
 
+    public function testIsLowercaseString(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->isLowercaseString());
+        self::assertNoErrorsThrown(static fn() => Assert::that('hello')->nullOr()->isLowercaseString());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'Hello\'" is expected to be null or a lowercase string but got string instead.');
+        Assert::that('Hello')->nullOr()->isLowercaseString();
+    }
+
     public function testIsMap(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->isMap());
@@ -357,6 +367,16 @@ final class NullableExpectationTest extends TestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "false" is expected to be null or true but got bool instead.');
         Assert::that(false)->nullOr()->isTrue();
+    }
+
+    public function testIsUppercaseString(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->isUppercaseString());
+        self::assertNoErrorsThrown(static fn() => Assert::that('HELLO')->nullOr()->isUppercaseString());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'Hello\'" is expected to be null or an uppercase string but got string instead.');
+        Assert::that('Hello')->nullOr()->isUppercaseString();
     }
 
     public function testMatchesRegularExpression(): void

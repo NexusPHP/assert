@@ -41,6 +41,7 @@ final readonly class NullableExpectation implements Expectable
     private const MESSAGE_IS_INT = 'Value "{value}" is expected to be null or an int but got {type} instead.';
     private const MESSAGE_IS_ITERABLE = 'Value "{value}" is expected to be null or iterable but got {type} instead.';
     private const MESSAGE_IS_LIST = 'Value "{value}" is expected to be null or a list but got {type} instead.';
+    private const MESSAGE_IS_LOWERCASE_STRING = 'Value "{value}" is expected to be null or a lowercase string but got {type} instead.';
     private const MESSAGE_IS_MAP = 'Value "{value}" is expected to be null or a map but got {type} instead.';
     private const MESSAGE_IS_NATURAL_INT = 'Value "{value}" is expected to be null or a natural int but got {type} instead.';
     private const MESSAGE_IS_NEGATIVE_INT = 'Value "{value}" is expected to be null or a negative int but got {type} instead.';
@@ -52,6 +53,7 @@ final readonly class NullableExpectation implements Expectable
     private const MESSAGE_IS_SCALAR = 'Value "{value}" is expected to be null or a scalar but got {type} instead.';
     private const MESSAGE_IS_STRING = 'Value "{value}" is expected to be null or a string but got {type} instead.';
     private const MESSAGE_IS_TRUE = 'Value "{value}" is expected to be null or true but got {type} instead.';
+    private const MESSAGE_IS_UPPERCASE_STRING = 'Value "{value}" is expected to be null or an uppercase string but got {type} instead.';
     private const MESSAGE_MATCHES_REGULAR_EXPRESSION = 'Value "{value}" is expected to be null or to match the PCRE pattern \'{pattern}\'.';
     private const MESSAGE_STARTS_WITH = 'Value "{value}" is expected to be null or to start with "{needle}".';
 
@@ -482,6 +484,30 @@ final readonly class NullableExpectation implements Expectable
     /**
      * @return self<null|TValue>
      */
+    public function isLowercaseString(?string $message = null): self
+    {
+        if (null === $this->value) {
+            return $this;
+        }
+
+        try {
+            $this->expectation->isLowercaseString($message);
+        } catch (ExpectationFailedException) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_LOWERCASE_STRING,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'type' => $this->expectation->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<null|TValue>
+     */
     public function isMap(?string $message = null): self
     {
         if (null === $this->value) {
@@ -743,6 +769,30 @@ final readonly class NullableExpectation implements Expectable
         } catch (ExpectationFailedException) {
             throw new ExpectationFailedException(
                 $message ?? self::MESSAGE_IS_TRUE,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'type' => $this->expectation->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<null|TValue>
+     */
+    public function isUppercaseString(?string $message = null): self
+    {
+        if (null === $this->value) {
+            return $this;
+        }
+
+        try {
+            $this->expectation->isUppercaseString($message);
+        } catch (ExpectationFailedException) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_UPPERCASE_STRING,
                 [
                     'value' => $this->expectation->exporter->exportValue($this->value),
                     'type' => $this->expectation->exporter->exportType($this->value),

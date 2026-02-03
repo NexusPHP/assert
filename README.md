@@ -89,6 +89,7 @@ with the message formatted depending on the available context. By default, there
 | `isInt(?string $message = null): self`                                     | `value`, `type`          |
 | `isIterable(?string $message = null): self`                                | `value`, `type`          |
 | `isList(?string $message = null): self`                                    | `value`, `type`          |
+| `isLowercaseString(?string $message = null): self`                         | `value`, `type`          |
 | `isMap(?string $message = null): self`                                     | `value`, `type`          |
 | `isNaturalInt(?string $message = null): self`                              | `value`, `type`          |
 | `isNegativeInt(?string $message = null): self`                             | `value`, `type`          |
@@ -101,6 +102,7 @@ with the message formatted depending on the available context. By default, there
 | `isScalar(?string $message = null): self`                                  | `value`, `type`          |
 | `isString(?string $message = null): self`                                  | `value`, `type`          |
 | `isTrue(?string $message = null): self`                                    | `value`, `type`          |
+| `isUppercaseString(?string $message = null): self`                         | `value`, `type`          |
 | `matchesRegularExpression(string $pattern, ?string $message = null): self` | `value`, `pattern=`      |
 | `startsWith(string $needle, ?string $message = null): self`                | `value`, `needle`        |
 
