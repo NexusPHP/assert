@@ -17,8 +17,9 @@ namespace Nexus\Assert;
  * @template TValue
  *
  * @implements Expectable<TValue>
+ * @implements MutatingExpectable<TValue>
  */
-final readonly class Expectation implements Expectable
+final readonly class Expectation implements Expectable, MutatingExpectable
 {
     private const MESSAGE_CONTAINS = 'Value "{value}" is expected to contain "{needle}".';
     private const MESSAGE_ENDS_WITH = 'Value "{value}" is expected to end with "{needle}".';
