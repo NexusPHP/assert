@@ -47,7 +47,7 @@ final class ExporterTest extends TestCase
      */
     public static function provideExportValueCases(): iterable
     {
-        yield 'string' => ['hello', "'hello'"];
+        yield 'string' => ['hello', '\'hello\''];
 
         yield 'int' => [42, '42'];
 
@@ -63,7 +63,7 @@ final class ExporterTest extends TestCase
 
         yield 'list array' => [[1, 2, 3], '[1, 2, 3]'];
 
-        yield 'associative array' => [['foo' => 'bar', 'baz' => 42], "['foo' => 'bar', 'baz' => 42]"];
+        yield 'associative array' => [['foo' => 'bar', 'baz' => 42], '[\'foo\' => \'bar\', \'baz\' => 42]'];
 
         yield 'object' => [(object) ['foo' => 'bar'], 'object(stdClass)'];
 

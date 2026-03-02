@@ -258,7 +258,7 @@ final class ExpectationVariantsGenerator
                 $exportCode = '$'.$variableName;
             }
 
-            $contextCodeLines[$variableName] = \sprintf("'%s' => %s,", $variableName, $exportCode);
+            $contextCodeLines[$variableName] = \sprintf('\'%s\' => %s,', $variableName, $exportCode);
         }
 
         if ($isNegated) {
