@@ -23,6 +23,7 @@ permissions:
 
 jobs:
   tests:
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -37,10 +38,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 1
+          persist-credentials: false
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@d59004228537ca90c8dca680592a08a675bf52b6 # 2.36.0
         with:
           php-version: ${{ matrix.php-version }}
           coverage: xdebug
@@ -53,7 +57,7 @@ jobs:
           echo "COMPOSER_CACHE_DIR=$(composer config cache-dir)" >> $GITHUB_OUTPUT
 
       - name: Cache Composer dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           path: ${{ steps.globals.outputs.COMPOSER_CACHE_DIR }}
           key: ${{ github.workflow }}-PHP_${{ matrix.php-version }}-${{ hashFiles('**/composer.json') }}
@@ -69,21 +73,23 @@ jobs:
           TACHYCARDIA_MONITOR_GA: enabled
 
       - name: Upload coverage to Coveralls
-        run: |
-          composer global require php-coveralls/php-coveralls --ansi
-          php-coveralls --verbose --exclude-no-stmt --ansi --coverage_clover build/phpunit/clover.xml --json_path build/phpunit/coveralls-upload.json
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+        uses: coverallsapp/github-action@5cbfd81b66ca5d10c19b062c04de0199c215fb6e # v2.3.7
+        with:
+          file: build/phpunit/clover.xml
+          flag-name: ${{ format('PHP_{0}_coverage', matrix.php-version) }}
+          parallel: true
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-          COVERALLS_PARALLEL: true
-          COVERALLS_FLAG_NAME: ${{ format('PHP_{0}_coverage', matrix.php-version) }}
 
   coveralls-finish:
     name: Notify Coveralls API
     runs-on: ubuntu-24.04
     needs: tests
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
 
     steps:
       - name: Complete parallel builds
-        uses: coverallsapp/github-action@v2
+        uses: coverallsapp/github-action@5cbfd81b66ca5d10c19b062c04de0199c215fb6e # v2.3.7
         with:
           parallel-finished: true

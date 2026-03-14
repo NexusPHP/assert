@@ -9,14 +9,17 @@ updates:
     schedule:
       interval: 'daily'
     open-pull-requests-limit: 10
+    groups:
+      dependencies:
+        patterns:
+          - '*'
 
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
       interval: 'daily'
     open-pull-requests-limit: 10
-    ignore:
-      - dependency-name: '*'
-        update-types:
-          - 'version-update:semver-minor'
-          - 'version-update:semver-patch'
+    groups:
+      actions:
+        patterns:
+          - '*'
