@@ -2,6 +2,9 @@
 
 [![Unit Tests](https://github.com/NexusPHP/assert/actions/workflows/unit-tests.yml/badge.svg?branch=1.x)](https://github.com/NexusPHP/assert/actions/workflows/unit-tests.yml)
 [![Static Code Analysis](https://github.com/NexusPHP/assert/actions/workflows/static-code-analysis.yml/badge.svg?branch=1.x)](https://github.com/NexusPHP/assert/actions/workflows/static-code-analysis.yml)
+[![Latest Release](https://img.shields.io/github/v/release/NexusPHP/assert?label=latest)](https://github.com/NexusPHP/assert/releases)
+[![Packagist Version](https://img.shields.io/packagist/v/nexusphp/assert.svg)](https://packagist.org/packages/nexusphp/assert)
+[![PHP Version](https://img.shields.io/packagist/php-v/nexusphp/assert.svg)](https://packagist.org/packages/nexusphp/assert)
 
 This library provides efficient type assertions for input validation in a chainable, fluent,
 natural language way. This also provides static analysis support ensuring [PHPStan][1]
