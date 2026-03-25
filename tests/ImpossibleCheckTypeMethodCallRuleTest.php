@@ -32,43 +32,52 @@ final class ImpossibleCheckTypeMethodCallRuleTest extends RuleTestCase
     #[TimeLimit(2.0)]
     public function testRule(): void
     {
-        $tip = 'Because the type is coming from a PHPDoc, you can turn off this check by setting <fg=cyan>treatPhpDocTypesAsCertain: false</> in your <fg=cyan>%configurationFile%</>.';
+        $tipBuilder = static function (?string $possiblyImpureFunction): string {
+            if (null === $possiblyImpureFunction) {
+                return 'Because the type is coming from a PHPDoc, you can turn off this check by setting <fg=cyan>treatPhpDocTypesAsCertain: false</> in your <fg=cyan>%configurationFile%</>.';
+            }
+
+            return implode("\n", [
+                '• Because the type is coming from a PHPDoc, you can turn off this check by setting <fg=cyan>treatPhpDocTypesAsCertain: false</> in your <fg=cyan>%configurationFile%</>.',
+                \sprintf('• If %s is impure, add <fg=cyan>@phpstan-impure</> PHPDoc tag above its declaration. Learn more: <fg=cyan>https://phpstan.org/blog/remembering-and-forgetting-returned-values</>', $possiblyImpureFunction),
+            ]);
+        };
 
         $this->analyse([__DIR__.'/data/impossible-check/impossible-check-type-method-call.php'], [
             [
                 'Call to method Nexus\\Assert\\Expectation<array<string, mixed>>::isArray() will always evaluate to true.',
                 23,
-                $tip,
+                $tipBuilder(null),
             ],
             [
                 'Call to method Nexus\\Assert\\Expectation<stdClass>::isInstanceOf() with \'stdClass\' will always evaluate to true.',
                 28,
-                $tip,
+                $tipBuilder(null),
             ],
             [
                 'Call to method Nexus\\Assert\\Expectation<stdClass>::isInstanceOf() with stdClass will always evaluate to true.',
                 29,
-                $tip,
+                $tipBuilder(null),
             ],
             [
                 'Call to method Nexus\\Assert\\Expectation<string>::matchesRegularExpression() with \'/^test-/\' will always evaluate to true.',
                 35,
-                $tip,
+                $tipBuilder(null),
             ],
             [
                 'Call to method Nexus\\Assert\\Expectation<string>::contains() with \'needle\' will always evaluate to true.',
                 38,
-                $tip,
+                $tipBuilder('Nexus\\Assert\\Expectation<string>::contains()'),
             ],
             [
                 'Call to method Nexus\\Assert\\Expectation<string>::endsWith() with \'world\' will always evaluate to true.',
                 41,
-                $tip,
+                $tipBuilder('Nexus\\Assert\\Expectation<string>::endsWith()'),
             ],
             [
                 'Call to method Nexus\\Assert\\Expectation<string>::startsWith() with \'hello\' will always evaluate to true.',
                 44,
-                $tip,
+                $tipBuilder(null),
             ],
         ]);
     }
