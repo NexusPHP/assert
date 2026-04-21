@@ -87,7 +87,7 @@ final class ComposerScripts
         ksort($settingsJson);
 
         try {
-            $newContents = json_encode($settingsJson, JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+            $newContents = json_encode($settingsJson, \JSON_PRETTY_PRINT | \JSON_NUMERIC_CHECK | \JSON_UNESCAPED_SLASHES | \JSON_THROW_ON_ERROR);
 
             if ($newContents === $contents) {
                 echo "\033[42m SKIP \033[0m .vscode/settings.json not needed to update.\n";

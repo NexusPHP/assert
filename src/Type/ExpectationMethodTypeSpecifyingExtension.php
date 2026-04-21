@@ -31,9 +31,7 @@ final class ExpectationMethodTypeSpecifyingExtension implements MethodTypeSpecif
 {
     private TypeSpecifier $typeSpecifier;
 
-    public function __construct(
-        private ExpectationMethodResolver $resolver,
-    ) {}
+    public function __construct(private ExpectationMethodResolver $resolver) {}
 
     public function setTypeSpecifier(TypeSpecifier $typeSpecifier): void
     {

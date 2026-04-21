@@ -58,10 +58,7 @@ final readonly class Expectation implements Expectable, MutatingExpectable
     /**
      * @param TValue $value
      */
-    public function __construct(
-        public mixed $value,
-        public ExporterInterface $exporter = new Exporter(),
-    ) {}
+    public function __construct(public mixed $value, public ExporterInterface $exporter = new Exporter()) {}
 
     /**
      * @return NegatedExpectation<TValue>
@@ -425,7 +422,7 @@ final readonly class Expectation implements Expectable, MutatingExpectable
     {
         $this->isArray($message);
 
-        if (array_filter($this->value, is_string(...), ARRAY_FILTER_USE_KEY) !== $this->value) {
+        if (array_filter($this->value, is_string(...), \ARRAY_FILTER_USE_KEY) !== $this->value) {
             throw new ExpectationFailedException(
                 $message ?? self::MESSAGE_IS_MAP,
                 [

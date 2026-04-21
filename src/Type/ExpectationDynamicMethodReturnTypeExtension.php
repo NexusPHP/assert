@@ -33,9 +33,7 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
 {
     private TypeSpecifier $typeSpecifier;
 
-    public function __construct(
-        private ExpectationMethodResolver $resolver,
-    ) {}
+    public function __construct(private ExpectationMethodResolver $resolver) {}
 
     public function getClass(): string
     {

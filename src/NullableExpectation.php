@@ -65,9 +65,8 @@ final readonly class NullableExpectation implements Expectable
     /**
      * @param Expectation<TValue> $expectation
      */
-    public function __construct(
-        public Expectation $expectation,
-    ) {
+    public function __construct(public Expectation $expectation)
+    {
         $this->value = $expectation->value;
     }
 
