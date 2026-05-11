@@ -56,7 +56,7 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
         self::assertNoErrorsThrown(static fn() => Assert::that(self::iter([new \Exception(), 1]))->keys()->hasMethod('__toString'));
         self::assertExpectationFails(
             static fn() => Assert::that(self::iter(['oops', 1]))->keys()->hasMethod('__toString'),
-            'Object key of class "string" in iterable is expected to have method "__toString".',
+            'Key of class "string" in iterable is expected to have method "__toString".',
         );
 
         $this->expectException(\LogicException::class);
@@ -69,7 +69,7 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
         self::assertNoErrorsThrown(static fn() => Assert::that(self::iter([['id' => 'x'], 1]))->keys()->hasOffset('id'));
         self::assertExpectationFails(
             static fn() => Assert::that(self::iter([['other' => 'x'], 1]))->keys()->hasOffset('id'),
-            'Array key "[\'other\' => \'x\']" in iterable is expected to have offset "id".',
+            'Key "[\'other\' => \'x\']" in iterable is expected to have offset "id".',
         );
 
         $this->expectException(\LogicException::class);
@@ -82,7 +82,7 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
         self::assertNoErrorsThrown(static fn() => Assert::that(self::iter([(object) ['foo' => 'x'], 1]))->keys()->hasProperty('foo'));
         self::assertExpectationFails(
             static fn() => Assert::that(self::iter([new \stdClass(), 1]))->keys()->hasProperty('foo'),
-            'Object key of class "stdClass" in iterable is expected to have property "foo".',
+            'Key of class "stdClass" in iterable is expected to have property "foo".',
         );
 
         $this->expectException(\LogicException::class);

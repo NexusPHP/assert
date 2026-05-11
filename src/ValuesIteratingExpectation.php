@@ -26,9 +26,9 @@ final readonly class ValuesIteratingExpectation implements Expectable
 {
     private const MESSAGE_CONTAINS = 'Value "{value}" in iterable is expected to contain "{needle}".';
     private const MESSAGE_ENDS_WITH = 'Value "{value}" in iterable is expected to end with "{needle}".';
-    private const MESSAGE_HAS_METHOD = 'Object value of class "{value}" in iterable is expected to have method "{method}".';
-    private const MESSAGE_HAS_OFFSET = 'Array value "{value}" in iterable is expected to have offset "{key}".';
-    private const MESSAGE_HAS_PROPERTY = 'Object value of class "{value}" in iterable is expected to have property "{property}".';
+    private const MESSAGE_HAS_METHOD = 'Value of class "{value}" in iterable is expected to have method "{method}".';
+    private const MESSAGE_HAS_OFFSET = 'Value "{value}" in iterable is expected to have offset "{key}".';
+    private const MESSAGE_HAS_PROPERTY = 'Value of class "{value}" in iterable is expected to have property "{property}".';
     private const MESSAGE_IS_ARRAY = 'Value "{value}" in iterable is expected to be an array but got {type} instead.';
     private const MESSAGE_IS_ARRAY_KEY = 'Value "{value}" in iterable is expected to be an array key but got {type} instead.';
     private const MESSAGE_IS_BOOL = 'Value "{value}" in iterable is expected to be a bool but got {type} instead.';

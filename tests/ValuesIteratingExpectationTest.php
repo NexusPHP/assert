@@ -56,7 +56,7 @@ final class ValuesIteratingExpectationTest extends AbstractExpectationTestCase
         self::assertNoErrorsThrown(static fn() => Assert::that([new \Exception('a'), new \Exception('b')])->values()->hasMethod('__toString'));
 
         $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage('Object value of class "stdClass" in iterable is expected to have method "__toString".');
+        $this->expectExceptionMessage('Value of class "stdClass" in iterable is expected to have method "__toString".');
         Assert::that([new \stdClass()])->values()->hasMethod('__toString');
     }
 
@@ -65,7 +65,7 @@ final class ValuesIteratingExpectationTest extends AbstractExpectationTestCase
         self::assertNoErrorsThrown(static fn() => Assert::that([['a' => 1], ['a' => 2]])->values()->hasOffset('a'));
 
         $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage('Array value "[\'a\' => 1]" in iterable is expected to have offset "b".');
+        $this->expectExceptionMessage('Value "[\'a\' => 1]" in iterable is expected to have offset "b".');
         Assert::that([['a' => 1]])->values()->hasOffset('b');
     }
 
@@ -77,7 +77,7 @@ final class ValuesIteratingExpectationTest extends AbstractExpectationTestCase
         self::assertNoErrorsThrown(static fn() => Assert::that([$obj, $obj])->values()->hasProperty('existing'));
 
         $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage('Object value of class "stdClass" in iterable is expected to have property "missing".');
+        $this->expectExceptionMessage('Value of class "stdClass" in iterable is expected to have property "missing".');
         Assert::that([new \stdClass()])->values()->hasProperty('missing');
     }
 

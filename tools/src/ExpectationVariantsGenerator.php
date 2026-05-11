@@ -175,13 +175,13 @@ final class ExpectationVariantsGenerator
         ],
         'keys' => [
             'Value "{value}" is' => 'Key "{value}" in iterable is',
-            'Object of class "{value}" is' => 'Object key of class "{value}" in iterable is',
-            'Array "{value}" is' => 'Array key "{value}" in iterable is',
+            'Object of class "{value}" is' => 'Key of class "{value}" in iterable is',
+            'Array "{value}" is' => 'Key "{value}" in iterable is',
         ],
         'values' => [
             'Value "{value}" is' => 'Value "{value}" in iterable is',
-            'Object of class "{value}" is' => 'Object value of class "{value}" in iterable is',
-            'Array "{value}" is' => 'Array value "{value}" in iterable is',
+            'Object of class "{value}" is' => 'Value of class "{value}" in iterable is',
+            'Array "{value}" is' => 'Value "{value}" in iterable is',
         ],
     ];
     private const UNSUPPORTED_METHODS = [
