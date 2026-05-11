@@ -27,10 +27,16 @@ jobs:
           coverage: xdebug
           ini-values: display_errors=On, display_startup_errors=On, error_reporting=-1, zend.assertions=1, assert.exception=1
 
+      - name: Setup global variables
+        id: globals
+        shell: bash
+        run: |
+          echo "COMPOSER_CACHE_DIR=$(composer config cache-dir)" >> $GITHUB_OUTPUT
+
       - name: Cache Composer dependencies
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
-          path: ~/.composer/cache/files
+          path: ${{ steps.globals.outputs.COMPOSER_CACHE_DIR }}
           key: composer-${{ hashFiles('**/composer.json') }}
           restore-keys: |
             composer-
