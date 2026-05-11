@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(composer phpstan:baseline)",
+      "Bash(composer phpstan:check)",
+      "Bash(composer cs:check)",
+      "Bash(composer cs:fix)",
+      "Bash(composer generate:docs)",
+      "Bash(composer mutation:check)",
+      "Bash(composer test:all)",
+      "Bash(composer test:auto-review)",
+      "Bash(composer test:stan)",
+      "Bash(composer test:unit)",
+      "mcp__github__get_file_contents"
+    ]
+  }
+}
