@@ -50,6 +50,7 @@ final readonly class NegatedExpectation implements Expectable
     private const MESSAGE_IS_NULL = 'Value "{value}" is not expected to be null.';
     private const MESSAGE_IS_NUMERIC = 'Value "{value}" is not expected to be numeric.';
     private const MESSAGE_IS_OBJECT = 'Value "{value}" is not expected to be an object.';
+    private const MESSAGE_IS_ONE_OF = 'Value "{value}" is not expected to be one of {choices}.';
     private const MESSAGE_IS_POSITIVE_INT = 'Value "{value}" is not expected to be a positive int.';
     private const MESSAGE_IS_RESOURCE = 'Value "{value}" is not expected to be a resource.';
     private const MESSAGE_IS_SCALAR = 'Value "{value}" is not expected to be a scalar.';
@@ -540,6 +541,28 @@ final readonly class NegatedExpectation implements Expectable
     }
 
     /**
+     * @param non-empty-list<mixed> $choices
+     *
+     * @return self<TValue>
+     */
+    public function isOneOf(array $choices, ?string $message = null): self
+    {
+        try {
+            $this->expectation->isOneOf($choices, $message);
+        } catch (ExpectationFailedException) {
+            return $this;
+        }
+
+        throw new ExpectationFailedException(
+            $message ?? self::MESSAGE_IS_ONE_OF,
+            [
+                'value' => $this->expectation->exporter->exportValue($this->value),
+                'choices' => $this->expectation->exporter->exportValue($choices),
+            ],
+        );
+    }
+
+    /**
      * @return self<TValue>
      */
     public function isPositiveInt(?string $message = null): self
@@ -642,6 +665,9 @@ final readonly class NegatedExpectation implements Expectable
     }
 
     /**
+     * @param non-empty-string      $pattern
+     * @param null|non-empty-string $message
+     *
      * @return self<TValue>
      */
     public function matchesRegularExpression(string $pattern, ?string $message = null): self

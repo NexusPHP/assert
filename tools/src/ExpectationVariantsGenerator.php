@@ -38,6 +38,7 @@ final class ExpectationVariantsGenerator
         'isBetween' => ['value', 'min', 'max'],
         'isIdentical' => ['value', 'other', 'type'],
         'isInstanceOf' => ['value', 'class', 'type'],
+        'isOneOf' => ['value', 'choices'],
         'matchesRegularExpression' => ['value', 'pattern='],
         'startsWith' => ['value', 'needle'],
     ];
@@ -417,6 +418,23 @@ final class ExpectationVariantsGenerator
         );
     }
 
+    private static function generateParamDocs(\ReflectionMethod $method): string
+    {
+        $docComment = $method->getDocComment();
+
+        if (false === $docComment) {
+            return '';
+        }
+
+        preg_match_all('/^\s*\*\s*(@param\s.+)$/m', $docComment, $matches);
+
+        if ([] === $matches[1]) {
+            return '';
+        }
+
+        return "\n * ".implode("\n * ", $matches[1])."\n *";
+    }
+
     /**
      * @return array{string, string}
      */
@@ -462,6 +480,7 @@ final class ExpectationVariantsGenerator
         return \sprintf(
             <<<'PHP'
                 /**
+                 * %6$s
                  * @return self<TValue>
                  */
                 public function %1$s(%2$s): self
@@ -483,6 +502,7 @@ final class ExpectationVariantsGenerator
             $parameterCallsCode,
             $constantName,
             self::generateContext($methodName, true),
+            self::generateParamDocs($method),
         );
     }
 
@@ -496,6 +516,7 @@ final class ExpectationVariantsGenerator
             return \sprintf(
                 <<<'PHP'
                     /**
+                     * %4$s
                      * @return self<null>
                      */
                     public function %1$s(%2$s): self
@@ -508,12 +529,14 @@ final class ExpectationVariantsGenerator
                 $methodName,
                 $parametersCode,
                 $parameterCallsCode,
+                self::generateParamDocs($method),
             );
         }
 
         return \sprintf(
             <<<'PHP'
                 /**
+                 * %6$s
                  * @return self<null|TValue>
                  */
                 public function %1$s(%2$s): self
@@ -539,6 +562,7 @@ final class ExpectationVariantsGenerator
             $parameterCallsCode,
             $constantName,
             self::generateContext($methodName, false),
+            self::generateParamDocs($method),
         );
     }
 
@@ -583,6 +607,7 @@ final class ExpectationVariantsGenerator
         return \sprintf(
             <<<'PHP'
                 /**
+                 * %9$s
                  * @return self<TValue>
                  */
                 public function %1$s(%2$s): self
@@ -609,6 +634,7 @@ final class ExpectationVariantsGenerator
             $loopHead,
             $loopVariable,
             $guardCode,
+            self::generateParamDocs($method),
         );
     }
 }

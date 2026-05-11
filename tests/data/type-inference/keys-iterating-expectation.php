@@ -263,6 +263,13 @@ function test_is_object(mixed $value1, mixed $value2): void
     assertType('*NEVER*', $value2);
 }
 
+function test_is_one_of(mixed $value): void
+{
+    $assert = Assert::that($value)->keys()->isOneOf(['light', 'dark']);
+    assertType('Nexus\\Assert\\KeysIteratingExpectation<iterable<\'dark\'|\'light\', mixed>>', $assert);
+    assertType('iterable<\'dark\'|\'light\', mixed>', $value);
+}
+
 function test_is_positive_int(mixed $value): void
 {
     $assert = Assert::that($value)->keys()->isPositiveInt();

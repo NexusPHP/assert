@@ -207,6 +207,13 @@ function test_is_object(mixed $value): void
     assertType('iterable<object>', $value);
 }
 
+function test_is_one_of(mixed $value): void
+{
+    $assert = Assert::that($value)->values()->isOneOf(['light', 'dark']);
+    assertType('Nexus\\Assert\\ValuesIteratingExpectation<iterable<\'dark\'|\'light\'>>', $assert);
+    assertType('iterable<\'dark\'|\'light\'>', $value);
+}
+
 function test_is_positive_int(mixed $value): void
 {
     $assert = Assert::that($value)->values()->isPositiveInt();

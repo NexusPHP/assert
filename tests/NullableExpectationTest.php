@@ -321,6 +321,16 @@ final class NullableExpectationTest extends AbstractExpectationTestCase
         Assert::that(42)->nullOr()->isObject();
     }
 
+    public function testIsOneOf(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->isOneOf(['light', 'dark']));
+        self::assertNoErrorsThrown(static fn() => Assert::that('dark')->nullOr()->isOneOf(['light', 'dark']));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'blue\'" is expected to be null or one of [\'light\', \'dark\'].');
+        Assert::that('blue')->nullOr()->isOneOf(['light', 'dark']);
+    }
+
     public function testIsPositiveInt(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->isPositiveInt());

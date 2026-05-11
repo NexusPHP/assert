@@ -264,6 +264,16 @@ interface Expectable
     public function isObject(?string $message = null): self;
 
     /**
+     * @param non-empty-list<mixed> $choices
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
+    public function isOneOf(array $choices, ?string $message = null): self;
+
+    /**
      * @param null|non-empty-string $message
      *
      * @return self<TValue>

@@ -47,6 +47,7 @@ final readonly class Expectation implements Expectable, MutatingExpectable
     private const MESSAGE_IS_NULL = 'Value "{value}" is expected to be null but got {type} instead.';
     private const MESSAGE_IS_NUMERIC = 'Value "{value}" is expected to be numeric but got {type} instead.';
     private const MESSAGE_IS_OBJECT = 'Value "{value}" is expected to be an object but got {type} instead.';
+    private const MESSAGE_IS_ONE_OF = 'Value "{value}" is expected to be one of {choices}.';
     private const MESSAGE_IS_POSITIVE_INT = 'Value "{value}" is expected to be a positive int but got {type} instead.';
     private const MESSAGE_IS_RESOURCE = 'Value "{value}" is expected to be a resource but got {type} instead.';
     private const MESSAGE_IS_SCALAR = 'Value "{value}" is expected to be a scalar but got {type} instead.';
@@ -583,6 +584,26 @@ final readonly class Expectation implements Expectable, MutatingExpectable
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param non-empty-list<mixed> $choices
+     *
+     * @return self<TValue>
+     */
+    public function isOneOf(array $choices, ?string $message = null): self
+    {
+        if (! \in_array($this->value, $choices, true)) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_ONE_OF,
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'choices' => $this->exporter->exportValue($choices),
                 ],
             );
         }

@@ -334,6 +334,17 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that(['a' => 1])->keys()->isObject();
     }
 
+    public function testIsOneOf(): void
+    {
+        $expectation = Assert::that(['light' => 1, 'dark' => 2])->keys();
+        self::assertSame($expectation, $expectation->isOneOf(['light', 'dark']));
+
+        self::assertExpectationFails(
+            static fn() => Assert::that(['blue' => 1])->keys()->isOneOf(['light', 'dark']),
+            'Key "\'blue\'" in iterable is expected to be one of [\'light\', \'dark\'].',
+        );
+    }
+
     public function testIsPositiveInt(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that([1 => 'a', 2 => 'b'])->keys()->isPositiveInt());

@@ -271,6 +271,15 @@ final class ValuesIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that([42])->values()->isObject();
     }
 
+    public function testIsOneOf(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(['light', 'dark', 'light'])->values()->isOneOf(['light', 'dark']));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'blue\'" in iterable is expected to be one of [\'light\', \'dark\'].');
+        Assert::that(['light', 'blue'])->values()->isOneOf(['light', 'dark']);
+    }
+
     public function testIsPositiveInt(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that([1, 2, 3])->values()->isPositiveInt());

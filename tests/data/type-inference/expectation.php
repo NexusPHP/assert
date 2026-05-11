@@ -193,6 +193,13 @@ function test_is_object(mixed $value): void
     assertType('object', $value);
 }
 
+function test_is_one_of(mixed $value): void
+{
+    $assert = Assert::that($value)->isOneOf(['light', 'dark']);
+    assertType('Nexus\\Assert\\Expectation<\'dark\'|\'light\'>', $assert);
+    assertType('\'dark\'|\'light\'', $value);
+}
+
 function test_is_positive_int(mixed $value): void
 {
     $assert = Assert::that($value)->isPositiveInt();

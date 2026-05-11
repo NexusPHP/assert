@@ -449,6 +449,7 @@ final class ExpectationMethodResolver
             'isNull' => new Resolver\IsNullResolver(),
             'isNumeric' => new Resolver\IsNumericResolver(),
             'isObject' => $isObject,
+            'isOneOf' => new Resolver\IsOneOfResolver(),
             'isPositiveInt' => new Resolver\IsPositiveIntResolver($isInt),
             'isResource' => new Resolver\IsResourceResolver(),
             'isScalar' => new Resolver\IsScalarResolver(),

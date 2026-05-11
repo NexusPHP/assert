@@ -50,6 +50,7 @@ final readonly class ValuesIteratingExpectation implements Expectable
     private const MESSAGE_IS_NULL = 'Value "{value}" in iterable is expected to be null but got {type} instead.';
     private const MESSAGE_IS_NUMERIC = 'Value "{value}" in iterable is expected to be numeric but got {type} instead.';
     private const MESSAGE_IS_OBJECT = 'Value "{value}" in iterable is expected to be an object but got {type} instead.';
+    private const MESSAGE_IS_ONE_OF = 'Value "{value}" in iterable is expected to be one of {choices}.';
     private const MESSAGE_IS_POSITIVE_INT = 'Value "{value}" in iterable is expected to be a positive int but got {type} instead.';
     private const MESSAGE_IS_RESOURCE = 'Value "{value}" in iterable is expected to be a resource but got {type} instead.';
     private const MESSAGE_IS_SCALAR = 'Value "{value}" in iterable is expected to be a scalar but got {type} instead.';
@@ -650,6 +651,30 @@ final readonly class ValuesIteratingExpectation implements Expectable
     }
 
     /**
+     * @param non-empty-list<mixed> $choices
+     *
+     * @return self<TValue>
+     */
+    public function isOneOf(array $choices, ?string $message = null): self
+    {
+        foreach ($this->value as $offsetValue) {
+            try {
+                Assert::that($offsetValue)->isOneOf($choices, $message);
+            } catch (ExpectationFailedException) {
+                throw new ExpectationFailedException(
+                    $message ?? self::MESSAGE_IS_ONE_OF,
+                    [
+                        'value' => $this->expectation->exporter->exportValue($offsetValue),
+                        'choices' => $this->expectation->exporter->exportValue($choices),
+                    ],
+                );
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * @return self<TValue>
      */
     public function isPositiveInt(?string $message = null): self
@@ -782,6 +807,9 @@ final readonly class ValuesIteratingExpectation implements Expectable
     }
 
     /**
+     * @param non-empty-string      $pattern
+     * @param null|non-empty-string $message
+     *
      * @return self<TValue>
      */
     public function matchesRegularExpression(string $pattern, ?string $message = null): self

@@ -101,6 +101,7 @@ with the message formatted depending on the available context. By default, there
 | `isNull(?string $message = null): self`                                                              | `value`, `type`          |
 | `isNumeric(?string $message = null): self`                                                           | `value`, `type`          |
 | `isObject(?string $message = null): self`                                                            | `value`, `type`          |
+| `isOneOf(array $choices, ?string $message = null): self`                                             | `value`, `choices`       |
 | `isPositiveInt(?string $message = null): self`                                                       | `value`, `type`          |
 | `isResource(?string $message = null): self`                                                          | `value`, `type`          |
 | `isScalar(?string $message = null): self`                                                            | `value`, `type`          |

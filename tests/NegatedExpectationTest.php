@@ -290,6 +290,15 @@ final class NegatedExpectationTest extends AbstractExpectationTestCase
         Assert::that(new \stdClass())->not()->isObject();
     }
 
+    public function testIsOneOf(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that('blue')->not()->isOneOf(['light', 'dark']));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'light\'" is not expected to be one of [\'light\', \'dark\'].');
+        Assert::that('light')->not()->isOneOf(['light', 'dark']);
+    }
+
     public function testIsPositiveInt(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(-3)->not()->isPositiveInt());

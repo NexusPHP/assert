@@ -341,6 +341,21 @@ final class ExpectationTest extends AbstractExpectationTestCase
         Assert::that(42)->isObject();
     }
 
+    public function testIsOneOf(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that('light')->isOneOf(['light', 'dark']));
+        self::assertNoErrorsThrown(static fn() => Assert::that(2)->isOneOf([1, 2, 3]));
+
+        self::assertExpectationFails(
+            static fn() => Assert::that('blue')->isOneOf(['light', 'dark']),
+            'Value "\'blue\'" is expected to be one of [\'light\', \'dark\'].',
+        );
+        self::assertExpectationFails(
+            static fn() => Assert::that(0)->isOneOf([1, 2, 3]),
+            'Value "0" is expected to be one of [1, 2, 3].',
+        );
+    }
+
     public function testIsPositiveInt(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(5)->isPositiveInt());
