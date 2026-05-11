@@ -28,6 +28,7 @@ final readonly class Expectation implements Expectable, MutatingExpectable
     private const MESSAGE_HAS_PROPERTY = 'Object of class "{value}" is expected to have property "{property}".';
     private const MESSAGE_IS_ARRAY = 'Value "{value}" is expected to be an array but got {type} instead.';
     private const MESSAGE_IS_ARRAY_KEY = 'Value "{value}" is expected to be an array key but got {type} instead.';
+    private const MESSAGE_IS_BETWEEN = 'Value "{value}" is expected to be a number between {min} and {max}.';
     private const MESSAGE_IS_BOOL = 'Value "{value}" is expected to be a bool but got {type} instead.';
     private const MESSAGE_IS_CALLABLE = 'Value "{value}" is expected to be callable but got {type} instead.';
     private const MESSAGE_IS_COUNTABLE = 'Value "{value}" is expected to be countable but got {type} instead.';
@@ -221,6 +222,30 @@ final readonly class Expectation implements Expectable, MutatingExpectable
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isBetween(float|int $min, float|int $max, bool $inclusive = true, ?string $message = null): self
+    {
+        $inRange = (\is_int($this->value) || \is_float($this->value))
+            && ($inclusive
+                ? ($this->value >= $min && $this->value <= $max)
+                : ($this->value > $min && $this->value < $max));
+
+        if (! $inRange) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_BETWEEN,
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'min' => $this->exporter->exportValue($min),
+                    'max' => $this->exporter->exportValue($max),
                 ],
             );
         }

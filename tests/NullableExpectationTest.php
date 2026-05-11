@@ -112,6 +112,16 @@ final class NullableExpectationTest extends AbstractExpectationTestCase
         Assert::that(3.14)->nullOr()->isArrayKey();
     }
 
+    public function testIsBetween(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->isBetween(0, 10));
+        self::assertNoErrorsThrown(static fn() => Assert::that(5)->nullOr()->isBetween(0, 10));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "15" is expected to be null or a number between 0 and 10.');
+        Assert::that(15)->nullOr()->isBetween(0, 10);
+    }
+
     public function testIsBool(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->isBool());

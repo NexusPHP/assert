@@ -35,6 +35,7 @@ final class ExpectationVariantsGenerator
         'hasMethod' => ['value+', 'method='],
         'hasOffset' => ['value', 'key='],
         'hasProperty' => ['value+', 'property='],
+        'isBetween' => ['value', 'min', 'max'],
         'isIdentical' => ['value', 'other', 'type'],
         'isInstanceOf' => ['value', 'class', 'type'],
         'matchesRegularExpression' => ['value', 'pattern='],

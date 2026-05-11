@@ -99,6 +99,16 @@ final class ValuesIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that([3.14])->values()->isArrayKey();
     }
 
+    public function testIsBetween(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([0, 5, 10])->values()->isBetween(0, 10));
+        self::assertNoErrorsThrown(static fn() => Assert::that([0.1, 0.5, 0.9])->values()->isBetween(0.0, 1.0));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "11" in iterable is expected to be a number between 0 and 10.');
+        Assert::that([11])->values()->isBetween(0, 10);
+    }
+
     public function testIsBool(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that([true, false])->values()->isBool());

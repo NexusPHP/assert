@@ -74,6 +74,13 @@ function test_is_array_key(mixed $value): void
     assertType('mixed~(int|string)', $value);
 }
 
+function test_is_between(mixed $value): void
+{
+    $assert = Assert::that($value)->not()->isBetween(0, 10);
+    assertType('Nexus\\Assert\\NegatedExpectation<mixed~(float|int<0, 10>)>', $assert);
+    assertType('mixed~(float|int<0, 10>)', $value);
+}
+
 function test_is_bool(mixed $value): void
 {
     $assert = Assert::that($value)->not()->isBool();

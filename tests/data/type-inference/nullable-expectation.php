@@ -74,6 +74,13 @@ function test_is_array_key(mixed $value): void
     assertType('int|string|null', $value);
 }
 
+function test_is_between(mixed $value): void
+{
+    $assert = Assert::that($value)->nullOr()->isBetween(0, 10);
+    assertType('Nexus\\Assert\\NullableExpectation<float|int<0, 10>|null>', $assert);
+    assertType('float|int<0, 10>|null', $value);
+}
+
 function test_is_bool(mixed $value): void
 {
     $assert = Assert::that($value)->nullOr()->isBool();

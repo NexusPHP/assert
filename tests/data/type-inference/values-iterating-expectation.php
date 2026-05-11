@@ -74,6 +74,13 @@ function test_is_array_key(mixed $value): void
     assertType('iterable<int|string>', $value);
 }
 
+function test_is_between(mixed $value): void
+{
+    $assert = Assert::that($value)->values()->isBetween(0, 10);
+    assertType('Nexus\\Assert\\ValuesIteratingExpectation<iterable<float|int<0, 10>>>', $assert);
+    assertType('iterable<float|int<0, 10>>', $value);
+}
+
 function test_is_bool(mixed $value): void
 {
     $assert = Assert::that($value)->values()->isBool();

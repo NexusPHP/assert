@@ -96,6 +96,15 @@ interface Expectable
      *
      * @throws ExpectationFailedException
      */
+    public function isBetween(float|int $min, float|int $max, bool $inclusive = true, ?string $message = null): self;
+
+    /**
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
     public function isBool(?string $message = null): self;
 
     /**

@@ -117,6 +117,21 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
         );
     }
 
+    public function testIsBetween(): void
+    {
+        $expectation = Assert::that([0 => 'a', 5 => 'b', 10 => 'c'])->keys();
+        self::assertSame($expectation, $expectation->isBetween(0, 10));
+
+        self::assertExpectationFails(
+            static fn() => Assert::that([15 => 'a'])->keys()->isBetween(0, 10),
+            'Key "15" in iterable is expected to be a number between 0 and 10.',
+        );
+        self::assertExpectationFails(
+            static fn() => Assert::that(['a' => 1])->keys()->isBetween(0, 10),
+            'Key "\'a\'" in iterable is expected to be a number between 0 and 10.',
+        );
+    }
+
     public function testIsBool(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(self::iter([true, 1], [false, 2]))->keys()->isBool());

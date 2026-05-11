@@ -127,6 +127,28 @@ final class ExpectationTest extends AbstractExpectationTestCase
         Assert::that(3.14)->isArrayKey();
     }
 
+    public function testIsBetween(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(5)->isBetween(0, 10));
+        self::assertNoErrorsThrown(static fn() => Assert::that(0)->isBetween(0, 10));
+        self::assertNoErrorsThrown(static fn() => Assert::that(10)->isBetween(0, 10));
+        self::assertNoErrorsThrown(static fn() => Assert::that(0.5)->isBetween(0.0, 1.0));
+        self::assertNoErrorsThrown(static fn() => Assert::that(5)->isBetween(1, 10, false));
+
+        self::assertExpectationFails(
+            static fn() => Assert::that(11)->isBetween(0, 10),
+            'Value "11" is expected to be a number between 0 and 10.',
+        );
+        self::assertExpectationFails(
+            static fn() => Assert::that(0)->isBetween(0, 10, false),
+            'Value "0" is expected to be a number between 0 and 10.',
+        );
+        self::assertExpectationFails(
+            static fn() => Assert::that('5')->isBetween(0, 10),
+            'Value "\'5\'" is expected to be a number between 0 and 10.',
+        );
+    }
+
     public function testIsBool(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(true)->isBool());

@@ -137,19 +137,21 @@ final class ExpectationMethodResolver
         $specifiedTypes = $typeSpecifier->specifyTypesInCondition($scope, $resolvedExpr, $context);
 
         if (NegatedExpectation::class === $expectationClass) {
-            foreach ($specifiedTypes->getSureNotTypes() as [$expr, $type]) {
+            $type = $originalType;
+
+            foreach ($specifiedTypes->getSureNotTypes() as [$expr, $sureNotType]) {
                 if ($expr === $arg->value) {
-                    return TypeCombinator::remove($originalType, $type);
+                    $type = TypeCombinator::remove($type, $sureNotType);
                 }
             }
 
-            foreach ($specifiedTypes->getSureTypes() as [$expr, $type]) {
+            foreach ($specifiedTypes->getSureTypes() as [$expr, $sureType]) {
                 if ($expr === $arg->value) {
-                    return TypeCombinator::intersect($originalType, $type);
+                    $type = TypeCombinator::intersect($type, $sureType);
                 }
             }
 
-            return $originalType;
+            return $type;
         }
 
         $sureType = self::findSureTypeFor($specifiedTypes, $arg->value);
@@ -428,6 +430,7 @@ final class ExpectationMethodResolver
             'hasProperty' => new Resolver\HasPropertyResolver($isObject),
             'isArray' => $isArray,
             'isArrayKey' => new Resolver\IsArrayKeyResolver($isInt, $isString),
+            'isBetween' => new Resolver\IsBetweenResolver($isInt, $isFloat),
             'isBool' => new Resolver\IsBoolResolver(),
             'isCallable' => new Resolver\IsCallableResolver(),
             'isCountable' => new Resolver\IsCountableResolver(),

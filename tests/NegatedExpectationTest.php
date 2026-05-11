@@ -103,6 +103,16 @@ final class NegatedExpectationTest extends AbstractExpectationTestCase
         Assert::that(42)->not()->isArrayKey();
     }
 
+    public function testIsBetween(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(15)->not()->isBetween(0, 10));
+        self::assertNoErrorsThrown(static fn() => Assert::that('5')->not()->isBetween(0, 10));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "5" is not expected to be a number between 0 and 10.');
+        Assert::that(5)->not()->isBetween(0, 10);
+    }
+
     public function testIsBool(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(42)->not()->isBool());

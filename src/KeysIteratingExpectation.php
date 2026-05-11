@@ -31,6 +31,7 @@ final readonly class KeysIteratingExpectation implements Expectable
     private const MESSAGE_HAS_PROPERTY = 'Key of class "{value}" in iterable is expected to have property "{property}".';
     private const MESSAGE_IS_ARRAY = 'Key "{value}" in iterable is expected to be an array but got {type} instead.';
     private const MESSAGE_IS_ARRAY_KEY = 'Key "{value}" in iterable is expected to be an array key but got {type} instead.';
+    private const MESSAGE_IS_BETWEEN = 'Key "{value}" in iterable is expected to be a number between {min} and {max}.';
     private const MESSAGE_IS_BOOL = 'Key "{value}" in iterable is expected to be a bool but got {type} instead.';
     private const MESSAGE_IS_CALLABLE = 'Key "{value}" in iterable is expected to be callable but got {type} instead.';
     private const MESSAGE_IS_COUNTABLE = 'Key "{value}" in iterable is expected to be countable but got {type} instead.';
@@ -238,6 +239,29 @@ final readonly class KeysIteratingExpectation implements Expectable
                     [
                         'value' => $this->expectation->exporter->exportValue($offsetKey),
                         'type' => $this->expectation->exporter->exportType($offsetKey),
+                    ],
+                );
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isBetween(float|int $min, float|int $max, bool $inclusive = true, ?string $message = null): self
+    {
+        foreach ($this->value as $offsetKey => $_) {
+            try {
+                Assert::that($offsetKey)->isBetween($min, $max, $inclusive, $message);
+            } catch (ExpectationFailedException) {
+                throw new ExpectationFailedException(
+                    $message ?? self::MESSAGE_IS_BETWEEN,
+                    [
+                        'value' => $this->expectation->exporter->exportValue($offsetKey),
+                        'min' => $this->expectation->exporter->exportValue($min),
+                        'max' => $this->expectation->exporter->exportValue($max),
                     ],
                 );
             }

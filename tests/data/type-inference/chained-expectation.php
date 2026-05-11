@@ -31,6 +31,13 @@ function test_is_countable_not_is_array(mixed $value): void
     assertType(\Countable::class, $value);
 }
 
+function test_is_int_is_between(mixed $value): void
+{
+    $assert = Assert::that($value)->isInt()->isBetween(0, 10);
+    assertType('Nexus\\Assert\\Expectation<int<0, 10>>', $assert);
+    assertType('int<0, 10>', $value);
+}
+
 function test_is_int_not_is_natural_int(mixed $value): void
 {
     $assert = Assert::that($value)->isInt()->not()->isNaturalInt();
