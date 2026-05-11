@@ -51,6 +51,15 @@ final class ValuesIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that(['index.html'])->values()->endsWith('.php');
     }
 
+    public function testHasMaxLength(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(['abc', 'de'])->values()->hasMaxLength(5));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'abcdef\'" in iterable is expected to have a maximum length of 5.');
+        Assert::that(['abcdef'])->values()->hasMaxLength(5);
+    }
+
     public function testHasMethod(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that([new \Exception('a'), new \Exception('b')])->values()->hasMethod('__toString'));
@@ -58,6 +67,15 @@ final class ValuesIteratingExpectationTest extends AbstractExpectationTestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value of class "stdClass" in iterable is expected to have method "__toString".');
         Assert::that([new \stdClass()])->values()->hasMethod('__toString');
+    }
+
+    public function testHasMinLength(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(['hello', 'world'])->values()->hasMinLength(3));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'ab\'" in iterable is expected to have a minimum length of 3.');
+        Assert::that(['ab'])->values()->hasMinLength(3);
     }
 
     public function testHasOffset(): void

@@ -32,7 +32,9 @@ final class ExpectationVariantsGenerator
     public const NON_DEFAULT_CONTEXT = [
         'contains' => ['value', 'needle'],
         'endsWith' => ['value', 'needle'],
+        'hasMaxLength' => ['value', 'max'],
         'hasMethod' => ['value+', 'method='],
+        'hasMinLength' => ['value', 'min'],
         'hasOffset' => ['value', 'key='],
         'hasProperty' => ['value+', 'property='],
         'isBetween' => ['value', 'min', 'max'],

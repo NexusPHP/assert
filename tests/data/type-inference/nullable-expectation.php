@@ -39,11 +39,25 @@ function test_ends_with(mixed $a, mixed $b): void
     assertType('string|null', $b);
 }
 
+function test_has_max_length(mixed $value): void
+{
+    $assert = Assert::that($value)->nullOr()->hasMaxLength(10);
+    assertType('Nexus\\Assert\\NullableExpectation<string|null>', $assert);
+    assertType('string|null', $value);
+}
+
 function test_has_method(mixed $value): void
 {
     $assert = Assert::that($value)->nullOr()->hasMethod('jsonSerialize');
     assertType('Nexus\\Assert\\NullableExpectation<(object&hasMethod(jsonSerialize))|null>', $assert);
     assertType('(object&hasMethod(jsonSerialize))|null', $value);
+}
+
+function test_has_min_length(mixed $value): void
+{
+    $assert = Assert::that($value)->nullOr()->hasMinLength(1);
+    assertType('Nexus\\Assert\\NullableExpectation<non-empty-string|null>', $assert);
+    assertType('non-empty-string|null', $value);
 }
 
 function test_has_offset(mixed $value): void

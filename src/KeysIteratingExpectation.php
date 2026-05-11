@@ -26,7 +26,9 @@ final readonly class KeysIteratingExpectation implements Expectable
 {
     private const MESSAGE_CONTAINS = 'Key "{value}" in iterable is expected to contain "{needle}".';
     private const MESSAGE_ENDS_WITH = 'Key "{value}" in iterable is expected to end with "{needle}".';
+    private const MESSAGE_HAS_MAX_LENGTH = 'Key "{value}" in iterable is expected to have a maximum length of {max}.';
     private const MESSAGE_HAS_METHOD = 'Key of class "{value}" in iterable is expected to have method "{method}".';
+    private const MESSAGE_HAS_MIN_LENGTH = 'Key "{value}" in iterable is expected to have a minimum length of {min}.';
     private const MESSAGE_HAS_OFFSET = 'Key "{value}" in iterable is expected to have offset "{key}".';
     private const MESSAGE_HAS_PROPERTY = 'Key of class "{value}" in iterable is expected to have property "{property}".';
     private const MESSAGE_IS_ARRAY = 'Key "{value}" in iterable is expected to be an array but got {type} instead.';
@@ -123,6 +125,30 @@ final readonly class KeysIteratingExpectation implements Expectable
     }
 
     /**
+     * @param int<1, max> $max
+     *
+     * @return self<TValue>
+     */
+    public function hasMaxLength(int $max, ?string $message = null): self
+    {
+        foreach ($this->value as $offsetKey => $_) {
+            try {
+                Assert::that($offsetKey)->hasMaxLength($max, $message);
+            } catch (ExpectationFailedException) {
+                throw new ExpectationFailedException(
+                    $message ?? self::MESSAGE_HAS_MAX_LENGTH,
+                    [
+                        'value' => $this->expectation->exporter->exportValue($offsetKey),
+                        'max' => $this->expectation->exporter->exportValue($max),
+                    ],
+                );
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * @return self<TValue>
      */
     public function hasMethod(string $method, ?string $message = null): self
@@ -140,6 +166,30 @@ final readonly class KeysIteratingExpectation implements Expectable
                     [
                         'value' => $this->expectation->exporter->exportType($offsetKey),
                         'method' => $method,
+                    ],
+                );
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param int<1, max> $min
+     *
+     * @return self<TValue>
+     */
+    public function hasMinLength(int $min, ?string $message = null): self
+    {
+        foreach ($this->value as $offsetKey => $_) {
+            try {
+                Assert::that($offsetKey)->hasMinLength($min, $message);
+            } catch (ExpectationFailedException) {
+                throw new ExpectationFailedException(
+                    $message ?? self::MESSAGE_HAS_MIN_LENGTH,
+                    [
+                        'value' => $this->expectation->exporter->exportValue($offsetKey),
+                        'min' => $this->expectation->exporter->exportValue($min),
                     ],
                 );
             }

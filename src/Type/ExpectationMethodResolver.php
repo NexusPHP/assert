@@ -44,6 +44,8 @@ final class ExpectationMethodResolver
     private const METHODS_NEEDING_FAUX_WRAP = [
         'contains',
         'endsWith',
+        'hasMaxLength',
+        'hasMinLength',
         'matchesRegularExpression',
         'startsWith',
     ];
@@ -425,7 +427,9 @@ final class ExpectationMethodResolver
         return [
             'contains' => $stringDispatching,
             'endsWith' => $stringDispatching,
+            'hasMaxLength' => new Resolver\HasMaxLengthResolver($isString),
             'hasMethod' => new Resolver\HasMethodResolver($isObject),
+            'hasMinLength' => new Resolver\HasMinLengthResolver($isString),
             'hasOffset' => new Resolver\HasOffsetResolver($isArray),
             'hasProperty' => new Resolver\HasPropertyResolver($isObject),
             'isArray' => $isArray,

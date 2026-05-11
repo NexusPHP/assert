@@ -23,7 +23,9 @@ final readonly class Expectation implements Expectable, MutatingExpectable
 {
     private const MESSAGE_CONTAINS = 'Value "{value}" is expected to contain "{needle}".';
     private const MESSAGE_ENDS_WITH = 'Value "{value}" is expected to end with "{needle}".';
+    private const MESSAGE_HAS_MAX_LENGTH = 'Value "{value}" is expected to have a maximum length of {max}.';
     private const MESSAGE_HAS_METHOD = 'Object of class "{value}" is expected to have method "{method}".';
+    private const MESSAGE_HAS_MIN_LENGTH = 'Value "{value}" is expected to have a minimum length of {min}.';
     private const MESSAGE_HAS_OFFSET = 'Array "{value}" is expected to have offset "{key}".';
     private const MESSAGE_HAS_PROPERTY = 'Object of class "{value}" is expected to have property "{property}".';
     private const MESSAGE_IS_ARRAY = 'Value "{value}" is expected to be an array but got {type} instead.';
@@ -135,6 +137,28 @@ final readonly class Expectation implements Expectable, MutatingExpectable
     }
 
     /**
+     * @param int<1, max> $max
+     *
+     * @return self<TValue>
+     */
+    public function hasMaxLength(int $max, ?string $message = null): self
+    {
+        $this->isString($message);
+
+        if (\strlen($this->value) > $max) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_HAS_MAX_LENGTH,
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'max' => $this->exporter->exportValue($max),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
      * @return self<TValue>
      */
     public function hasMethod(string $method, ?string $message = null): self
@@ -147,6 +171,28 @@ final readonly class Expectation implements Expectable, MutatingExpectable
                 [
                     'value' => $this->exporter->exportType($this->value),
                     'method' => $method,
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param int<1, max> $min
+     *
+     * @return self<TValue>
+     */
+    public function hasMinLength(int $min, ?string $message = null): self
+    {
+        $this->isString($message);
+
+        if (\strlen($this->value) < $min) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_HAS_MIN_LENGTH,
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'min' => $this->exporter->exportValue($min),
                 ],
             );
         }

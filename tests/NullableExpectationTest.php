@@ -58,6 +58,16 @@ final class NullableExpectationTest extends AbstractExpectationTestCase
         Assert::that('hello world')->nullOr()->endsWith('planet');
     }
 
+    public function testHasMaxLength(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->hasMaxLength(5));
+        self::assertNoErrorsThrown(static fn() => Assert::that('abc')->nullOr()->hasMaxLength(5));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'abcdef\'" is expected to be null or to have a maximum length of 5.');
+        Assert::that('abcdef')->nullOr()->hasMaxLength(5);
+    }
+
     public function testHasMethod(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->hasMethod('__toString'));
@@ -66,6 +76,16 @@ final class NullableExpectationTest extends AbstractExpectationTestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Object of class "stdClass" is expected to be null or to have method "__toString".');
         Assert::that(new \stdClass())->nullOr()->hasMethod('__toString');
+    }
+
+    public function testHasMinLength(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->hasMinLength(3));
+        self::assertNoErrorsThrown(static fn() => Assert::that('hello')->nullOr()->hasMinLength(3));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'ab\'" is expected to be null or to have a minimum length of 3.');
+        Assert::that('ab')->nullOr()->hasMinLength(3);
     }
 
     public function testHasOffset(): void

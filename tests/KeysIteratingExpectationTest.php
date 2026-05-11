@@ -51,6 +51,16 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that(['index.php' => 1])->keys()->endsWith('.html');
     }
 
+    public function testHasMaxLength(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(['abc' => 1, 'de' => 2])->keys()->hasMaxLength(5));
+
+        self::assertExpectationFails(
+            static fn() => Assert::that(['abcdef' => 1])->keys()->hasMaxLength(5),
+            'Key "\'abcdef\'" in iterable is expected to have a maximum length of 5.',
+        );
+    }
+
     public function testHasMethod(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(self::iter([new \Exception(), 1]))->keys()->hasMethod('__toString'));
@@ -62,6 +72,16 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Method hasMethod() cannot be called on keys of an array; array keys are constrained to int|string.');
         Assert::that(['a' => 1])->keys()->hasMethod('__toString');
+    }
+
+    public function testHasMinLength(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(['hello' => 1, 'world' => 2])->keys()->hasMinLength(3));
+
+        self::assertExpectationFails(
+            static fn() => Assert::that(['ab' => 1])->keys()->hasMinLength(3),
+            'Key "\'ab\'" in iterable is expected to have a minimum length of 3.',
+        );
     }
 
     public function testHasOffset(): void

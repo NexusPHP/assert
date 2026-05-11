@@ -26,7 +26,9 @@ final readonly class NullableExpectation implements Expectable
 {
     private const MESSAGE_CONTAINS = 'Value "{value}" is expected to be null or to contain "{needle}".';
     private const MESSAGE_ENDS_WITH = 'Value "{value}" is expected to be null or to end with "{needle}".';
+    private const MESSAGE_HAS_MAX_LENGTH = 'Value "{value}" is expected to be null or to have a maximum length of {max}.';
     private const MESSAGE_HAS_METHOD = 'Object of class "{value}" is expected to be null or to have method "{method}".';
+    private const MESSAGE_HAS_MIN_LENGTH = 'Value "{value}" is expected to be null or to have a minimum length of {min}.';
     private const MESSAGE_HAS_OFFSET = 'Array "{value}" is expected to be null or to have offset "{key}".';
     private const MESSAGE_HAS_PROPERTY = 'Object of class "{value}" is expected to be null or to have property "{property}".';
     private const MESSAGE_IS_ARRAY = 'Value "{value}" is expected to be null or an array but got {type} instead.';
@@ -121,6 +123,32 @@ final readonly class NullableExpectation implements Expectable
     }
 
     /**
+     * @param int<1, max> $max
+     *
+     * @return self<null|TValue>
+     */
+    public function hasMaxLength(int $max, ?string $message = null): self
+    {
+        if (null === $this->value) {
+            return $this;
+        }
+
+        try {
+            $this->expectation->hasMaxLength($max, $message);
+        } catch (ExpectationFailedException) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_HAS_MAX_LENGTH,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'max' => $this->expectation->exporter->exportValue($max),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
      * @return self<null|TValue>
      */
     public function hasMethod(string $method, ?string $message = null): self
@@ -137,6 +165,32 @@ final readonly class NullableExpectation implements Expectable
                 [
                     'value' => $this->expectation->exporter->exportType($this->value),
                     'method' => $method,
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param int<1, max> $min
+     *
+     * @return self<null|TValue>
+     */
+    public function hasMinLength(int $min, ?string $message = null): self
+    {
+        if (null === $this->value) {
+            return $this;
+        }
+
+        try {
+            $this->expectation->hasMinLength($min, $message);
+        } catch (ExpectationFailedException) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_HAS_MIN_LENGTH,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'min' => $this->expectation->exporter->exportValue($min),
                 ],
             );
         }

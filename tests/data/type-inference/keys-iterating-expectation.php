@@ -39,6 +39,13 @@ function test_ends_with(mixed $value1, mixed $value2): void
     assertType('iterable<string, mixed>', $value2);
 }
 
+function test_has_max_length(mixed $value): void
+{
+    $assert = Assert::that($value)->keys()->hasMaxLength(10);
+    assertType('Nexus\\Assert\\KeysIteratingExpectation<iterable<string, mixed>>', $assert);
+    assertType('iterable<string, mixed>', $value);
+}
+
 function test_has_method(mixed $value1, mixed $value2): void
 {
     $assert1 = Assert::that($value1)->keys()->hasMethod('jsonSerialize');
@@ -48,6 +55,13 @@ function test_has_method(mixed $value1, mixed $value2): void
     $assert2 = Assert::that($value2)->isArray()->keys()->hasMethod('jsonSerialize');
     assertType('*NEVER*', $assert2);
     assertType('*NEVER*', $value2);
+}
+
+function test_has_min_length(mixed $value): void
+{
+    $assert = Assert::that($value)->keys()->hasMinLength(1);
+    assertType('Nexus\\Assert\\KeysIteratingExpectation<iterable<non-empty-string, mixed>>', $assert);
+    assertType('iterable<non-empty-string, mixed>', $value);
 }
 
 function test_has_offset(mixed $value1, mixed $value2): void

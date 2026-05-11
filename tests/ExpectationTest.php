@@ -77,6 +77,16 @@ final class ExpectationTest extends AbstractExpectationTestCase
         Assert::that('hello world')->endsWith('planet');
     }
 
+    public function testHasMaxLength(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that('abc')->hasMaxLength(5));
+        self::assertNoErrorsThrown(static fn() => Assert::that('abcde')->hasMaxLength(5));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'abcdef\'" is expected to have a maximum length of 5.');
+        Assert::that('abcdef')->hasMaxLength(5);
+    }
+
     public function testHasMethod(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(new \Exception('Test'))->hasMethod('__toString'));
@@ -84,6 +94,16 @@ final class ExpectationTest extends AbstractExpectationTestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Object of class "stdClass" is expected to have method "nonExistentMethod".');
         Assert::that(new \stdClass())->hasMethod('nonExistentMethod');
+    }
+
+    public function testHasMinLength(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that('hello')->hasMinLength(3));
+        self::assertNoErrorsThrown(static fn() => Assert::that('abc')->hasMinLength(3));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'ab\'" is expected to have a minimum length of 3.');
+        Assert::that('ab')->hasMinLength(3);
     }
 
     public function testHasOffset(): void

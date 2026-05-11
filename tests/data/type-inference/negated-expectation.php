@@ -39,9 +39,23 @@ function test_ends_with(mixed $a, mixed $b): void
     assertType('mixed', $b);
 }
 
+function test_has_max_length(mixed $value): void
+{
+    $assert = Assert::that($value)->not()->hasMaxLength(10);
+    assertType('Nexus\\Assert\\NegatedExpectation<mixed>', $assert);
+    assertType('mixed', $value);
+}
+
 function test_has_method(mixed $value): void
 {
     $assert = Assert::that($value)->not()->hasMethod('jsonSerialize');
+    assertType('Nexus\\Assert\\NegatedExpectation<mixed>', $assert);
+    assertType('mixed', $value);
+}
+
+function test_has_min_length(mixed $value): void
+{
+    $assert = Assert::that($value)->not()->hasMinLength(3);
     assertType('Nexus\\Assert\\NegatedExpectation<mixed>', $assert);
     assertType('mixed', $value);
 }

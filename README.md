@@ -77,7 +77,9 @@ with the message formatted depending on the available context. By default, there
 | ---------------------------------------------------------------------------------------------------- | ------------------------ |
 | `contains(string $needle, ?string $message = null): self`                                            | `value`, `needle`        |
 | `endsWith(string $needle, ?string $message = null): self`                                            | `value`, `needle`        |
+| `hasMaxLength(int $max, ?string $message = null): self`                                              | `value`, `max`           |
 | `hasMethod(string $method, ?string $message = null): self`                                           | `value+`, `method=`      |
+| `hasMinLength(int $min, ?string $message = null): self`                                              | `value`, `min`           |
 | `hasOffset(int\|string $key, ?string $message = null): self`                                         | `value`, `key=`          |
 | `hasProperty(string $property, ?string $message = null): self`                                       | `value+`, `property=`    |
 | `isArray(?string $message = null): self`                                                             | `value`, `type`          |

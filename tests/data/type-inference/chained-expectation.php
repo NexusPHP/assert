@@ -17,6 +17,13 @@ use Nexus\Assert\Assert;
 
 use function PHPStan\Testing\assertType;
 
+function test_has_min_length_has_max_length(mixed $value): void
+{
+    $assert = Assert::that($value)->hasMinLength(1)->hasMaxLength(10);
+    assertType('Nexus\\Assert\\Expectation<non-empty-string>', $assert);
+    assertType('non-empty-string', $value);
+}
+
 function test_is_array_not_has_offset(mixed $value): void
 {
     $assert = Assert::that($value)->isArray()->not()->hasOffset('id');
