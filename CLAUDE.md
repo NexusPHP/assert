@@ -12,6 +12,7 @@ Chainable type-safety assertion library with first-class PHPStan support. Each r
   - `NegatedExpectation.php`, `NullableExpectation.php`, `KeysIteratingExpectation.php`, `ValuesIteratingExpectation.php` — **all auto-generated**, marked `@auto-generated`. Do not edit by hand.
   - `Exporter.php` / `ExporterInterface.php` — value/type formatting for failure messages.
   - `src/Type/` — PHPStan extension code (see below).
+  - `src/Type/Resolver/` — one `ResolverInterface` implementation per `Expectable` method (`IsIntResolver`, `HasOffsetResolver`, etc.). Each builds the synthetic predicate AST for its method. Composite resolvers receive their dependencies via constructor injection (e.g. `IsArrayKeyResolver(IsIntResolver, IsStringResolver)`). `StringDispatchingResolver` is shared by `contains`/`startsWith`/`endsWith`.
 - `tools/` — code-gen & devtools, not shipped at runtime.
   - `tools/src/ExpectationVariantsGenerator.php` — generates the four variant classes.
   - `tools/src/ReadmeGenerator.php` — generates `README.md` from `tools/resources/README.md.tpl`.
@@ -21,13 +22,20 @@ Chainable type-safety assertion library with first-class PHPStan support. Each r
 
 ## Adding or modifying an assertion
 
-1. Edit `src/Expectable.php` (interface) and `src/Expectation.php` (base implementation, message constant, `@return self<TValue>` PHPDoc).
-2. Edit `src/Type/ExpectationMethodResolver.php` to register the PHPStan predicate (`is_int($x)` etc.) in `createExprResolvers()`. Special cases:
-   - methods whose narrowing reuses another predicate (e.g. `matchesRegularExpression` → `isString`): add to `METHODS_USING_PRIMARY_RESOLVERS`.
-   - methods needing the `FAUX_FUNCTION_*` faux-call to chain narrowing (e.g. `contains`, `startsWith`): add to `METHODS_USING_STRING_RESOLVERS`.
-3. If the method's failure message uses non-default placeholders, register them in `ExpectationVariantsGenerator::NON_DEFAULT_CONTEXT` (`'value+'` = type-exported, `'name='` = integrated as-is, plain name = value-exported).
-4. Run `composer generate:docs` — this regenerates every variant class and the README. **Never** edit `Negated/Nullable/Keys/ValuesIteratingExpectation.php` or `README.md` directly.
-5. Add tests (see "Tests").
+The canonical order is **interface → base → regenerate → tests → resolver → fixtures**. The resolver work belongs at the end, not before generation; it surfaces requirements (e.g. multi-arg predicates) naturally only once the runtime behaviour is in place and exercised.
+
+1. **Interface.** Add the method to `src/Expectable.php` with full PHPDoc (`@param`, `@return self<TValue>`, `@throws`).
+2. **Base implementation.** Add the method and its `MESSAGE_<CONSTANT>` to `src/Expectation.php`. The constant message should use the default `{value}`/`{type}` placeholders unless a more specific shape is needed.
+3. **Regenerate variants.** Run `composer generate:docs`. This rewrites `NegatedExpectation`, `NullableExpectation`, `KeysIteratingExpectation`, `ValuesIteratingExpectation`, and `README.md`. **Never** edit those files by hand. There is a known catch-22: the generator loads `Expectation`, which triggers PHP's interface-conformance check on the four variants, which still lack the new method. Bridge it by adding one-line stubs to each variant first, e.g. `public function isFoo(...): self { return $this; }`. The generator overwrites them.
+4. **Unit tests.** Add a `test_<methodName>` to all five test files (`ExpectationTest`, `NegatedExpectationTest`, `NullableExpectationTest`, `KeysIteratingExpectationTest`, `ValuesIteratingExpectationTest`). Method order in each file is enforced by `ExpectableAutoReviewTest`.
+5. **PHPStan resolver.** If the assertion needs type narrowing, add a `FooResolver` class in `src/Type/Resolver/` implementing `ResolverInterface::resolve(Scope $scope, Node\Arg $arg, Node\Arg ...$args): Node\Expr`. Wire it into `ExpectationMethodResolver::__construct()`'s `$this->resolvers` map under the method name. Conventions:
+   - If the new resolver depends on others (e.g. `isList` needs `isArray`, `isBetween` needs `isInt`+`isFloat`), accept them as readonly constructor parameters and reuse the shared instances created at the top of `__construct`.
+   - If the assertion is a simple alias whose narrowing is identical to another (e.g. `matchesRegularExpression` reuses `IsStringResolver`), point the map entry at the existing instance instead of creating a new class.
+   - If the method needs a `FAUX_FUNCTION_*` faux-call to disambiguate it in chained predicates (e.g. `contains`, `startsWith` both narrow to `string`), add its name to `ExpectationMethodResolver::METHODS_NEEDING_FAUX_WRAP`.
+   - If the message uses non-default placeholders, register them in `ExpectationVariantsGenerator::NON_DEFAULT_CONTEXT` (`'value+'` = type-exported, `'name='` = integrated as-is, plain name = value-exported) and **re-run `composer generate:docs`** so the variants pick up the new context. Note: integrated-as-is (`'name='`) markers must correspond to actual method parameter names; derived/computed context keys are not supported by the generator.
+6. **Type-inference fixtures.** Add a `test_<method>` to each of the five fixture files under `tests/data/type-inference/` with `assertType(...)` calls on both the assertion result and the narrowed value. `ExpectableAutoReviewTest::testTypeInferenceFixturesCoverEveryMethod` enforces coverage.
+
+Finally run `composer test:all` and fix any drift (CS, PHPStan, unit, auto-review, type-inference).
 
 The set of methods that are *unreachable on PHP arrays when iterating keys* (because array keys are constrained to `int|string`) lives in `ExpectationVariantsGenerator::KEYS_UNREACHABLE_FOR_ARRAYS`. Those methods throw `\LogicException` at runtime on arrays; they remain valid on non-array iterables.
 
@@ -39,10 +47,12 @@ Three extensions in `src/Type/`, registered in `extension.neon`:
 - `ExpectationDynamicMethodReturnTypeExtension` — types the return of every chainable method on an `Expectable`. Mutating methods (`not`, `nullOr`, `keys`, `values`) wrap the existing `ExpectationObjectType`; assertion methods narrow the wrapped type.
 - `ExpectationMethodTypeSpecifyingExtension` — narrows the wrapped *value's* scope-type (the variable passed to `Assert::that()`), so callers see the narrowing on subsequent statements.
 
-Both `*MethodReturn*` and `*TypeSpecifying*` extensions delegate to `ExpectationMethodResolver`, which:
-- builds the synthetic predicate AST per method,
-- handles negation / null-or wrapping,
+Both `*MethodReturn*` and `*TypeSpecifying*` extensions delegate to `ExpectationMethodResolver`. The resolver is an orchestrator that:
+- holds a `method-name => ResolverInterface` map built in its constructor (`src/Type/Resolver/*` are the implementations; see Layout above),
+- dispatches to the right resolver in `resolveExpr`, which builds the per-method predicate AST,
+- handles negation / null-or wrapping around the predicate,
 - accumulates predicates across the chain via `reduceExprWithStoredExpr` and the `storedExpr` carried on `ExpectationObjectType`,
+- wraps the predicate with a `FAUX_FUNCTION_<method>` call for methods listed in `METHODS_NEEDING_FAUX_WRAP` so they remain distinguishable in chained narrowings,
 - for iterating variants (`keys`/`values`), runs `narrowIterating` to compute the rebuilt iterable type using a **faux variable** trick (see comment at `narrowIterating`): the predicate is specified against a synthetic `Variable` so PHPStan's OR-handling cannot prune disjuncts as impossible against the iterable's outer type. Use `ExpectationMethodResolver::isIteratingVariant()` for class-membership tests; don't inline the class list.
 
 `ExpectationObjectType` is a custom `GenericObjectType` that carries `(className, types, valueExpr, storedExpr)`. `valueExpr` is the AST of the original `Assert::that($x)` argument; `storedExpr` is the cumulative `BooleanAnd` of all predicates in the chain. These let mid-chain methods see and extend prior narrowings.
