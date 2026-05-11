@@ -13,13 +13,24 @@ declare(strict_types=1);
 
 namespace Nexus\Assert\Type;
 
+use Nexus\Assert\KeysIteratingExpectation;
 use Nexus\Assert\NegatedExpectation;
 use Nexus\Assert\NullableExpectation;
+use Nexus\Assert\ValuesIteratingExpectation;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
+use PHPStan\Analyser\SpecifiedTypes;
 use PHPStan\Analyser\TypeSpecifier;
 use PHPStan\Analyser\TypeSpecifierContext;
+use PHPStan\Type\ArrayType;
+use PHPStan\Type\BenevolentUnionType;
+use PHPStan\Type\Constant\ConstantArrayType;
+use PHPStan\Type\Constant\ConstantArrayTypeBuilder;
+use PHPStan\Type\IntegerType;
+use PHPStan\Type\IterableType;
+use PHPStan\Type\MixedType;
 use PHPStan\Type\NeverType;
+use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 
@@ -36,6 +47,14 @@ final class ExpectationMethodResolver
     private const UNSUPPORTED_EXPECTATION_METHODS = [
         'not',
         'nullOr',
+    ];
+    private const ITERATING_VARIANT_METHODS = [
+        'keys',
+        'values',
+    ];
+    private const ITERATING_VARIANT_CLASSES = [
+        KeysIteratingExpectation::class,
+        ValuesIteratingExpectation::class,
     ];
 
     /**
@@ -129,24 +148,127 @@ final class ExpectationMethodResolver
             return $originalType;
         }
 
-        $sureNotTypes = $specifiedTypes->getSureNotTypes();
+        $sureType = self::findSureTypeFor($specifiedTypes, $arg->value);
 
-        foreach ($specifiedTypes->getSureTypes() as $str => [$expr, $type]) {
-            if ($expr !== $arg->value) {
-                continue;
-            }
-
-            $type = TypeCombinator::remove($type, $sureNotTypes[$str][1] ?? new NeverType());
-            $type = TypeCombinator::intersect($originalType, $type);
-
-            if (NullableExpectation::class === $expectationClass) {
-                return TypeCombinator::addNull($type);
-            }
-
-            return $type;
+        if (null === $sureType) {
+            return $originalType;
         }
 
-        return $originalType;
+        $type = TypeCombinator::intersect($originalType, $sureType);
+
+        if (NullableExpectation::class === $expectationClass) {
+            return TypeCombinator::addNull($type);
+        }
+
+        return $type;
+    }
+
+    public static function isIteratingVariant(string $className): bool
+    {
+        return \in_array($className, self::ITERATING_VARIANT_CLASSES, true);
+    }
+
+    /**
+     * @param list<Node\Arg> $args
+     *
+     * @return null|array{Type, Node\Expr}
+     */
+    public function narrowIterating(
+        TypeSpecifier $typeSpecifier,
+        Scope $scope,
+        ExpectationObjectType $calledOnType,
+        string $methodName,
+        array $args,
+    ): ?array {
+        $valueExpr = $calledOnType->getValueExpr();
+        $iteratingClass = $calledOnType->getClassName();
+        \assert(class_exists($iteratingClass));
+
+        $otherArg = $args[0] ?? new Node\Arg(new Node\Scalar\Int_(1));
+
+        // Faux variable: unknown to scope, so PHPStan's OR-specifier cannot prune
+        // disjuncts as impossible against the iterable's outer type. Returns the
+        // predicate's pure narrowing type (e.g. int|string for isArrayKey).
+        $fauxExpr = new Node\Expr\Variable('__faux_iterating_value__');
+        $fauxPredicate = $this->resolveExpr(
+            $iteratingClass,
+            $methodName,
+            null,
+            $scope,
+            new Node\Arg($fauxExpr),
+            $otherArg,
+        );
+
+        if (null === $fauxPredicate) {
+            return null;
+        }
+
+        $specifiedTypes = $typeSpecifier->specifyTypesInCondition(
+            $scope,
+            $fauxPredicate,
+            TypeSpecifierContext::createTruthy(),
+        );
+
+        $innerType = self::findSureTypeFor($specifiedTypes, $fauxExpr);
+
+        if (null === $innerType) {
+            return null;
+        }
+
+        $newType = self::rebuildIterable(
+            $calledOnType->getTypes()[0],
+            KeysIteratingExpectation::class === $iteratingClass,
+            $innerType,
+        );
+
+        if (null === $newType) {
+            return null;
+        }
+
+        $storedPredicate = $this->resolveExpr(
+            $iteratingClass,
+            $methodName,
+            null,
+            $scope,
+            new Node\Arg($valueExpr),
+            $otherArg,
+        );
+        \assert(null !== $storedPredicate);
+
+        return [$newType, self::reduceExprWithStoredExpr($calledOnType->getStoredExpr(), $storedPredicate)];
+    }
+
+    /**
+     * @param list<Node\Arg> $args
+     */
+    public function specifyIteratingOuter(
+        TypeSpecifier $typeSpecifier,
+        Scope $scope,
+        ExpectationObjectType $calledOnType,
+        string $methodName,
+        array $args,
+    ): SpecifiedTypes {
+        $narrowed = $this->narrowIterating($typeSpecifier, $scope, $calledOnType, $methodName, $args);
+
+        if (null === $narrowed) {
+            $storedExpr = $calledOnType->getStoredExpr();
+
+            if (null === $storedExpr) {
+                return new SpecifiedTypes();
+            }
+
+            return $typeSpecifier
+                ->specifyTypesInCondition($scope, $storedExpr, TypeSpecifierContext::createTruthy())
+                ->setRootExpr($storedExpr)
+            ;
+        }
+
+        [$newType, $newStoredExpr] = $narrowed;
+
+        return $typeSpecifier
+            ->create($calledOnType->getValueExpr(), $newType, TypeSpecifierContext::createTruthy(), $scope)
+            ->setRootExpr($newStoredExpr)
+        ;
     }
 
     private static function reduceExprWithStoredExpr(?Node\Expr $storedExpr, Node\Expr $expr): Node\Expr
@@ -156,6 +278,134 @@ final class ExpectationMethodResolver
         }
 
         return new Node\Expr\BinaryOp\BooleanAnd($storedExpr, $expr);
+    }
+
+    private static function findSureTypeFor(SpecifiedTypes $specifiedTypes, Node\Expr $target): ?Type
+    {
+        $sureNotTypes = $specifiedTypes->getSureNotTypes();
+        $matches = [];
+
+        foreach ($specifiedTypes->getSureTypes() as $key => [$expr, $type]) {
+            if ($expr !== $target) {
+                continue;
+            }
+
+            $matches[] = TypeCombinator::remove($type, $sureNotTypes[$key][1] ?? new NeverType());
+        }
+
+        if ([] === $matches) {
+            return null;
+        }
+
+        return TypeCombinator::union(...$matches);
+    }
+
+    private static function rebuildIterable(
+        Type $wrappedType,
+        bool $narrowKey,
+        Type $innerType,
+    ): ?Type {
+        $iterable = new IterableType(new MixedType(), new MixedType());
+        $currentType = TypeCombinator::intersect($wrappedType, $iterable);
+
+        if (! $iterable->isSuperTypeOf($currentType)->yes()) {
+            return null;
+        }
+
+        $arrayKeyConstraint = new BenevolentUnionType([new IntegerType(), new StringType()]);
+
+        $resultTypes = [];
+
+        foreach ($currentType->getArrays() as $arrayType) {
+            $constantArrays = $arrayType->getConstantArrays();
+
+            if (\count($constantArrays) === 1) {
+                $rebuilt = self::rebuildConstantArray($constantArrays[0], $narrowKey, $innerType, $arrayKeyConstraint);
+
+                if (null !== $rebuilt) {
+                    $resultTypes[] = $rebuilt;
+                }
+
+                continue;
+            }
+
+            if ($narrowKey) {
+                $newKeyType = TypeCombinator::intersect($arrayType->getKeyType(), $innerType, $arrayKeyConstraint);
+                $newValueType = $arrayType->getItemType();
+            } else {
+                $newKeyType = $arrayType->getKeyType();
+                $newValueType = TypeCombinator::intersect($arrayType->getItemType(), $innerType);
+            }
+
+            if ($newKeyType instanceof NeverType || $newValueType instanceof NeverType) {
+                continue;
+            }
+
+            $resultTypes[] = new ArrayType($newKeyType, $newValueType);
+        }
+
+        if (! $currentType->isArray()->yes()) {
+            if ($narrowKey) {
+                $newKeyType = TypeCombinator::intersect($currentType->getIterableKeyType(), $innerType);
+                $newValueType = $currentType->getIterableValueType();
+            } else {
+                $newKeyType = $currentType->getIterableKeyType();
+                $newValueType = TypeCombinator::intersect($currentType->getIterableValueType(), $innerType);
+            }
+
+            if (! ($newKeyType instanceof NeverType) && ! ($newValueType instanceof NeverType)) {
+                $resultTypes[] = new IterableType($newKeyType, $newValueType);
+            }
+        }
+
+        if ([] === $resultTypes) {
+            return new NeverType();
+        }
+
+        return TypeCombinator::union(...$resultTypes);
+    }
+
+    private static function rebuildConstantArray(
+        ConstantArrayType $constantArray,
+        bool $narrowKey,
+        Type $innerType,
+        Type $arrayKeyConstraint,
+    ): ?Type {
+        $builder = ConstantArrayTypeBuilder::createEmpty();
+
+        foreach ($constantArray->getKeyTypes() as $i => $keyType) {
+            $valueType = $constantArray->getValueTypes()[$i];
+            $isOptional = $constantArray->isOptionalKey($i);
+
+            if ($narrowKey) {
+                $newKeyType = TypeCombinator::intersect($keyType, $innerType, $arrayKeyConstraint);
+
+                if ($newKeyType instanceof NeverType) {
+                    if ($isOptional) {
+                        continue;
+                    }
+
+                    return null;
+                }
+
+                $newValueType = $valueType;
+            } else {
+                $newKeyType = $keyType;
+                $newValueType = TypeCombinator::intersect($valueType, $innerType);
+
+                if ($newValueType instanceof NeverType) {
+                    if ($isOptional) {
+                        continue;
+                    }
+
+                    return null;
+                }
+            }
+
+            $builder->setOffsetValueType($newKeyType, $newValueType, $isOptional);
+        }
+
+        return $builder->getArray();
     }
 
     private static function createExprResolvers(): void
@@ -368,6 +618,10 @@ final class ExpectationMethodResolver
 
                     return self::$resolvers['isString']($scope, $haystack, $needle);
                 };
+            }
+
+            foreach (self::ITERATING_VARIANT_METHODS as $methodName) {
+                self::$resolvers[$methodName] = self::$resolvers['isIterable'];
             }
         }
     }

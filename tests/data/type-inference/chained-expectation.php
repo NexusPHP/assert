@@ -158,3 +158,20 @@ function test_is_string_not_is_uppercase_string(mixed $value): void
     assertType('Nexus\\Assert\\NegatedExpectation<string>', $assert);
     assertType('string', $value);
 }
+
+/**
+ * @param array<int, string> $value
+ */
+function test_typed_array_values_contradictory_int_collapses_to_never(array $value): void
+{
+    $assert = Assert::that($value)->values()->isInt();
+    assertType('*NEVER*', $assert);
+    assertType('*NEVER*', $value);
+}
+
+function test_values_int_then_string_collapses_to_never(mixed $value): void
+{
+    $assert = Assert::that($value)->values()->isInt()->isString();
+    assertType('*NEVER*', $assert);
+    assertType('*NEVER*', $value);
+}

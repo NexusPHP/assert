@@ -77,6 +77,16 @@ final class ExpectationMethodTypeSpecifyingExtension implements MethodTypeSpecif
             return new SpecifiedTypes();
         }
 
+        if (ExpectationMethodResolver::isIteratingVariant($calledOnType->getClassName())) {
+            return $this->resolver->specifyIteratingOuter(
+                $this->typeSpecifier,
+                $scope,
+                $calledOnType,
+                $methodReflection->getName(),
+                array_values($node->getArgs()),
+            );
+        }
+
         $expectationClass = $calledOnType->getClassName();
         \assert(class_exists($expectationClass));
 

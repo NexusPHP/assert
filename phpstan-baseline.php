@@ -26,7 +26,7 @@ $ignoreErrors[] = [
 	'path' => __DIR__ . '/tests/ExpectationTypeInferenceTest.php',
 ];
 $ignoreErrors[] = [
-	'rawMessage' => 'Property Nexus\\Assert\\Tools\\ExpectationVariantsGenerator::$options (array{all?: false, negated?: false, nullable?: false, help?: false}) does not accept array<string, list<mixed>|string|false>.',
+	'rawMessage' => 'Property Nexus\\Assert\\Tools\\ExpectationVariantsGenerator::$options (array{all?: false, negated?: false, nullable?: false, keys?: false, values?: false, help?: false}) does not accept array<string, list<mixed>|string|false>.',
 	'identifier' => 'assign.propertyType',
 	'count' => 1,
 	'path' => __DIR__ . '/tools/src/ExpectationVariantsGenerator.php',

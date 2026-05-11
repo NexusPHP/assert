@@ -40,6 +40,18 @@ parameters:
     -
       identifier: method.impossibleType
       path: tests/NullableExpectationTest.php
+    -
+      identifier: method.alreadyNarrowedType
+      path: tests/KeysIteratingExpectationTest.php
+    -
+      identifier: method.impossibleType
+      path: tests/KeysIteratingExpectationTest.php
+    -
+      identifier: method.alreadyNarrowedType
+      path: tests/ValuesIteratingExpectationTest.php
+    -
+      identifier: method.impossibleType
+      path: tests/ValuesIteratingExpectationTest.php
   exceptions:
     check:
       throwTypeCovariance: true

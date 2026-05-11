@@ -21,14 +21,13 @@ use Nexus\Assert\NullableExpectation;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  */
 #[CoversClass(NullableExpectation::class)]
 #[Group('unit')]
-final class NullableExpectationTest extends TestCase
+final class NullableExpectationTest extends AbstractExpectationTestCase
 {
     private ExporterInterface $exporter;
 
@@ -397,19 +396,5 @@ final class NullableExpectationTest extends TestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "\'hello world\'" is expected to be null or to start with "\'planet\'".');
         Assert::that('hello world')->nullOr()->startsWith('planet');
-    }
-
-    /**
-     * @template T
-     *
-     * @param \Closure(): NullableExpectation<T> $callback
-     */
-    private static function assertNoErrorsThrown(\Closure $callback): void
-    {
-        try {
-            $callback();
-        } catch (ExpectationFailedException) {
-            self::fail('Expected no exception to be thrown.');
-        }
     }
 }

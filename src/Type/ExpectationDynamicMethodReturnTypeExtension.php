@@ -76,6 +76,37 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
             );
         }
 
+        $iteratingClass = $calledOnType->getClassName();
+
+        if (ExpectationMethodResolver::isIteratingVariant($iteratingClass)) {
+            \assert(class_exists($iteratingClass));
+
+            $narrowed = $this->resolver->narrowIterating(
+                $this->typeSpecifier,
+                $scope,
+                $calledOnType,
+                $methodReflection->getName(),
+                array_values($methodCall->getArgs()),
+            );
+
+            if (null === $narrowed) {
+                return $calledOnType;
+            }
+
+            [$newType, $newStoredExpr] = $narrowed;
+
+            if ($newType instanceof NeverType) {
+                return new NeverType(true);
+            }
+
+            return new ExpectationObjectType(
+                $iteratingClass,
+                [$newType],
+                $calledOnType->getValueExpr(),
+                $newStoredExpr,
+            );
+        }
+
         $returnType = ParametersAcceptorSelector::selectFromArgs(
             $scope,
             $methodCall->getArgs(),

@@ -106,9 +106,37 @@ function test(mixed $a): void
 
 ```
 
+If you want to assert against each key or each value of an iterable input, you can invoke `keys()` or
+`values()` on the base expectation. These return a `Nexus\Assert\KeysIteratingExpectation` or
+`Nexus\Assert\ValuesIteratingExpectation` respectively, on which any expectation method is applied to
+every element.
+
+```php
+<?php
+
+use Nexus\Assert\Assert;
+
+function test(mixed $a, mixed $b): void
+{
+    Assert::that($a)->values()->isInt();
+    // $a is now understood as iterable<mixed, int>
+
+    Assert::that($b)->keys()->isString();
+    // $b is now understood as iterable<string, mixed>
+}
+
+```
+
 > [!NOTE]
-> Currently, the `not()` and `nullOr()` methods can only be invoked on the base `Expectation` object.
-> It is not yet available on the variant expectations. It can be considered in future versions.
+> PHP arrays only allow `int|string` keys. Calling key-iterating methods whose predicate is unreachable
+> on array keys (e.g. `keys()->isFloat()`, `keys()->isObject()`, `keys()->hasMethod()`) throws a
+> `LogicException` at runtime when the wrapped value is an array. They remain valid on non-array
+> iterables (`Iterator`, `Generator`, `IteratorAggregate`), whose keys are not so constrained.
+
+> [!NOTE]
+> Currently, the `not()`, `nullOr()`, `keys()`, and `values()` methods can only be invoked on the base
+> `Expectation` object. They are not yet available on the variant expectations. This can be considered
+> in future versions.
 
 ## Customising the Exporter
 

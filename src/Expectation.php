@@ -77,6 +77,22 @@ final readonly class Expectation implements Expectable, MutatingExpectable
     }
 
     /**
+     * @return KeysIteratingExpectation<TValue>
+     */
+    public function keys(): KeysIteratingExpectation
+    {
+        return new KeysIteratingExpectation($this);
+    }
+
+    /**
+     * @return ValuesIteratingExpectation<TValue>
+     */
+    public function values(): ValuesIteratingExpectation
+    {
+        return new ValuesIteratingExpectation($this);
+    }
+
+    /**
      * @return self<TValue>
      */
     public function contains(string $needle, ?string $message = null): self

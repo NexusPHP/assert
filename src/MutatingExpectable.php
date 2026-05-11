@@ -17,7 +17,8 @@ namespace Nexus\Assert;
  * Interface for a mutating expectation.
  *
  * Mutating expectations change the nature of the expectation itself, such as
- * negating it or allowing null values.
+ * negating it, allowing null values, or iterating over keys or values of an
+ * iterable.
  *
  * @template T
  */
@@ -32,4 +33,14 @@ interface MutatingExpectable
      * @return Expectable<null|T>
      */
     public function nullOr(): Expectable;
+
+    /**
+     * @return Expectable<T>
+     */
+    public function keys(): Expectable;
+
+    /**
+     * @return Expectable<T>
+     */
+    public function values(): Expectable;
 }

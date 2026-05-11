@@ -20,7 +20,6 @@ use Nexus\Assert\ExporterInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
@@ -28,7 +27,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(Assert::class)]
 #[CoversClass(Expectation::class)]
 #[Group('unit')]
-final class ExpectationTest extends TestCase
+final class ExpectationTest extends AbstractExpectationTestCase
 {
     public function testCanSetDifferentExporter(): void
     {
@@ -52,6 +51,12 @@ final class ExpectationTest extends TestCase
 
         $nullableExpectation = Assert::that(null)->nullOr();
         self::assertSame($nullableExpectation, $nullableExpectation->isArray());
+
+        $keysExpectation = Assert::that(['a' => 1, 'b' => 2])->keys();
+        self::assertSame($keysExpectation, $keysExpectation->isString());
+
+        $valuesExpectation = Assert::that([1, 2, 3])->values();
+        self::assertSame($valuesExpectation, $valuesExpectation->isInt());
     }
 
     public function testContains(): void
@@ -392,19 +397,5 @@ final class ExpectationTest extends TestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "\'hello world\'" is expected to start with "\'planet\'".');
         Assert::that('hello world')->startsWith('planet');
-    }
-
-    /**
-     * @template T
-     *
-     * @param \Closure(): Expectation<T> $callback
-     */
-    private static function assertNoErrorsThrown(\Closure $callback): void
-    {
-        try {
-            $callback();
-        } catch (ExpectationFailedException) {
-            self::fail('Expected no exception to be thrown.');
-        }
     }
 }

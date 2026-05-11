@@ -21,14 +21,13 @@ use Nexus\Assert\NegatedExpectation;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @internal
  */
 #[CoversClass(NegatedExpectation::class)]
 #[Group('unit')]
-final class NegatedExpectationTest extends TestCase
+final class NegatedExpectationTest extends AbstractExpectationTestCase
 {
     private ExporterInterface $exporter;
 
@@ -358,19 +357,5 @@ final class NegatedExpectationTest extends TestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "\'hello world\'" is not expected to start with "\'hello\'".');
         Assert::that('hello world')->not()->startsWith('hello');
-    }
-
-    /**
-     * @template T
-     *
-     * @param \Closure(): NegatedExpectation<T> $callback
-     */
-    private static function assertNoErrorsThrown(\Closure $callback): void
-    {
-        try {
-            $callback();
-        } catch (ExpectationFailedException) {
-            self::fail('Expected no exception to be thrown.');
-        }
     }
 }
