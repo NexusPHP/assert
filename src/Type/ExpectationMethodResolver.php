@@ -22,6 +22,8 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Analyser\SpecifiedTypes;
 use PHPStan\Analyser\TypeSpecifier;
 use PHPStan\Analyser\TypeSpecifierContext;
+use PHPStan\Type\Accessory\AccessoryArrayListType;
+use PHPStan\Type\Accessory\NonEmptyArrayType;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\BenevolentUnionType;
 use PHPStan\Type\Constant\ConstantArrayType;
@@ -33,6 +35,7 @@ use PHPStan\Type\NeverType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\UnionType;
 
 final class ExpectationMethodResolver
 {
@@ -316,32 +319,51 @@ final class ExpectationMethodResolver
 
         $resultTypes = [];
 
-        foreach ($currentType->getArrays() as $arrayType) {
-            $constantArrays = $arrayType->getConstantArrays();
+        // Walk union branches so per-branch list/non-empty accessories survive;
+        // `getArrays()` flattens intersections and drops them.
+        $branches = $currentType instanceof UnionType
+            ? $currentType->getTypes()
+            : [$currentType];
 
-            if (\count($constantArrays) === 1) {
-                $rebuilt = self::rebuildConstantArray($constantArrays[0], $narrowKey, $innerType, $arrayKeyConstraint);
+        foreach ($branches as $branch) {
+            if (! $branch->isArray()->yes()) {
+                continue;
+            }
 
-                if (null !== $rebuilt) {
-                    $resultTypes[] = $rebuilt;
+            $branchIsList = $branch->isList()->yes();
+            $branchIsNonEmpty = $branch->isIterableAtLeastOnce()->yes();
+
+            foreach ($branch->getArrays() as $arrayType) {
+                $constantArrays = $arrayType->getConstantArrays();
+
+                if (\count($constantArrays) === 1) {
+                    $rebuilt = self::rebuildConstantArray($constantArrays[0], $narrowKey, $innerType, $arrayKeyConstraint);
+
+                    if (null !== $rebuilt) {
+                        $resultTypes[] = $rebuilt;
+                    }
+
+                    continue;
                 }
 
-                continue;
-            }
+                if ($narrowKey) {
+                    $newKeyType = TypeCombinator::intersect($arrayType->getKeyType(), $innerType, $arrayKeyConstraint);
+                    $newValueType = $arrayType->getItemType();
+                } else {
+                    $newKeyType = $arrayType->getKeyType();
+                    $newValueType = TypeCombinator::intersect($arrayType->getItemType(), $innerType);
+                }
 
-            if ($narrowKey) {
-                $newKeyType = TypeCombinator::intersect($arrayType->getKeyType(), $innerType, $arrayKeyConstraint);
-                $newValueType = $arrayType->getItemType();
-            } else {
-                $newKeyType = $arrayType->getKeyType();
-                $newValueType = TypeCombinator::intersect($arrayType->getItemType(), $innerType);
-            }
+                if ($newKeyType instanceof NeverType || $newValueType instanceof NeverType) {
+                    continue;
+                }
 
-            if ($newKeyType instanceof NeverType || $newValueType instanceof NeverType) {
-                continue;
+                $resultTypes[] = self::applyArrayAccessories(
+                    new ArrayType($newKeyType, $newValueType),
+                    $branchIsList,
+                    $branchIsNonEmpty,
+                );
             }
-
-            $resultTypes[] = new ArrayType($newKeyType, $newValueType);
         }
 
         if (! $currentType->isArray()->yes()) {
@@ -363,6 +385,28 @@ final class ExpectationMethodResolver
         }
 
         return TypeCombinator::union(...$resultTypes);
+    }
+
+    private static function applyArrayAccessories(
+        Type $array,
+        bool $isList,
+        bool $isNonEmpty,
+    ): Type {
+        $accessories = [];
+
+        if ($isNonEmpty) {
+            $accessories[] = new NonEmptyArrayType();
+        }
+
+        if ($isList) {
+            $accessories[] = new AccessoryArrayListType();
+        }
+
+        if ([] === $accessories) {
+            return $array;
+        }
+
+        return TypeCombinator::intersect($array, ...$accessories);
     }
 
     private static function rebuildConstantArray(

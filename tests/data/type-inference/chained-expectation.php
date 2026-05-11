@@ -189,3 +189,53 @@ function test_values_int_then_string_collapses_to_never(mixed $value): void
     assertType('*NEVER*', $assert);
     assertType('*NEVER*', $value);
 }
+
+/**
+ * @param list<mixed> $value
+ */
+function test_values_preserves_list_shape(array $value): void
+{
+    $assert = Assert::that($value)->values()->isInt();
+    assertType('Nexus\\Assert\\ValuesIteratingExpectation<list<int>>', $assert);
+    assertType('list<int>', $value);
+}
+
+/**
+ * @param non-empty-list<mixed> $value
+ */
+function test_values_preserves_non_empty_list_shape(array $value): void
+{
+    $assert = Assert::that($value)->values()->isInt();
+    assertType('Nexus\\Assert\\ValuesIteratingExpectation<non-empty-list<int>>', $assert);
+    assertType('non-empty-list<int>', $value);
+}
+
+/**
+ * @param non-empty-array<string, mixed> $value
+ */
+function test_values_preserves_non_empty_array_shape(array $value): void
+{
+    $assert = Assert::that($value)->values()->isInt();
+    assertType('Nexus\\Assert\\ValuesIteratingExpectation<non-empty-array<string, int>>', $assert);
+    assertType('non-empty-array<string, int>', $value);
+}
+
+/**
+ * @param non-empty-list<mixed> $value
+ */
+function test_keys_preserves_non_empty_list_shape(array $value): void
+{
+    $assert = Assert::that($value)->keys()->isInt();
+    assertType('Nexus\\Assert\\KeysIteratingExpectation<non-empty-list<mixed>>', $assert);
+    assertType('non-empty-list<mixed>', $value);
+}
+
+/**
+ * @param non-empty-array<int|string, mixed> $value
+ */
+function test_keys_preserves_non_empty_array_shape(array $value): void
+{
+    $assert = Assert::that($value)->keys()->isString();
+    assertType('Nexus\\Assert\\KeysIteratingExpectation<non-empty-array<string, mixed>>', $assert);
+    assertType('non-empty-array<string, mixed>', $value);
+}
