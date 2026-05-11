@@ -83,7 +83,7 @@ final class ExpectationMethodTypeSpecifyingExtension implements MethodTypeSpecif
                 $scope,
                 $calledOnType,
                 $methodReflection->getName(),
-                array_values($node->getArgs()),
+                ...array_values($node->getArgs()),
             );
         }
 
@@ -96,7 +96,7 @@ final class ExpectationMethodTypeSpecifyingExtension implements MethodTypeSpecif
             $calledOnType->getStoredExpr(),
             $scope,
             new Node\Arg($calledOnType->getValueExpr()),
-            $node->getArgs()[0] ?? new Node\Arg(new Node\Scalar\Int_(1)),
+            ...array_values($node->getArgs()),
         );
 
         if (null === $expr) {
@@ -106,10 +106,7 @@ final class ExpectationMethodTypeSpecifyingExtension implements MethodTypeSpecif
         $context = TypeSpecifierContext::createTruthy();
         $specifiedTypes = $this->typeSpecifier->specifyTypesInCondition($scope, $expr, $context)->setRootExpr($expr);
 
-        if (
-            ! \array_key_exists($methodReflection->getName(), ExpectationMethodResolver::METHODS_USING_PRIMARY_RESOLVERS)
-            && ! \in_array($methodReflection->getName(), ExpectationMethodResolver::METHODS_USING_STRING_RESOLVERS, true)
-        ) {
+        if (! $this->resolver->isFauxWrapped($methodReflection->getName())) {
             return $specifiedTypes;
         }
 

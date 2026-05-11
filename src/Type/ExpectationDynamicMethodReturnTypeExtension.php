@@ -86,7 +86,7 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
                 $scope,
                 $calledOnType,
                 $methodReflection->getName(),
-                array_values($methodCall->getArgs()),
+                ...array_values($methodCall->getArgs()),
             );
 
             if (null === $narrowed) {
@@ -123,7 +123,7 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
             $calledOnType->getStoredExpr(),
             $scope,
             new Node\Arg($calledOnType->getValueExpr()),
-            $methodCall->getArgs()[0] ?? new Node\Arg(new Node\Scalar\Int_(1)),
+            ...array_values($methodCall->getArgs()),
         );
 
         if (null === $resolvedExpr) {

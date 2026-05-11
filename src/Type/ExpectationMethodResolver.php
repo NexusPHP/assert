@@ -36,21 +36,21 @@ use PHPStan\Type\TypeCombinator;
 
 final class ExpectationMethodResolver
 {
-    public const METHODS_USING_PRIMARY_RESOLVERS = [
-        'matchesRegularExpression' => 'isString',
-    ];
-    public const METHODS_USING_STRING_RESOLVERS = [
+    /**
+     * Methods whose narrowing predicate must be paired with a synthetic
+     * `FAUX_FUNCTION_<method>` call so PHPStan threads them through the
+     * chained `storedExpr`.
+     */
+    private const METHODS_NEEDING_FAUX_WRAP = [
         'contains',
         'endsWith',
+        'matchesRegularExpression',
         'startsWith',
     ];
+
     private const UNSUPPORTED_EXPECTATION_METHODS = [
         'not',
         'nullOr',
-    ];
-    private const ITERATING_VARIANT_METHODS = [
-        'keys',
-        'values',
     ];
     private const ITERATING_VARIANT_CLASSES = [
         KeysIteratingExpectation::class,
@@ -58,19 +58,19 @@ final class ExpectationMethodResolver
     ];
 
     /**
-     * @var array<string, callable(Scope, Node\Arg, Node\Arg): Node\Expr>
+     * @var array<string, Resolver\ResolverInterface>
      */
-    private static array $resolvers = [];
+    private array $resolvers;
 
     public function __construct()
     {
-        self::createExprResolvers();
+        $this->resolvers = self::createExprResolvers();
     }
 
     public function isSupported(string $methodName): bool
     {
         return ! \in_array($methodName, self::UNSUPPORTED_EXPECTATION_METHODS, true)
-            && \array_key_exists($methodName, self::$resolvers);
+            && \array_key_exists($methodName, $this->resolvers);
     }
 
     /**
@@ -82,23 +82,22 @@ final class ExpectationMethodResolver
         ?Node\Expr $storedExpr,
         Scope $scope,
         Node\Arg $arg,
-        Node\Arg $other,
+        Node\Arg ...$args,
     ): ?Node\Expr {
         if (! $this->isSupported($methodName)) {
             return null; // do not throw on yet unsupported methods
         }
 
-        $expr = self::$resolvers[$methodName]($scope, $arg, $other);
+        $expr = $this->resolvers[$methodName]->resolve($scope, $arg, ...$args);
 
-        if (
-            \array_key_exists($methodName, self::METHODS_USING_PRIMARY_RESOLVERS)
-            || \in_array($methodName, self::METHODS_USING_STRING_RESOLVERS, true)
-        ) {
+        if (\in_array($methodName, self::METHODS_NEEDING_FAUX_WRAP, true)) {
+            \assert(isset($args[0]));
+
             $expr = new Node\Expr\BinaryOp\BooleanAnd(
                 $expr,
                 new Node\Expr\FuncCall(
                     new Node\Name(\sprintf('FAUX_FUNCTION_%s', $methodName)),
-                    [$arg, $other],
+                    [$arg, $args[0]],
                 ),
             );
         }
@@ -116,6 +115,11 @@ final class ExpectationMethodResolver
         }
 
         return self::reduceExprWithStoredExpr($storedExpr, $expr);
+    }
+
+    public function isFauxWrapped(string $methodName): bool
+    {
+        return \in_array($methodName, self::METHODS_NEEDING_FAUX_WRAP, true);
     }
 
     /**
@@ -169,8 +173,6 @@ final class ExpectationMethodResolver
     }
 
     /**
-     * @param list<Node\Arg> $args
-     *
      * @return null|array{Type, Node\Expr}
      */
     public function narrowIterating(
@@ -178,13 +180,11 @@ final class ExpectationMethodResolver
         Scope $scope,
         ExpectationObjectType $calledOnType,
         string $methodName,
-        array $args,
+        Node\Arg ...$args,
     ): ?array {
         $valueExpr = $calledOnType->getValueExpr();
         $iteratingClass = $calledOnType->getClassName();
         \assert(class_exists($iteratingClass));
-
-        $otherArg = $args[0] ?? new Node\Arg(new Node\Scalar\Int_(1));
 
         // Faux variable: unknown to scope, so PHPStan's OR-specifier cannot prune
         // disjuncts as impossible against the iterable's outer type. Returns the
@@ -196,7 +196,7 @@ final class ExpectationMethodResolver
             null,
             $scope,
             new Node\Arg($fauxExpr),
-            $otherArg,
+            ...$args,
         );
 
         if (null === $fauxPredicate) {
@@ -231,24 +231,21 @@ final class ExpectationMethodResolver
             null,
             $scope,
             new Node\Arg($valueExpr),
-            $otherArg,
+            ...$args,
         );
         \assert(null !== $storedPredicate);
 
         return [$newType, self::reduceExprWithStoredExpr($calledOnType->getStoredExpr(), $storedPredicate)];
     }
 
-    /**
-     * @param list<Node\Arg> $args
-     */
     public function specifyIteratingOuter(
         TypeSpecifier $typeSpecifier,
         Scope $scope,
         ExpectationObjectType $calledOnType,
         string $methodName,
-        array $args,
+        Node\Arg ...$args,
     ): SpecifiedTypes {
-        $narrowed = $this->narrowIterating($typeSpecifier, $scope, $calledOnType, $methodName, $args);
+        $narrowed = $this->narrowIterating($typeSpecifier, $scope, $calledOnType, $methodName, ...$args);
 
         if (null === $narrowed) {
             $storedExpr = $calledOnType->getStoredExpr();
@@ -408,221 +405,60 @@ final class ExpectationMethodResolver
         return $builder->getArray();
     }
 
-    private static function createExprResolvers(): void
+    /**
+     * @return array<string, Resolver\ResolverInterface>
+     */
+    private static function createExprResolvers(): array
     {
-        if ([] === self::$resolvers) {
-            self::$resolvers = [
-                'hasMethod' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $method): Node\Expr => new Node\Expr\BinaryOp\BooleanAnd(
-                    self::$resolvers['isObject']($scope, $arg, $method),
-                    new Node\Expr\FuncCall(
-                        new Node\Name('method_exists'),
-                        [$arg, $method],
-                    ),
-                ),
-                'hasOffset' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $key): Node\Expr => new Node\Expr\BinaryOp\BooleanAnd(
-                    self::$resolvers['isArray']($scope, $arg, $key),
-                    new Node\Expr\FuncCall(
-                        new Node\Name\FullyQualified('array_key_exists'),
-                        [$key, $arg],
-                    ),
-                ),
-                'hasProperty' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $property): Node\Expr => new Node\Expr\BinaryOp\BooleanAnd(
-                    self::$resolvers['isObject']($scope, $arg, $property),
-                    new Node\Expr\FuncCall(
-                        new Node\Name('property_exists'),
-                        [$arg, $property],
-                    ),
-                ),
-                'isArray' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\FuncCall(
-                    new Node\Name\FullyQualified('is_array'),
-                    [$arg],
-                ),
-                'isArrayKey' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\BinaryOp\BooleanOr(
-                    self::$resolvers['isInt']($scope, $arg, $other),
-                    self::$resolvers['isString']($scope, $arg, $other),
-                ),
-                'isBool' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\FuncCall(
-                    new Node\Name\FullyQualified('is_bool'),
-                    [$arg],
-                ),
-                'isCallable' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\FuncCall(
-                    new Node\Name\FullyQualified('is_callable'),
-                    [$arg],
-                ),
-                'isCountable' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\FuncCall(
-                    new Node\Name('is_countable'),
-                    [$arg],
-                ),
-                'isFalse' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\BinaryOp\Identical(
-                    new Node\Expr\ConstFetch(new Node\Name('false')),
-                    $arg->value,
-                ),
-                'isFloat' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\FuncCall(
-                    new Node\Name\FullyQualified('is_float'),
-                    [$arg],
-                ),
-                'isIdentical' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $expected): Node\Expr => new Node\Expr\BinaryOp\Identical(
-                    $arg->value,
-                    $expected->value,
-                ),
-                'isInstanceOf' => static function (Scope $scope, Node\Arg $arg, Node\Arg $class): Node\Expr {
-                    $classType = $scope->getType($class->value)->getObjectTypeOrClassStringObjectType();
-                    $classNames = $classType->getObjectClassNames();
+        $isArray = new Resolver\IsArrayResolver();
+        $isFloat = new Resolver\IsFloatResolver();
+        $isInt = new Resolver\IsIntResolver();
+        $isIterable = new Resolver\IsIterableResolver();
+        $isObject = new Resolver\IsObjectResolver();
+        $isString = new Resolver\IsStringResolver();
+        $isNonEmptyString = new Resolver\IsNonEmptyStringResolver($isString);
 
-                    if ([] === $classNames) {
-                        return new Node\Expr\Instanceof_($arg->value, $class->value);
-                    }
+        $stringDispatching = new Resolver\StringDispatchingResolver($isString, $isNonEmptyString);
 
-                    $exprs = array_map(
-                        static fn(string $className): Node\Expr => new Node\Expr\Instanceof_(
-                            $arg->value,
-                            new Node\Name\FullyQualified($className),
-                        ),
-                        $classNames,
-                    );
-
-                    if (\count($exprs) === 1) {
-                        return $exprs[0];
-                    }
-
-                    $firstExpr = array_shift($exprs);
-
-                    return array_reduce(
-                        $exprs,
-                        static fn(Node\Expr $carry, Node\Expr $expr): Node\Expr => new Node\Expr\BinaryOp\BooleanOr($carry, $expr),
-                        $firstExpr,
-                    );
-                },
-                'isInt' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\FuncCall(
-                    new Node\Name\FullyQualified('is_int'),
-                    [$arg],
-                ),
-                'isIterable' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\FuncCall(
-                    new Node\Name('is_iterable'),
-                    [$arg],
-                ),
-                'isList' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\BinaryOp\BooleanAnd(
-                    self::$resolvers['isArray']($scope, $arg, $other),
-                    new Node\Expr\BinaryOp\Identical(
-                        new Node\Expr\FuncCall(
-                            new Node\Name('array_values'),
-                            [$arg],
-                        ),
-                        $arg->value,
-                    ),
-                ),
-                'isLowercaseString' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\BinaryOp\BooleanAnd(
-                    self::$resolvers['isString']($scope, $arg, $other),
-                    new Node\Expr\BinaryOp\Identical(
-                        new Node\Expr\FuncCall(
-                            new Node\Name('strtolower'),
-                            [$arg],
-                        ),
-                        $arg->value,
-                    ),
-                ),
-                'isMap' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\BinaryOp\BooleanAnd(
-                    self::$resolvers['isArray']($scope, $arg, $other),
-                    new Node\Expr\BinaryOp\Identical(
-                        new Node\Expr\FuncCall(
-                            new Node\Name('array_filter'),
-                            [
-                                $arg,
-                                new Node\Arg(new Node\Expr\FuncCall(
-                                    new Node\Name\FullyQualified('is_string'),
-                                    [new Node\VariadicPlaceholder()],
-                                )),
-                                new Node\Arg(new Node\Expr\ConstFetch(new Node\Name('ARRAY_FILTER_USE_KEY'))),
-                            ],
-                        ),
-                        $arg->value,
-                    ),
-                ),
-                'isNaturalInt' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\BinaryOp\BooleanAnd(
-                    self::$resolvers['isInt']($scope, $arg, $other),
-                    new Node\Expr\BinaryOp\GreaterOrEqual(
-                        $arg->value,
-                        new Node\Scalar\Int_(0),
-                    ),
-                ),
-                'isNegativeInt' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\BinaryOp\BooleanAnd(
-                    self::$resolvers['isInt']($scope, $arg, $other),
-                    new Node\Expr\BinaryOp\Smaller(
-                        $arg->value,
-                        new Node\Scalar\Int_(0),
-                    ),
-                ),
-                'isNonEmptyString' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\BinaryOp\BooleanAnd(
-                    self::$resolvers['isString']($scope, $arg, $other),
-                    new Node\Expr\BinaryOp\NotIdentical(
-                        new Node\Scalar\String_(''),
-                        $arg->value,
-                    ),
-                ),
-                'isNull' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\BinaryOp\Identical(
-                    new Node\Expr\ConstFetch(new Node\Name('null')),
-                    $arg->value,
-                ),
-                'isNumeric' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\FuncCall(
-                    new Node\Name('is_numeric'),
-                    [$arg],
-                ),
-                'isObject' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\FuncCall(
-                    new Node\Name\FullyQualified('is_object'),
-                    [$arg],
-                ),
-                'isPositiveInt' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\BinaryOp\BooleanAnd(
-                    self::$resolvers['isInt']($scope, $arg, $other),
-                    new Node\Expr\BinaryOp\Greater(
-                        $arg->value,
-                        new Node\Scalar\Int_(0),
-                    ),
-                ),
-                'isResource' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\FuncCall(
-                    new Node\Name\FullyQualified('is_resource'),
-                    [$arg],
-                ),
-                'isScalar' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\FuncCall(
-                    new Node\Name\FullyQualified('is_scalar'),
-                    [$arg],
-                ),
-                'isString' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\FuncCall(
-                    new Node\Name\FullyQualified('is_string'),
-                    [$arg],
-                ),
-                'isTrue' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\BinaryOp\Identical(
-                    new Node\Expr\ConstFetch(new Node\Name('true')),
-                    $arg->value,
-                ),
-                'isUppercaseString' => static fn(Scope $scope, Node\Arg $arg, Node\Arg $other): Node\Expr => new Node\Expr\BinaryOp\BooleanAnd(
-                    self::$resolvers['isString']($scope, $arg, $other),
-                    new Node\Expr\BinaryOp\Identical(
-                        new Node\Expr\FuncCall(
-                            new Node\Name('strtoupper'),
-                            [$arg],
-                        ),
-                        $arg->value,
-                    ),
-                ),
-            ];
-
-            foreach (self::METHODS_USING_PRIMARY_RESOLVERS as $methodName => $primaryResolverName) {
-                self::$resolvers[$methodName] = self::$resolvers[$primaryResolverName];
-            }
-
-            foreach (self::METHODS_USING_STRING_RESOLVERS as $methodName) {
-                self::$resolvers[$methodName] = static function (Scope $scope, Node\Arg $haystack, Node\Arg $needle): Node\Expr {
-                    if ($scope->getType($needle->value)->isNonEmptyString()->yes()) {
-                        return self::$resolvers['isNonEmptyString']($scope, $haystack, $needle);
-                    }
-
-                    return self::$resolvers['isString']($scope, $haystack, $needle);
-                };
-            }
-
-            foreach (self::ITERATING_VARIANT_METHODS as $methodName) {
-                self::$resolvers[$methodName] = self::$resolvers['isIterable'];
-            }
-        }
+        return [
+            'contains' => $stringDispatching,
+            'endsWith' => $stringDispatching,
+            'hasMethod' => new Resolver\HasMethodResolver($isObject),
+            'hasOffset' => new Resolver\HasOffsetResolver($isArray),
+            'hasProperty' => new Resolver\HasPropertyResolver($isObject),
+            'isArray' => $isArray,
+            'isArrayKey' => new Resolver\IsArrayKeyResolver($isInt, $isString),
+            'isBool' => new Resolver\IsBoolResolver(),
+            'isCallable' => new Resolver\IsCallableResolver(),
+            'isCountable' => new Resolver\IsCountableResolver(),
+            'isFalse' => new Resolver\IsFalseResolver(),
+            'isFloat' => $isFloat,
+            'isIdentical' => new Resolver\IsIdenticalResolver(),
+            'isInstanceOf' => new Resolver\IsInstanceOfResolver(),
+            'isInt' => $isInt,
+            'isIterable' => $isIterable,
+            'isList' => new Resolver\IsListResolver($isArray),
+            'isLowercaseString' => new Resolver\IsLowercaseStringResolver($isString),
+            'isMap' => new Resolver\IsMapResolver($isArray),
+            'isNaturalInt' => new Resolver\IsNaturalIntResolver($isInt),
+            'isNegativeInt' => new Resolver\IsNegativeIntResolver($isInt),
+            'isNonEmptyString' => $isNonEmptyString,
+            'isNull' => new Resolver\IsNullResolver(),
+            'isNumeric' => new Resolver\IsNumericResolver(),
+            'isObject' => $isObject,
+            'isPositiveInt' => new Resolver\IsPositiveIntResolver($isInt),
+            'isResource' => new Resolver\IsResourceResolver(),
+            'isScalar' => new Resolver\IsScalarResolver(),
+            'isString' => $isString,
+            'isTrue' => new Resolver\IsTrueResolver(),
+            'isUppercaseString' => new Resolver\IsUppercaseStringResolver($isString),
+            'matchesRegularExpression' => $isString,
+            'startsWith' => $stringDispatching,
+            // iterating variant methods (`keys`, `values`) just assert the
+            // outer value is iterable; the element-narrowing happens in
+            // `narrowIterating` against the next method's resolver.
+            'keys' => $isIterable,
+            'values' => $isIterable,
+        ];
     }
 }
