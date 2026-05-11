@@ -59,6 +59,7 @@ final readonly class NegatedExpectation implements Expectable
     private const MESSAGE_IS_STRING = 'Value "{value}" is not expected to be a string.';
     private const MESSAGE_IS_TRUE = 'Value "{value}" is not expected to be true.';
     private const MESSAGE_IS_UPPERCASE_STRING = 'Value "{value}" is not expected to be an uppercase string.';
+    private const MESSAGE_IS_URL = 'Value "{value}" is not expected to be a URL.';
     private const MESSAGE_MATCHES_REGULAR_EXPRESSION = 'Value "{value}" is not expected to match the PCRE pattern \'{pattern}\'.';
     private const MESSAGE_STARTS_WITH = 'Value "{value}" is not expected to start with "{needle}".';
 
@@ -706,6 +707,23 @@ final readonly class NegatedExpectation implements Expectable
 
         throw new ExpectationFailedException(
             $message ?? self::MESSAGE_IS_UPPERCASE_STRING,
+            ['value' => $this->expectation->exporter->exportValue($this->value)],
+        );
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isUrl(?string $message = null): self
+    {
+        try {
+            $this->expectation->isUrl($message);
+        } catch (ExpectationFailedException) {
+            return $this;
+        }
+
+        throw new ExpectationFailedException(
+            $message ?? self::MESSAGE_IS_URL,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }

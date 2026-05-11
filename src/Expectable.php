@@ -348,6 +348,15 @@ interface Expectable
     public function isUppercaseString(?string $message = null): self;
 
     /**
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
+    public function isUrl(?string $message = null): self;
+
+    /**
      * @param non-empty-string      $pattern
      * @param null|non-empty-string $message
      *

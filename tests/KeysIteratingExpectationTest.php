@@ -437,6 +437,16 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that(['Hello' => 1])->keys()->isUppercaseString();
     }
 
+    public function testIsUrl(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(['https://example.com' => 1, 'http://foo.bar' => 2])->keys()->isUrl());
+
+        self::assertExpectationFails(
+            static fn() => Assert::that(['not a url' => 1])->keys()->isUrl(),
+            'Key "\'not a url\'" in iterable is expected to be a URL.',
+        );
+    }
+
     public function testMatchesRegularExpression(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(['abc123' => 1, 'abc456' => 2])->keys()->matchesRegularExpression('/^abc\d+$/'));

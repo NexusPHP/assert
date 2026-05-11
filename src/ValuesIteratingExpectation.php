@@ -59,6 +59,7 @@ final readonly class ValuesIteratingExpectation implements Expectable
     private const MESSAGE_IS_STRING = 'Value "{value}" in iterable is expected to be a string but got {type} instead.';
     private const MESSAGE_IS_TRUE = 'Value "{value}" in iterable is expected to be true but got {type} instead.';
     private const MESSAGE_IS_UPPERCASE_STRING = 'Value "{value}" in iterable is expected to be an uppercase string but got {type} instead.';
+    private const MESSAGE_IS_URL = 'Value "{value}" in iterable is expected to be a URL.';
     private const MESSAGE_MATCHES_REGULAR_EXPRESSION = 'Value "{value}" in iterable is expected to match the PCRE pattern \'{pattern}\'.';
     private const MESSAGE_STARTS_WITH = 'Value "{value}" in iterable is expected to start with "{needle}".';
 
@@ -849,6 +850,25 @@ final readonly class ValuesIteratingExpectation implements Expectable
                         'value' => $this->expectation->exporter->exportValue($offsetValue),
                         'type' => $this->expectation->exporter->exportType($offsetValue),
                     ],
+                );
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isUrl(?string $message = null): self
+    {
+        foreach ($this->value as $offsetValue) {
+            try {
+                Assert::that($offsetValue)->isUrl($message);
+            } catch (ExpectationFailedException) {
+                throw new ExpectationFailedException(
+                    $message ?? self::MESSAGE_IS_URL,
+                    ['value' => $this->expectation->exporter->exportValue($offsetValue)],
                 );
             }
         }

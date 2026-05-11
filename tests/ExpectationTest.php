@@ -438,6 +438,16 @@ final class ExpectationTest extends AbstractExpectationTestCase
         Assert::that('Hello')->isUppercaseString();
     }
 
+    public function testIsUrl(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that('https://example.com')->isUrl());
+        self::assertNoErrorsThrown(static fn() => Assert::that('http://example.com/path?q=1')->isUrl());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'not a url\'" is expected to be a URL.');
+        Assert::that('not a url')->isUrl();
+    }
+
     public function testMatchesRegularExpression(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that('hello123')->matchesRegularExpression('/^hello\d+$/'));

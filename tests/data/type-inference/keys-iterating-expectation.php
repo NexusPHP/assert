@@ -334,6 +334,13 @@ function test_is_uppercase_string(mixed $value): void
     assertType('iterable<uppercase-string, mixed>', $value);
 }
 
+function test_is_url(mixed $value): void
+{
+    $assert = Assert::that($value)->keys()->isUrl();
+    assertType('Nexus\\Assert\\KeysIteratingExpectation<iterable<string, mixed>>', $assert);
+    assertType('iterable<string, mixed>', $value);
+}
+
 function test_matches_regular_expression(mixed $value, string $pattern): void
 {
     $assert = Assert::that($value)->keys()->matchesRegularExpression($pattern);

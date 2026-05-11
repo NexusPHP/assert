@@ -256,6 +256,13 @@ function test_is_uppercase_string(mixed $value): void
     assertType('uppercase-string|null', $value);
 }
 
+function test_is_url(mixed $value): void
+{
+    $assert = Assert::that($value)->nullOr()->isUrl();
+    assertType('Nexus\\Assert\\NullableExpectation<string|null>', $assert);
+    assertType('string|null', $value);
+}
+
 function test_matches_regular_expression(mixed $value, string $pattern): void
 {
     $assert = Assert::that($value)->nullOr()->matchesRegularExpression($pattern);

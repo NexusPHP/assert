@@ -110,6 +110,7 @@ with the message formatted depending on the available context. By default, there
 | `isString(?string $message = null): self`                                                            | `value`, `type`          |
 | `isTrue(?string $message = null): self`                                                              | `value`, `type`          |
 | `isUppercaseString(?string $message = null): self`                                                   | `value`, `type`          |
+| `isUrl(?string $message = null): self`                                                               | `value`                  |
 | `matchesRegularExpression(string $pattern, ?string $message = null): self`                           | `value`, `pattern=`      |
 | `startsWith(string $needle, ?string $message = null): self`                                          | `value`, `needle`        |
 

@@ -41,6 +41,7 @@ final class ExpectationVariantsGenerator
         'isIdentical' => ['value', 'other', 'type'],
         'isInstanceOf' => ['value', 'class', 'type'],
         'isOneOf' => ['value', 'choices'],
+        'isUrl' => ['value'],
         'matchesRegularExpression' => ['value', 'pattern='],
         'startsWith' => ['value', 'needle'],
     ];

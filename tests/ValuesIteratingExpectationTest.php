@@ -359,6 +359,15 @@ final class ValuesIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that(['Hello'])->values()->isUppercaseString();
     }
 
+    public function testIsUrl(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(['https://example.com', 'http://foo.bar'])->values()->isUrl());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'not a url\'" in iterable is expected to be a URL.');
+        Assert::that(['not a url'])->values()->isUrl();
+    }
+
     public function testMatchesRegularExpression(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(['abc123', 'abc456'])->values()->matchesRegularExpression('/^abc\d+$/'));

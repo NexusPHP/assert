@@ -256,6 +256,13 @@ function test_is_uppercase_string(mixed $value): void
     assertType('uppercase-string', $value);
 }
 
+function test_is_url(mixed $value): void
+{
+    $assert = Assert::that($value)->isUrl();
+    assertType('Nexus\\Assert\\Expectation<string>', $assert);
+    assertType('string', $value);
+}
+
 function test_matches_regular_expression(mixed $value, string $pattern): void
 {
     $assert = Assert::that($value)->matchesRegularExpression($pattern);

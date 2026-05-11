@@ -418,6 +418,16 @@ final class NullableExpectationTest extends AbstractExpectationTestCase
         Assert::that('Hello')->nullOr()->isUppercaseString();
     }
 
+    public function testIsUrl(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->isUrl());
+        self::assertNoErrorsThrown(static fn() => Assert::that('https://example.com')->nullOr()->isUrl());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'not a url\'" is expected to be null or a URL.');
+        Assert::that('not a url')->nullOr()->isUrl();
+    }
+
     public function testMatchesRegularExpression(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->matchesRegularExpression('/^hello\d+$/'));

@@ -58,6 +58,7 @@ final readonly class NullableExpectation implements Expectable
     private const MESSAGE_IS_STRING = 'Value "{value}" is expected to be null or a string but got {type} instead.';
     private const MESSAGE_IS_TRUE = 'Value "{value}" is expected to be null or true but got {type} instead.';
     private const MESSAGE_IS_UPPERCASE_STRING = 'Value "{value}" is expected to be null or an uppercase string but got {type} instead.';
+    private const MESSAGE_IS_URL = 'Value "{value}" is expected to be null or a URL.';
     private const MESSAGE_MATCHES_REGULAR_EXPRESSION = 'Value "{value}" is expected to be null or to match the PCRE pattern \'{pattern}\'.';
     private const MESSAGE_STARTS_WITH = 'Value "{value}" is expected to be null or to start with "{needle}".';
 
@@ -903,6 +904,27 @@ final readonly class NullableExpectation implements Expectable
                     'value' => $this->expectation->exporter->exportValue($this->value),
                     'type' => $this->expectation->exporter->exportType($this->value),
                 ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<null|TValue>
+     */
+    public function isUrl(?string $message = null): self
+    {
+        if (null === $this->value) {
+            return $this;
+        }
+
+        try {
+            $this->expectation->isUrl($message);
+        } catch (ExpectationFailedException) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_URL,
+                ['value' => $this->expectation->exporter->exportValue($this->value)],
             );
         }
 

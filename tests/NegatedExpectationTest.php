@@ -378,6 +378,15 @@ final class NegatedExpectationTest extends AbstractExpectationTestCase
         Assert::that('HELLO')->not()->isUppercaseString();
     }
 
+    public function testIsUrl(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that('not a url')->not()->isUrl());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'https://example.com\'" is not expected to be a URL.');
+        Assert::that('https://example.com')->not()->isUrl();
+    }
+
     public function testMatchesRegularExpression(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that('test')->not()->matchesRegularExpression('/^hello\d+$/'));

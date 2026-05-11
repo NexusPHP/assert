@@ -46,6 +46,7 @@ final class ExpectationMethodResolver
         'endsWith',
         'hasMaxLength',
         'hasMinLength',
+        'isUrl',
         'matchesRegularExpression',
         'startsWith',
     ];
@@ -93,13 +94,11 @@ final class ExpectationMethodResolver
         $expr = $this->resolvers[$methodName]->resolve($scope, $arg, ...$args);
 
         if (\in_array($methodName, self::METHODS_NEEDING_FAUX_WRAP, true)) {
-            \assert(isset($args[0]));
-
             $expr = new Node\Expr\BinaryOp\BooleanAnd(
                 $expr,
                 new Node\Expr\FuncCall(
                     new Node\Name(\sprintf('FAUX_FUNCTION_%s', $methodName)),
-                    [$arg, $args[0]],
+                    isset($args[0]) ? [$arg, $args[0]] : [$arg],
                 ),
             );
         }
@@ -460,6 +459,7 @@ final class ExpectationMethodResolver
             'isString' => $isString,
             'isTrue' => new Resolver\IsTrueResolver(),
             'isUppercaseString' => new Resolver\IsUppercaseStringResolver($isString),
+            'isUrl' => new Resolver\IsUrlResolver($isString),
             'matchesRegularExpression' => $isString,
             'startsWith' => $stringDispatching,
             // iterating variant methods (`keys`, `values`) just assert the
