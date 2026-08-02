@@ -241,6 +241,17 @@ final class NullableExpectationTest extends AbstractExpectationTestCase
         Assert::that(3.14)->nullOr()->isInt();
     }
 
+    public function testIsIntOrNonEmptyString(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->isIntOrNonEmptyString());
+        self::assertNoErrorsThrown(static fn() => Assert::that(42)->nullOr()->isIntOrNonEmptyString());
+        self::assertNoErrorsThrown(static fn() => Assert::that('id')->nullOr()->isIntOrNonEmptyString());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'\'" is expected to be null or an int or non-empty string but got string instead.');
+        Assert::that('')->nullOr()->isIntOrNonEmptyString();
+    }
+
     public function testIsIterable(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->isIterable());

@@ -42,6 +42,7 @@ final readonly class NegatedExpectation implements Expectable
     private const MESSAGE_IS_IDENTICAL = 'Value "{value}" is not expected to be identical to "{other}".';
     private const MESSAGE_IS_INSTANCE_OF = 'Value "{value}" is not expected to be an instance of {class}.';
     private const MESSAGE_IS_INT = 'Value "{value}" is not expected to be an int.';
+    private const MESSAGE_IS_INT_OR_NON_EMPTY_STRING = 'Value "{value}" is not expected to be an int or non-empty string.';
     private const MESSAGE_IS_ITERABLE = 'Value "{value}" is not expected to be iterable.';
     private const MESSAGE_IS_LIST = 'Value "{value}" is not expected to be a list.';
     private const MESSAGE_IS_LOWERCASE_STRING = 'Value "{value}" is not expected to be a lowercase string.';
@@ -413,6 +414,23 @@ final readonly class NegatedExpectation implements Expectable
 
         throw new ExpectationFailedException(
             $message ?? self::MESSAGE_IS_INT,
+            ['value' => $this->expectation->exporter->exportValue($this->value)],
+        );
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isIntOrNonEmptyString(?string $message = null): self
+    {
+        try {
+            $this->expectation->isIntOrNonEmptyString($message);
+        } catch (ExpectationFailedException) {
+            return $this;
+        }
+
+        throw new ExpectationFailedException(
+            $message ?? self::MESSAGE_IS_INT_OR_NON_EMPTY_STRING,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }

@@ -218,6 +218,16 @@ final class NegatedExpectationTest extends AbstractExpectationTestCase
         Assert::that(42)->not()->isInt();
     }
 
+    public function testIsIntOrNonEmptyString(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that('')->not()->isIntOrNonEmptyString());
+        self::assertNoErrorsThrown(static fn() => Assert::that(3.14)->not()->isIntOrNonEmptyString());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "42" is not expected to be an int or non-empty string.');
+        Assert::that(42)->not()->isIntOrNonEmptyString();
+    }
+
     public function testIsIterable(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(42)->not()->isIterable());

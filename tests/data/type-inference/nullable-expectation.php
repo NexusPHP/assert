@@ -137,6 +137,13 @@ function test_is_int(mixed $value): void
     assertType('int|null', $value);
 }
 
+function test_is_int_or_non_empty_string(mixed $value): void
+{
+    $assert = Assert::that($value)->nullOr()->isIntOrNonEmptyString();
+    assertType('Nexus\\Assert\\NullableExpectation<int|non-empty-string|null>', $assert);
+    assertType('int|non-empty-string|null', $value);
+}
+
 function test_is_iterable(mixed $value): void
 {
     $assert = Assert::that($value)->nullOr()->isIterable();

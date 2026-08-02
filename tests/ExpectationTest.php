@@ -264,6 +264,16 @@ final class ExpectationTest extends AbstractExpectationTestCase
         Assert::that(true)->isInt();
     }
 
+    public function testIsIntOrNonEmptyString(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(42)->isIntOrNonEmptyString());
+        self::assertNoErrorsThrown(static fn() => Assert::that('id')->isIntOrNonEmptyString());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'\'" is expected to be an int or non-empty string but got string instead.');
+        Assert::that('')->isIntOrNonEmptyString();
+    }
+
     public function testIsIterable(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that([])->isIterable());

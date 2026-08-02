@@ -424,6 +424,7 @@ final class ExpectationMethodResolver
             'isIdentical' => new Resolver\IsIdenticalResolver(),
             'isInstanceOf' => new Resolver\IsInstanceOfResolver(),
             'isInt' => $isInt,
+            'isIntOrNonEmptyString' => new Resolver\IsIntOrNonEmptyStringResolver($isInt, $isNonEmptyString),
             'isIterable' => $isIterable,
             'isList' => new Resolver\IsListResolver($isArray),
             'isLowercaseString' => new Resolver\IsLowercaseStringResolver($isString),

@@ -244,6 +244,15 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that(['a' => 1])->keys()->isInt();
     }
 
+    public function testIsIntOrNonEmptyString(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([1, 'a' => 2])->keys()->isIntOrNonEmptyString());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Key "\'\'" in iterable is expected to be an int or non-empty string but got string instead.');
+        Assert::that(['' => 1])->keys()->isIntOrNonEmptyString();
+    }
+
     public function testIsIterable(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(self::iter([[], 1]))->keys()->isIterable());

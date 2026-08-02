@@ -93,6 +93,7 @@ with the message formatted depending on the available context. By default, there
 | `isIdentical(mixed $other, ?string $message = null): self`                                           | `value`, `other`, `type` |
 | `isInstanceOf(object\|string $class, ?string $message = null): self`                                 | `value`, `class`, `type` |
 | `isInt(?string $message = null): self`                                                               | `value`, `type`          |
+| `isIntOrNonEmptyString(?string $message = null): self`                                               | `value`, `type`          |
 | `isIterable(?string $message = null): self`                                                          | `value`, `type`          |
 | `isList(?string $message = null): self`                                                              | `value`, `type`          |
 | `isLowercaseString(?string $message = null): self`                                                   | `value`, `type`          |

@@ -199,6 +199,15 @@ final class ValuesIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that(['a'])->values()->isInt();
     }
 
+    public function testIsIntOrNonEmptyString(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([1, 'a'])->values()->isIntOrNonEmptyString());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'\'" in iterable is expected to be an int or non-empty string but got string instead.');
+        Assert::that([''])->values()->isIntOrNonEmptyString();
+    }
+
     public function testIsIterable(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that([[], [1]])->values()->isIterable());

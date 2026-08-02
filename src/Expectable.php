@@ -200,6 +200,15 @@ interface Expectable
      *
      * @throws ExpectationFailedException
      */
+    public function isIntOrNonEmptyString(?string $message = null): self;
+
+    /**
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
     public function isIterable(?string $message = null): self;
 
     /**

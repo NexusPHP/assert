@@ -39,6 +39,7 @@ final readonly class Expectation implements Expectable, MutatingExpectable
     private const MESSAGE_IS_IDENTICAL = 'Value "{value}" is expected to be identical to "{other}".';
     private const MESSAGE_IS_INSTANCE_OF = 'Value "{value}" is expected to be an instance of {class} but got {type} instead.';
     private const MESSAGE_IS_INT = 'Value "{value}" is expected to be an int but got {type} instead.';
+    private const MESSAGE_IS_INT_OR_NON_EMPTY_STRING = 'Value "{value}" is expected to be an int or non-empty string but got {type} instead.';
     private const MESSAGE_IS_ITERABLE = 'Value "{value}" is expected to be iterable but got {type} instead.';
     private const MESSAGE_IS_LIST = 'Value "{value}" is expected to be a list but got {type} instead.';
     private const MESSAGE_IS_LOWERCASE_STRING = 'Value "{value}" is expected to be a lowercase string but got {type} instead.';
@@ -436,6 +437,26 @@ final readonly class Expectation implements Expectable, MutatingExpectable
         if (! \is_int($this->value)) {
             throw new ExpectationFailedException(
                 $message ?? self::MESSAGE_IS_INT,
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'type' => $this->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isIntOrNonEmptyString(?string $message = null): self
+    {
+        $isNonEmptyString = \is_string($this->value) && '' !== $this->value;
+
+        if (! \is_int($this->value) && ! $isNonEmptyString) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_INT_OR_NON_EMPTY_STRING,
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),
