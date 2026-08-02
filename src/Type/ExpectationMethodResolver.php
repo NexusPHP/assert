@@ -126,51 +126,15 @@ final class ExpectationMethodResolver
         return \in_array($methodName, self::METHODS_NEEDING_FAUX_WRAP, true);
     }
 
-    /**
-     * @param class-string $expectationClass
-     */
     public function resolveType(
-        TypeSpecifier $typeSpecifier,
         Node\Expr $resolvedExpr,
         Type $originalType,
-        string $expectationClass,
         Scope $scope,
         Node\Arg $arg,
     ): Type {
-        $context = TypeSpecifierContext::createTruthy();
-        $specifiedTypes = $typeSpecifier->specifyTypesInCondition($scope, $resolvedExpr, $context);
+        $narrowed = $scope->filterByTruthyValue($resolvedExpr)->getType($arg->value);
 
-        if (NegatedExpectation::class === $expectationClass) {
-            $type = $originalType;
-
-            foreach ($specifiedTypes->getSureNotTypes() as [$expr, $sureNotType]) {
-                if ($expr === $arg->value) {
-                    $type = TypeCombinator::remove($type, $sureNotType);
-                }
-            }
-
-            foreach ($specifiedTypes->getSureTypes() as [$expr, $sureType]) {
-                if ($expr === $arg->value) {
-                    $type = TypeCombinator::intersect($type, $sureType);
-                }
-            }
-
-            return $type;
-        }
-
-        $sureType = self::findSureTypeFor($specifiedTypes, $arg->value);
-
-        if (null === $sureType) {
-            return $originalType;
-        }
-
-        $type = TypeCombinator::intersect($originalType, $sureType);
-
-        if (NullableExpectation::class === $expectationClass) {
-            return TypeCombinator::addNull($type);
-        }
-
-        return $type;
+        return TypeCombinator::intersect($originalType, $narrowed);
     }
 
     public static function isIteratingVariant(string $className): bool
@@ -182,7 +146,6 @@ final class ExpectationMethodResolver
      * @return null|array{Type, Node\Expr}
      */
     public function narrowIterating(
-        TypeSpecifier $typeSpecifier,
         Scope $scope,
         ExpectationObjectType $calledOnType,
         string $methodName,
@@ -209,15 +172,10 @@ final class ExpectationMethodResolver
             return null;
         }
 
-        $specifiedTypes = $typeSpecifier->specifyTypesInCondition(
-            $scope,
-            $fauxPredicate,
-            TypeSpecifierContext::createTruthy(),
-        );
+        $innerType = $scope->filterByTruthyValue($fauxPredicate)->getType($fauxExpr);
 
-        $innerType = self::findSureTypeFor($specifiedTypes, $fauxExpr);
-
-        if (null === $innerType) {
+        // ErrorType extends MixedType, so an unresolvable faux variable lands here too.
+        if ($innerType instanceof MixedType) {
             return null;
         }
 
@@ -251,7 +209,7 @@ final class ExpectationMethodResolver
         string $methodName,
         Node\Arg ...$args,
     ): SpecifiedTypes {
-        $narrowed = $this->narrowIterating($typeSpecifier, $scope, $calledOnType, $methodName, ...$args);
+        $narrowed = $this->narrowIterating($scope, $calledOnType, $methodName, ...$args);
 
         if (null === $narrowed) {
             $storedExpr = $calledOnType->getStoredExpr();
@@ -281,26 +239,6 @@ final class ExpectationMethodResolver
         }
 
         return new Node\Expr\BinaryOp\BooleanAnd($storedExpr, $expr);
-    }
-
-    private static function findSureTypeFor(SpecifiedTypes $specifiedTypes, Node\Expr $target): ?Type
-    {
-        $sureNotTypes = $specifiedTypes->getSureNotTypes();
-        $matches = [];
-
-        foreach ($specifiedTypes->getSureTypes() as $key => [$expr, $type]) {
-            if ($expr !== $target) {
-                continue;
-            }
-
-            $matches[] = TypeCombinator::remove($type, $sureNotTypes[$key][1] ?? new NeverType());
-        }
-
-        if ([] === $matches) {
-            return null;
-        }
-
-        return TypeCombinator::union(...$matches);
     }
 
     private static function rebuildIterable(

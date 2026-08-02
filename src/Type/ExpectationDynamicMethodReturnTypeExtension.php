@@ -19,8 +19,6 @@ use Nexus\Assert\NullableExpectation;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
-use PHPStan\Analyser\TypeSpecifier;
-use PHPStan\Analyser\TypeSpecifierAwareExtension;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
@@ -29,20 +27,13 @@ use PHPStan\Type\NeverType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 
-final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension, TypeSpecifierAwareExtension
+final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
-    private TypeSpecifier $typeSpecifier;
-
     public function __construct(private ExpectationMethodResolver $resolver) {}
 
     public function getClass(): string
     {
         return Expectable::class;
-    }
-
-    public function setTypeSpecifier(TypeSpecifier $typeSpecifier): void
-    {
-        $this->typeSpecifier = $typeSpecifier;
     }
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
@@ -82,7 +73,6 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
             \assert(class_exists($iteratingClass));
 
             $narrowed = $this->resolver->narrowIterating(
-                $this->typeSpecifier,
                 $scope,
                 $calledOnType,
                 $methodReflection->getName(),
@@ -131,10 +121,8 @@ final class ExpectationDynamicMethodReturnTypeExtension implements DynamicMethod
         }
 
         $resolvedType = $this->resolver->resolveType(
-            $this->typeSpecifier,
             $resolvedExpr,
             TypeCombinator::union(...$returnType->getTypes()),
-            $expectationClass,
             $scope,
             new Node\Arg($calledOnType->getValueExpr()),
         );
