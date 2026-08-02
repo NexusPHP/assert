@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.2.0](https://github.com/NexusPHP/assert/compare/v1.1.1...v1.2.0) - 2026-08-02
+
+### Added
+- `isIntOrNonEmptyString()` expectation, narrowing to `int|non-empty-string`
+
+### Fixed
+- Restored type narrowing on PHPStan 2.2.7, which changed how the type specifier composes `&&` and `||` conditions and left chained `not()` / `nullOr()` assertions widening back to their unnarrowed type
+
+### Known issues
+- On PHPStan 2.2.7, a chain that negates two overlapping ranges (e.g. `isInt()->not()->isNegativeInt()->isPositiveInt()`) keeps only the first negation, narrowing to `int<0, max>` rather than `0`. Tracked upstream at [phpstan/phpstan#15039](https://github.com/phpstan/phpstan/issues/15039)
+
 ## [v1.1.1](https://github.com/NexusPHP/assert/compare/v1.1.0...v1.1.1) - 2026-05-11
 
 ### Fixed
