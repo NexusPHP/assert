@@ -63,9 +63,8 @@ function test_is_int_not_is_negative_int(mixed $value): void
 function test_is_int_not_is_negative_int_or_positive_int(mixed $value): void
 {
     $assert = Assert::that($value)->isInt()->not()->isNegativeInt()->isPositiveInt();
-    // Baselined: both should be 0. phpstan/phpstan#15039 drops the isPositiveInt() conjunct.
-    assertType('Nexus\\Assert\\NegatedExpectation<int<0, max>>', $assert);
-    assertType('int<0, max>', $value);
+    assertType('Nexus\\Assert\\NegatedExpectation<0>', $assert);
+    assertType('0', $value);
 }
 
 function test_is_int_not_is_positive_int(mixed $value): void
