@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.3.0](https://github.com/NexusPHP/assert/compare/v1.2.0...v1.3.0) - 2026-08-05
+
+### Added
+- `isSubclassOf(class-string<T>|T $class)` expectation, narrowing to `class-string<T>|T` for objects and class strings that are a strict subclass of the given class
+
+### Fixed
+- Restored the chained double-negation narrowing reported in v1.2.0's known issues. On PHPStan 2.2.8 and later, `isInt()->not()->isNegativeInt()->isPositiveInt()` narrows to `0` again instead of `int<0, max>`, following the upstream fix for [phpstan/phpstan#15039](https://github.com/phpstan/phpstan/issues/15039)
+
 ## [v1.2.0](https://github.com/NexusPHP/assert/compare/v1.1.1...v1.2.0) - 2026-08-02
 
 ### Added
