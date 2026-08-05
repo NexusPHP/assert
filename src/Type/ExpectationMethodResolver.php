@@ -440,6 +440,7 @@ final class ExpectationMethodResolver
             'isResource' => new Resolver\IsResourceResolver(),
             'isScalar' => new Resolver\IsScalarResolver(),
             'isString' => $isString,
+            'isSubclassOf' => new Resolver\IsSubclassOfResolver(),
             'isTrue' => new Resolver\IsTrueResolver(),
             'isUppercaseString' => new Resolver\IsUppercaseStringResolver($isString),
             'isUrl' => new Resolver\IsUrlResolver($isString),

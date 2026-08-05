@@ -424,6 +424,15 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that([1, 2, 3])->keys()->isString();
     }
 
+    public function testIsSubclassOf(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([\DateTimeImmutable::class => 1])->keys()->isSubclassOf(\DateTimeInterface::class));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Key "\'stdClass\'" in iterable is expected to be a subclass of \'DateTimeInterface\' but got string instead.');
+        Assert::that([\stdClass::class => 1])->keys()->isSubclassOf(\DateTimeInterface::class);
+    }
+
     public function testIsTrue(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(self::iter([true, 1]))->keys()->isTrue());

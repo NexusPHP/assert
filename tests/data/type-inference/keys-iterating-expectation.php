@@ -323,6 +323,13 @@ function test_is_string(mixed $value): void
     assertType('iterable<string, mixed>', $value);
 }
 
+function test_is_subclass_of(mixed $value): void
+{
+    $assert = Assert::that($value)->keys()->isSubclassOf(\stdClass::class);
+    assertType('Nexus\\Assert\\KeysIteratingExpectation<iterable<class-string<stdClass>|stdClass, mixed>>', $assert);
+    assertType('iterable<class-string<stdClass>|stdClass, mixed>', $value);
+}
+
 function test_is_true(mixed $value1, mixed $value2): void
 {
     $assert1 = Assert::that($value1)->keys()->isTrue();

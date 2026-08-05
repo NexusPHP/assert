@@ -370,6 +370,15 @@ final class NegatedExpectationTest extends AbstractExpectationTestCase
         Assert::that('hello')->not()->isString();
     }
 
+    public function testIsSubclassOf(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(new \stdClass())->not()->isSubclassOf(\DateTimeInterface::class));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'DateTimeImmutable\'" is not expected to be a subclass of \'DateTimeInterface\'.');
+        Assert::that(\DateTimeImmutable::class)->not()->isSubclassOf(\DateTimeInterface::class);
+    }
+
     public function testIsTrue(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(false)->not()->isTrue());

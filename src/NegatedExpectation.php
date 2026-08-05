@@ -58,6 +58,7 @@ final readonly class NegatedExpectation implements Expectable
     private const MESSAGE_IS_RESOURCE = 'Value "{value}" is not expected to be a resource.';
     private const MESSAGE_IS_SCALAR = 'Value "{value}" is not expected to be a scalar.';
     private const MESSAGE_IS_STRING = 'Value "{value}" is not expected to be a string.';
+    private const MESSAGE_IS_SUBCLASS_OF = 'Value "{value}" is not expected to be a subclass of {class}.';
     private const MESSAGE_IS_TRUE = 'Value "{value}" is not expected to be true.';
     private const MESSAGE_IS_UPPERCASE_STRING = 'Value "{value}" is not expected to be an uppercase string.';
     private const MESSAGE_IS_URL = 'Value "{value}" is not expected to be a URL.';
@@ -692,6 +693,26 @@ final readonly class NegatedExpectation implements Expectable
         throw new ExpectationFailedException(
             $message ?? self::MESSAGE_IS_STRING,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
+        );
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isSubclassOf(object|string $class, ?string $message = null): self
+    {
+        try {
+            $this->expectation->isSubclassOf($class, $message);
+        } catch (ExpectationFailedException) {
+            return $this;
+        }
+
+        throw new ExpectationFailedException(
+            $message ?? self::MESSAGE_IS_SUBCLASS_OF,
+            [
+                'value' => $this->expectation->exporter->exportValue($this->value),
+                'class' => $this->expectation->exporter->exportValue($class),
+            ],
         );
     }
 

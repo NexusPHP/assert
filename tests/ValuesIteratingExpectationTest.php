@@ -350,6 +350,15 @@ final class ValuesIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that([42])->values()->isString();
     }
 
+    public function testIsSubclassOf(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([new \DateTimeImmutable()])->values()->isSubclassOf(\DateTimeInterface::class));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "object(stdClass)" in iterable is expected to be a subclass of \'DateTimeInterface\' but got stdClass instead.');
+        Assert::that([new \stdClass()])->values()->isSubclassOf(\DateTimeInterface::class);
+    }
+
     public function testIsTrue(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that([true, true])->values()->isTrue());

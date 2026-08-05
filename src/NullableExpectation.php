@@ -57,6 +57,7 @@ final readonly class NullableExpectation implements Expectable
     private const MESSAGE_IS_RESOURCE = 'Value "{value}" is expected to be null or a resource but got {type} instead.';
     private const MESSAGE_IS_SCALAR = 'Value "{value}" is expected to be null or a scalar but got {type} instead.';
     private const MESSAGE_IS_STRING = 'Value "{value}" is expected to be null or a string but got {type} instead.';
+    private const MESSAGE_IS_SUBCLASS_OF = 'Value "{value}" is expected to be null or a subclass of {class} but got {type} instead.';
     private const MESSAGE_IS_TRUE = 'Value "{value}" is expected to be null or true but got {type} instead.';
     private const MESSAGE_IS_UPPERCASE_STRING = 'Value "{value}" is expected to be null or an uppercase string but got {type} instead.';
     private const MESSAGE_IS_URL = 'Value "{value}" is expected to be null or a URL.';
@@ -879,6 +880,31 @@ final readonly class NullableExpectation implements Expectable
                 $message ?? self::MESSAGE_IS_STRING,
                 [
                     'value' => $this->expectation->exporter->exportValue($this->value),
+                    'type' => $this->expectation->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<null|TValue>
+     */
+    public function isSubclassOf(object|string $class, ?string $message = null): self
+    {
+        if (null === $this->value) {
+            return $this;
+        }
+
+        try {
+            $this->expectation->isSubclassOf($class, $message);
+        } catch (ExpectationFailedException) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_SUBCLASS_OF,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'class' => $this->expectation->exporter->exportValue($class),
                     'type' => $this->expectation->exporter->exportType($this->value),
                 ],
             );

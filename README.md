@@ -109,6 +109,7 @@ with the message formatted depending on the available context. By default, there
 | `isResource(?string $message = null): self`                                                          | `value`, `type`          |
 | `isScalar(?string $message = null): self`                                                            | `value`, `type`          |
 | `isString(?string $message = null): self`                                                            | `value`, `type`          |
+| `isSubclassOf(object\|string $class, ?string $message = null): self`                                 | `value`, `class`, `type` |
 | `isTrue(?string $message = null): self`                                                              | `value`, `type`          |
 | `isUppercaseString(?string $message = null): self`                                                   | `value`, `type`          |
 | `isUrl(?string $message = null): self`                                                               | `value`                  |

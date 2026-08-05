@@ -58,6 +58,7 @@ final readonly class KeysIteratingExpectation implements Expectable
     private const MESSAGE_IS_RESOURCE = 'Key "{value}" in iterable is expected to be a resource but got {type} instead.';
     private const MESSAGE_IS_SCALAR = 'Key "{value}" in iterable is expected to be a scalar but got {type} instead.';
     private const MESSAGE_IS_STRING = 'Key "{value}" in iterable is expected to be a string but got {type} instead.';
+    private const MESSAGE_IS_SUBCLASS_OF = 'Key "{value}" in iterable is expected to be a subclass of {class} but got {type} instead.';
     private const MESSAGE_IS_TRUE = 'Key "{value}" in iterable is expected to be true but got {type} instead.';
     private const MESSAGE_IS_UPPERCASE_STRING = 'Key "{value}" in iterable is expected to be an uppercase string but got {type} instead.';
     private const MESSAGE_IS_URL = 'Key "{value}" in iterable is expected to be a URL.';
@@ -890,6 +891,29 @@ final readonly class KeysIteratingExpectation implements Expectable
                     $message ?? self::MESSAGE_IS_STRING,
                     [
                         'value' => $this->expectation->exporter->exportValue($offsetKey),
+                        'type' => $this->expectation->exporter->exportType($offsetKey),
+                    ],
+                );
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isSubclassOf(object|string $class, ?string $message = null): self
+    {
+        foreach ($this->value as $offsetKey => $_) {
+            try {
+                Assert::that($offsetKey)->isSubclassOf($class, $message);
+            } catch (ExpectationFailedException) {
+                throw new ExpectationFailedException(
+                    $message ?? self::MESSAGE_IS_SUBCLASS_OF,
+                    [
+                        'value' => $this->expectation->exporter->exportValue($offsetKey),
+                        'class' => $this->expectation->exporter->exportValue($class),
                         'type' => $this->expectation->exporter->exportType($offsetKey),
                     ],
                 );

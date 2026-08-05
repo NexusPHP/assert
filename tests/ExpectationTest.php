@@ -430,6 +430,17 @@ final class ExpectationTest extends AbstractExpectationTestCase
         Assert::that(3.14)->isString();
     }
 
+    public function testIsSubclassOf(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(new \DateTimeImmutable())->isSubclassOf(\DateTimeInterface::class));
+        self::assertNoErrorsThrown(static fn() => Assert::that(\DateTimeImmutable::class)->isSubclassOf(\DateTimeInterface::class));
+        self::assertNoErrorsThrown(static fn() => Assert::that(new \LogicException())->isSubclassOf(new \Exception()));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "object(stdClass)" is expected to be a subclass of \'DateTimeInterface\' but got stdClass instead.');
+        Assert::that(new \stdClass())->isSubclassOf(\DateTimeInterface::class);
+    }
+
     public function testIsTrue(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(true)->isTrue());

@@ -55,6 +55,7 @@ final readonly class Expectation implements Expectable, MutatingExpectable
     private const MESSAGE_IS_RESOURCE = 'Value "{value}" is expected to be a resource but got {type} instead.';
     private const MESSAGE_IS_SCALAR = 'Value "{value}" is expected to be a scalar but got {type} instead.';
     private const MESSAGE_IS_STRING = 'Value "{value}" is expected to be a string but got {type} instead.';
+    private const MESSAGE_IS_SUBCLASS_OF = 'Value "{value}" is expected to be a subclass of {class} but got {type} instead.';
     private const MESSAGE_IS_TRUE = 'Value "{value}" is expected to be true but got {type} instead.';
     private const MESSAGE_IS_UPPERCASE_STRING = 'Value "{value}" is expected to be an uppercase string but got {type} instead.';
     private const MESSAGE_IS_URL = 'Value "{value}" is expected to be a URL.';
@@ -745,6 +746,27 @@ final readonly class Expectation implements Expectable, MutatingExpectable
                 $message ?? self::MESSAGE_IS_STRING,
                 [
                     'value' => $this->exporter->exportValue($this->value),
+                    'type' => $this->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isSubclassOf(object|string $class, ?string $message = null): self
+    {
+        $isObjectOrString = \is_object($this->value) || \is_string($this->value);
+
+        if (! $isObjectOrString || ! is_subclass_of($this->value, \is_object($class) ? $class::class : $class)) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_SUBCLASS_OF,
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'class' => $this->exporter->exportValue($class),
                     'type' => $this->exporter->exportType($this->value),
                 ],
             );
