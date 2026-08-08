@@ -186,6 +186,13 @@ function test_is_negative_int(mixed $value): void
     assertType('int<min, -1>|null', $value);
 }
 
+function test_is_non_empty_list(mixed $value): void
+{
+    $assert = Assert::that($value)->nullOr()->isNonEmptyList();
+    assertType('Nexus\\Assert\\NullableExpectation<non-empty-list<mixed>|null>', $assert);
+    assertType('non-empty-list<mixed>|null', $value);
+}
+
 function test_is_non_empty_string(mixed $value): void
 {
     $assert = Assert::that($value)->nullOr()->isNonEmptyString();

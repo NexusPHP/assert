@@ -100,6 +100,7 @@ with the message formatted depending on the available context. By default, there
 | `isMap(?string $message = null): self`                                                               | `value`, `type`          |
 | `isNaturalInt(?string $message = null): self`                                                        | `value`, `type`          |
 | `isNegativeInt(?string $message = null): self`                                                       | `value`, `type`          |
+| `isNonEmptyList(?string $message = null): self`                                                      | `value`, `type`          |
 | `isNonEmptyString(?string $message = null): self`                                                    | `value`, `type`          |
 | `isNull(?string $message = null): self`                                                              | `value`, `type`          |
 | `isNumeric(?string $message = null): self`                                                           | `value`, `type`          |

@@ -200,6 +200,13 @@ function test_is_negative_int(mixed $value): void
     assertType('iterable<int<min, -1>>', $value);
 }
 
+function test_is_non_empty_list(mixed $value): void
+{
+    $assert = Assert::that($value)->values()->isNonEmptyList();
+    assertType('Nexus\\Assert\\ValuesIteratingExpectation<iterable<non-empty-list<mixed>>>', $assert);
+    assertType('iterable<non-empty-list<mixed>>', $value);
+}
+
 function test_is_non_empty_string(mixed $value): void
 {
     $assert = Assert::that($value)->values()->isNonEmptyString();

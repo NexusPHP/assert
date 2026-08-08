@@ -164,6 +164,7 @@ final class ExpectationVariantsGenerator
         'isInstanceOf',
         'isIterable',
         'isList',
+        'isNonEmptyList',
         'isMap',
         'isNull',
         'isObject',

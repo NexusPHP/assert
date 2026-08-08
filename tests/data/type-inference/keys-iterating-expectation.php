@@ -248,6 +248,17 @@ function test_is_negative_int(mixed $value): void
     assertType('iterable<int<min, -1>, mixed>', $value);
 }
 
+function test_is_non_empty_list(mixed $value1, mixed $value2): void
+{
+    $assert1 = Assert::that($value1)->keys()->isNonEmptyList();
+    assertType('Nexus\\Assert\\KeysIteratingExpectation<iterable<non-empty-list<mixed>, mixed>>', $assert1);
+    assertType('iterable<non-empty-list<mixed>, mixed>', $value1);
+
+    $assert2 = Assert::that($value2)->isArray()->keys()->isNonEmptyList();
+    assertType('*NEVER*', $assert2);
+    assertType('*NEVER*', $value2);
+}
+
 function test_is_non_empty_string(mixed $value): void
 {
     $assert = Assert::that($value)->keys()->isNonEmptyString();

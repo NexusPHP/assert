@@ -401,6 +401,7 @@ final class ExpectationMethodResolver
         $isIterable = new Resolver\IsIterableResolver();
         $isObject = new Resolver\IsObjectResolver();
         $isString = new Resolver\IsStringResolver();
+        $isList = new Resolver\IsListResolver($isArray);
         $isNonEmptyString = new Resolver\IsNonEmptyStringResolver($isString);
 
         $stringDispatching = new Resolver\StringDispatchingResolver($isString, $isNonEmptyString);
@@ -426,11 +427,12 @@ final class ExpectationMethodResolver
             'isInt' => $isInt,
             'isIntOrNonEmptyString' => new Resolver\IsIntOrNonEmptyStringResolver($isInt, $isNonEmptyString),
             'isIterable' => $isIterable,
-            'isList' => new Resolver\IsListResolver($isArray),
+            'isList' => $isList,
             'isLowercaseString' => new Resolver\IsLowercaseStringResolver($isString),
             'isMap' => new Resolver\IsMapResolver($isArray),
             'isNaturalInt' => new Resolver\IsNaturalIntResolver($isInt),
             'isNegativeInt' => new Resolver\IsNegativeIntResolver($isInt),
+            'isNonEmptyList' => new Resolver\IsNonEmptyListResolver($isList),
             'isNonEmptyString' => $isNonEmptyString,
             'isNull' => new Resolver\IsNullResolver(),
             'isNumeric' => new Resolver\IsNumericResolver(),

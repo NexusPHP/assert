@@ -332,6 +332,15 @@ final class ExpectationTest extends AbstractExpectationTestCase
         Assert::that(3)->isNegativeInt();
     }
 
+    public function testIsNonEmptyList(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([1, 2, 3])->isNonEmptyList());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "[]" is expected to be a non-empty list but got array instead.');
+        Assert::that([])->isNonEmptyList();
+    }
+
     public function testIsNonEmptyString(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that('hello')->isNonEmptyString());

@@ -63,9 +63,9 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
 
     public function testHasMethod(): void
     {
-        self::assertNoErrorsThrown(static fn() => Assert::that(self::iter([new \Exception(), 1]))->keys()->hasMethod('__toString'));
+        self::assertNoErrorsThrown(static fn() => Assert::that(self::asGenerator([new \Exception(), 1]))->keys()->hasMethod('__toString'));
         self::assertExpectationFails(
-            static fn() => Assert::that(self::iter(['oops', 1]))->keys()->hasMethod('__toString'),
+            static fn() => Assert::that(self::asGenerator(['oops', 1]))->keys()->hasMethod('__toString'),
             'Key of class "string" in iterable is expected to have method "__toString".',
         );
 
@@ -86,9 +86,9 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
 
     public function testHasOffset(): void
     {
-        self::assertNoErrorsThrown(static fn() => Assert::that(self::iter([['id' => 'x'], 1]))->keys()->hasOffset('id'));
+        self::assertNoErrorsThrown(static fn() => Assert::that(self::asGenerator([['id' => 'x'], 1]))->keys()->hasOffset('id'));
         self::assertExpectationFails(
-            static fn() => Assert::that(self::iter([['other' => 'x'], 1]))->keys()->hasOffset('id'),
+            static fn() => Assert::that(self::asGenerator([['other' => 'x'], 1]))->keys()->hasOffset('id'),
             'Key "[\'other\' => \'x\']" in iterable is expected to have offset "id".',
         );
 
@@ -99,9 +99,9 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
 
     public function testHasProperty(): void
     {
-        self::assertNoErrorsThrown(static fn() => Assert::that(self::iter([(object) ['foo' => 'x'], 1]))->keys()->hasProperty('foo'));
+        self::assertNoErrorsThrown(static fn() => Assert::that(self::asGenerator([(object) ['foo' => 'x'], 1]))->keys()->hasProperty('foo'));
         self::assertExpectationFails(
-            static fn() => Assert::that(self::iter([new \stdClass(), 1]))->keys()->hasProperty('foo'),
+            static fn() => Assert::that(self::asGenerator([new \stdClass(), 1]))->keys()->hasProperty('foo'),
             'Key of class "stdClass" in iterable is expected to have property "foo".',
         );
 
@@ -112,9 +112,9 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
 
     public function testIsArray(): void
     {
-        self::assertNoErrorsThrown(static fn() => Assert::that(self::iter([[], 1]))->keys()->isArray());
+        self::assertNoErrorsThrown(static fn() => Assert::that(self::asGenerator([[], 1]))->keys()->isArray());
         self::assertExpectationFails(
-            static fn() => Assert::that(self::iter(['oops', 1]))->keys()->isArray(),
+            static fn() => Assert::that(self::asGenerator(['oops', 1]))->keys()->isArray(),
             'Key "\'oops\'" in iterable is expected to be an array but got string instead.',
         );
 
@@ -132,7 +132,7 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
         self::assertSame($intKeysExpectation, $intKeysExpectation->isArrayKey());
 
         self::assertExpectationFails(
-            static fn() => Assert::that(self::iter([null, 1]))->keys()->isArrayKey(),
+            static fn() => Assert::that(self::asGenerator([null, 1]))->keys()->isArrayKey(),
             'Key "null" in iterable is expected to be an array key but got null instead.',
         );
     }
@@ -154,9 +154,9 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
 
     public function testIsBool(): void
     {
-        self::assertNoErrorsThrown(static fn() => Assert::that(self::iter([true, 1], [false, 2]))->keys()->isBool());
+        self::assertNoErrorsThrown(static fn() => Assert::that(self::asGenerator([true, 1], [false, 2]))->keys()->isBool());
         self::assertExpectationFails(
-            static fn() => Assert::that(self::iter([true, 1], ['oops', 2]))->keys()->isBool(),
+            static fn() => Assert::that(self::asGenerator([true, 1], ['oops', 2]))->keys()->isBool(),
             'Key "\'oops\'" in iterable is expected to be a bool but got string instead.',
         );
 
@@ -176,9 +176,9 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
 
     public function testIsCountable(): void
     {
-        self::assertNoErrorsThrown(static fn() => Assert::that(self::iter([[], 1]))->keys()->isCountable());
+        self::assertNoErrorsThrown(static fn() => Assert::that(self::asGenerator([[], 1]))->keys()->isCountable());
         self::assertExpectationFails(
-            static fn() => Assert::that(self::iter(['oops', 1]))->keys()->isCountable(),
+            static fn() => Assert::that(self::asGenerator(['oops', 1]))->keys()->isCountable(),
             'Key "\'oops\'" in iterable is expected to be countable but got string instead.',
         );
 
@@ -189,9 +189,9 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
 
     public function testIsFalse(): void
     {
-        self::assertNoErrorsThrown(static fn() => Assert::that(self::iter([false, 1]))->keys()->isFalse());
+        self::assertNoErrorsThrown(static fn() => Assert::that(self::asGenerator([false, 1]))->keys()->isFalse());
         self::assertExpectationFails(
-            static fn() => Assert::that(self::iter([true, 1]))->keys()->isFalse(),
+            static fn() => Assert::that(self::asGenerator([true, 1]))->keys()->isFalse(),
             'Key "true" in iterable is expected to be false but got bool instead.',
         );
 
@@ -202,9 +202,9 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
 
     public function testIsFloat(): void
     {
-        self::assertNoErrorsThrown(static fn() => Assert::that(self::iter([1.5, 'x'], [2.5, 'y']))->keys()->isFloat());
+        self::assertNoErrorsThrown(static fn() => Assert::that(self::asGenerator([1.5, 'x'], [2.5, 'y']))->keys()->isFloat());
         self::assertExpectationFails(
-            static fn() => Assert::that(self::iter([1.5, 'x'], ['oops', 'y']))->keys()->isFloat(),
+            static fn() => Assert::that(self::asGenerator([1.5, 'x'], ['oops', 'y']))->keys()->isFloat(),
             'Key "\'oops\'" in iterable is expected to be a float but got string instead.',
         );
 
@@ -224,9 +224,9 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
 
     public function testIsInstanceOf(): void
     {
-        self::assertNoErrorsThrown(static fn() => Assert::that(self::iter([new \stdClass(), 1]))->keys()->isInstanceOf(\stdClass::class));
+        self::assertNoErrorsThrown(static fn() => Assert::that(self::asGenerator([new \stdClass(), 1]))->keys()->isInstanceOf(\stdClass::class));
         self::assertExpectationFails(
-            static fn() => Assert::that(self::iter(['oops', 1]))->keys()->isInstanceOf(\stdClass::class),
+            static fn() => Assert::that(self::asGenerator(['oops', 1]))->keys()->isInstanceOf(\stdClass::class),
             'Key "\'oops\'" in iterable is expected to be an instance of \'stdClass\' but got string instead.',
         );
 
@@ -255,9 +255,9 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
 
     public function testIsIterable(): void
     {
-        self::assertNoErrorsThrown(static fn() => Assert::that(self::iter([[], 1]))->keys()->isIterable());
+        self::assertNoErrorsThrown(static fn() => Assert::that(self::asGenerator([[], 1]))->keys()->isIterable());
         self::assertExpectationFails(
-            static fn() => Assert::that(self::iter(['oops', 1]))->keys()->isIterable(),
+            static fn() => Assert::that(self::asGenerator(['oops', 1]))->keys()->isIterable(),
             'Key "\'oops\'" in iterable is expected to be iterable but got string instead.',
         );
 
@@ -268,9 +268,9 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
 
     public function testIsList(): void
     {
-        self::assertNoErrorsThrown(static fn() => Assert::that(self::iter([[1, 2, 3], 'x']))->keys()->isList());
+        self::assertNoErrorsThrown(static fn() => Assert::that(self::asGenerator([[1, 2, 3], 'x']))->keys()->isList());
         self::assertExpectationFails(
-            static fn() => Assert::that(self::iter([['a' => 1], 'x']))->keys()->isList(),
+            static fn() => Assert::that(self::asGenerator([['a' => 1], 'x']))->keys()->isList(),
             'Key "[\'a\' => 1]" in iterable is expected to be a list but got array instead.',
         );
 
@@ -290,9 +290,9 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
 
     public function testIsMap(): void
     {
-        self::assertNoErrorsThrown(static fn() => Assert::that(self::iter([['a' => 1], 'x']))->keys()->isMap());
+        self::assertNoErrorsThrown(static fn() => Assert::that(self::asGenerator([['a' => 1], 'x']))->keys()->isMap());
         self::assertExpectationFails(
-            static fn() => Assert::that(self::iter([[1, 2, 3], 'x']))->keys()->isMap(),
+            static fn() => Assert::that(self::asGenerator([[1, 2, 3], 'x']))->keys()->isMap(),
             'Key "[1, 2, 3]" in iterable is expected to be a map but got array instead.',
         );
 
@@ -319,6 +319,19 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that([1 => 'a'])->keys()->isNegativeInt();
     }
 
+    public function testIsNonEmptyList(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(self::asGenerator([[1, 2, 3], 'x']))->keys()->isNonEmptyList());
+        self::assertExpectationFails(
+            static fn() => Assert::that(self::asGenerator([[], 'x']))->keys()->isNonEmptyList(),
+            'Key "[]" in iterable is expected to be a non-empty list but got array instead.',
+        );
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Method isNonEmptyList() cannot be called on keys of an array; array keys are constrained to int|string.');
+        Assert::that(['a' => 1])->keys()->isNonEmptyList();
+    }
+
     public function testIsNonEmptyString(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(['a' => 1, 'b' => 2])->keys()->isNonEmptyString());
@@ -330,9 +343,9 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
 
     public function testIsNull(): void
     {
-        self::assertNoErrorsThrown(static fn() => Assert::that(self::iter([null, 1]))->keys()->isNull());
+        self::assertNoErrorsThrown(static fn() => Assert::that(self::asGenerator([null, 1]))->keys()->isNull());
         self::assertExpectationFails(
-            static fn() => Assert::that(self::iter(['oops', 1]))->keys()->isNull(),
+            static fn() => Assert::that(self::asGenerator(['oops', 1]))->keys()->isNull(),
             'Key "\'oops\'" in iterable is expected to be null but got string instead.',
         );
 
@@ -352,9 +365,9 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
 
     public function testIsObject(): void
     {
-        self::assertNoErrorsThrown(static fn() => Assert::that(self::iter([new \stdClass(), 1]))->keys()->isObject());
+        self::assertNoErrorsThrown(static fn() => Assert::that(self::asGenerator([new \stdClass(), 1]))->keys()->isObject());
         self::assertExpectationFails(
-            static fn() => Assert::that(self::iter(['oops', 1]))->keys()->isObject(),
+            static fn() => Assert::that(self::asGenerator(['oops', 1]))->keys()->isObject(),
             'Key "\'oops\'" in iterable is expected to be an object but got string instead.',
         );
 
@@ -388,9 +401,9 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
         $resource = fopen('php://memory', 'rb');
         self::assertIsResource($resource);
 
-        self::assertNoErrorsThrown(static fn() => Assert::that(self::iter([$resource, 1]))->keys()->isResource());
+        self::assertNoErrorsThrown(static fn() => Assert::that(self::asGenerator([$resource, 1]))->keys()->isResource());
         self::assertExpectationFails(
-            static fn() => Assert::that(self::iter(['oops', 1]))->keys()->isResource(),
+            static fn() => Assert::that(self::asGenerator(['oops', 1]))->keys()->isResource(),
             'Key "\'oops\'" in iterable is expected to be a resource but got string instead.',
         );
 
@@ -410,7 +423,7 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
         self::assertSame($intKeysExpectation, $intKeysExpectation->isScalar());
 
         self::assertExpectationFails(
-            static fn() => Assert::that(self::iter([[], 1]))->keys()->isScalar(),
+            static fn() => Assert::that(self::asGenerator([[], 1]))->keys()->isScalar(),
             'Key "[]" in iterable is expected to be a scalar but got array instead.',
         );
     }
@@ -435,9 +448,9 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
 
     public function testIsTrue(): void
     {
-        self::assertNoErrorsThrown(static fn() => Assert::that(self::iter([true, 1]))->keys()->isTrue());
+        self::assertNoErrorsThrown(static fn() => Assert::that(self::asGenerator([true, 1]))->keys()->isTrue());
         self::assertExpectationFails(
-            static fn() => Assert::that(self::iter([false, 1]))->keys()->isTrue(),
+            static fn() => Assert::that(self::asGenerator([false, 1]))->keys()->isTrue(),
             'Key "false" in iterable is expected to be true but got bool instead.',
         );
 
@@ -488,7 +501,7 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
      *
      * @return \Generator<mixed, mixed>
      */
-    private static function iter(array ...$pairs): \Generator
+    private static function asGenerator(array ...$pairs): \Generator
     {
         foreach ($pairs as [$key, $value]) {
             yield $key => $value;
