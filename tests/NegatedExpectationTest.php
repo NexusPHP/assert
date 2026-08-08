@@ -362,6 +362,15 @@ final class NegatedExpectationTest extends AbstractExpectationTestCase
         }
     }
 
+    public function testIsSameOrSubclassOf(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(new \stdClass())->not()->isSameOrSubclassOf(\DateTimeInterface::class));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'DateTimeImmutable\'" is not expected to be \'DateTimeImmutable\' or a subclass of it.');
+        Assert::that(\DateTimeImmutable::class)->not()->isSameOrSubclassOf(\DateTimeImmutable::class);
+    }
+
     public function testIsScalar(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that([])->not()->isScalar());

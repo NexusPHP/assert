@@ -397,6 +397,16 @@ final class NullableExpectationTest extends AbstractExpectationTestCase
         Assert::that(42)->nullOr()->isResource();
     }
 
+    public function testIsSameOrSubclassOf(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->isSameOrSubclassOf(\DateTimeInterface::class));
+        self::assertNoErrorsThrown(static fn() => Assert::that(\DateTimeImmutable::class)->nullOr()->isSameOrSubclassOf(\DateTimeImmutable::class));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "object(stdClass)" is expected to be null or \'DateTimeInterface\' or a subclass of it but got stdClass instead.');
+        Assert::that(new \stdClass())->nullOr()->isSameOrSubclassOf(\DateTimeInterface::class);
+    }
+
     public function testIsScalar(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->isScalar());

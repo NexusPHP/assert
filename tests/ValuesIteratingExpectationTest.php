@@ -341,6 +341,15 @@ final class ValuesIteratingExpectationTest extends AbstractExpectationTestCase
         }
     }
 
+    public function testIsSameOrSubclassOf(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([new \DateTimeImmutable()])->values()->isSameOrSubclassOf(\DateTimeImmutable::class));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "object(stdClass)" in iterable is expected to be \'DateTimeInterface\' or a subclass of it but got stdClass instead.');
+        Assert::that([new \stdClass()])->values()->isSameOrSubclassOf(\DateTimeInterface::class);
+    }
+
     public function testIsScalar(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that([1, 'a', true, 1.5])->values()->isScalar());

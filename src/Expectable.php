@@ -330,6 +330,18 @@ interface Expectable
     public function isResource(?string $message = null): self;
 
     /**
+     * @template T of object
+     *
+     * @param class-string<T>|T     $class
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
+    public function isSameOrSubclassOf(object|string $class, ?string $message = null): self;
+
+    /**
      * @param null|non-empty-string $message
      *
      * @return self<TValue>

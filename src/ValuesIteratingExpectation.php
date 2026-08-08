@@ -57,6 +57,7 @@ final readonly class ValuesIteratingExpectation implements Expectable
     private const MESSAGE_IS_ONE_OF = 'Value "{value}" in iterable is expected to be one of {choices}.';
     private const MESSAGE_IS_POSITIVE_INT = 'Value "{value}" in iterable is expected to be a positive int but got {type} instead.';
     private const MESSAGE_IS_RESOURCE = 'Value "{value}" in iterable is expected to be a resource but got {type} instead.';
+    private const MESSAGE_IS_SAME_OR_SUBCLASS_OF = 'Value "{value}" in iterable is expected to be {class} or a subclass of it but got {type} instead.';
     private const MESSAGE_IS_SCALAR = 'Value "{value}" in iterable is expected to be a scalar but got {type} instead.';
     private const MESSAGE_IS_STRING = 'Value "{value}" in iterable is expected to be a string but got {type} instead.';
     private const MESSAGE_IS_SUBCLASS_OF = 'Value "{value}" in iterable is expected to be a subclass of {class} but got {type} instead.';
@@ -807,6 +808,29 @@ final readonly class ValuesIteratingExpectation implements Expectable
                     $message ?? self::MESSAGE_IS_RESOURCE,
                     [
                         'value' => $this->expectation->exporter->exportValue($offsetValue),
+                        'type' => $this->expectation->exporter->exportType($offsetValue),
+                    ],
+                );
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isSameOrSubclassOf(object|string $class, ?string $message = null): self
+    {
+        foreach ($this->value as $offsetValue) {
+            try {
+                Assert::that($offsetValue)->isSameOrSubclassOf($class, $message);
+            } catch (ExpectationFailedException) {
+                throw new ExpectationFailedException(
+                    $message ?? self::MESSAGE_IS_SAME_OR_SUBCLASS_OF,
+                    [
+                        'value' => $this->expectation->exporter->exportValue($offsetValue),
+                        'class' => $this->expectation->exporter->exportValue($class),
                         'type' => $this->expectation->exporter->exportType($offsetValue),
                     ],
                 );

@@ -417,6 +417,18 @@ final class ExpectationTest extends AbstractExpectationTestCase
         Assert::that(42)->isResource();
     }
 
+    public function testIsSameOrSubclassOf(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(new \DateTimeImmutable())->isSameOrSubclassOf(\DateTimeImmutable::class));
+        self::assertNoErrorsThrown(static fn() => Assert::that(\DateTimeImmutable::class)->isSameOrSubclassOf(\DateTimeImmutable::class));
+        self::assertNoErrorsThrown(static fn() => Assert::that(new \DateTimeImmutable())->isSameOrSubclassOf(\DateTimeInterface::class));
+        self::assertNoErrorsThrown(static fn() => Assert::that(new \LogicException())->isSameOrSubclassOf(new \Exception()));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "object(stdClass)" is expected to be \'DateTimeInterface\' or a subclass of it but got stdClass instead.');
+        Assert::that(new \stdClass())->isSameOrSubclassOf(\DateTimeInterface::class);
+    }
+
     public function testIsScalar(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(42)->isScalar());

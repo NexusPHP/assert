@@ -54,6 +54,7 @@ final readonly class Expectation implements Expectable, MutatingExpectable
     private const MESSAGE_IS_ONE_OF = 'Value "{value}" is expected to be one of {choices}.';
     private const MESSAGE_IS_POSITIVE_INT = 'Value "{value}" is expected to be a positive int but got {type} instead.';
     private const MESSAGE_IS_RESOURCE = 'Value "{value}" is expected to be a resource but got {type} instead.';
+    private const MESSAGE_IS_SAME_OR_SUBCLASS_OF = 'Value "{value}" is expected to be {class} or a subclass of it but got {type} instead.';
     private const MESSAGE_IS_SCALAR = 'Value "{value}" is expected to be a scalar but got {type} instead.';
     private const MESSAGE_IS_STRING = 'Value "{value}" is expected to be a string but got {type} instead.';
     private const MESSAGE_IS_SUBCLASS_OF = 'Value "{value}" is expected to be a subclass of {class} but got {type} instead.';
@@ -731,6 +732,27 @@ final readonly class Expectation implements Expectable, MutatingExpectable
                 $message ?? self::MESSAGE_IS_RESOURCE,
                 [
                     'value' => $this->exporter->exportValue($this->value),
+                    'type' => $this->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isSameOrSubclassOf(object|string $class, ?string $message = null): self
+    {
+        $isObjectOrString = \is_object($this->value) || \is_string($this->value);
+
+        if (! $isObjectOrString || ! is_a($this->value, \is_object($class) ? $class::class : $class, true)) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_SAME_OR_SUBCLASS_OF,
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'class' => $this->exporter->exportValue($class),
                     'type' => $this->exporter->exportType($this->value),
                 ],
             );

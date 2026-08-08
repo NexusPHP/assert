@@ -320,6 +320,13 @@ function test_is_resource(mixed $value1, mixed $value2): void
     assertType('*NEVER*', $value2);
 }
 
+function test_is_same_or_subclass_of(mixed $value): void
+{
+    $assert = Assert::that($value)->keys()->isSameOrSubclassOf(\stdClass::class);
+    assertType('Nexus\\Assert\\KeysIteratingExpectation<iterable<class-string<stdClass>|stdClass, mixed>>', $assert);
+    assertType('iterable<class-string<stdClass>|stdClass, mixed>', $value);
+}
+
 function test_is_scalar(mixed $value): void
 {
     $assert = Assert::that($value)->keys()->isScalar();

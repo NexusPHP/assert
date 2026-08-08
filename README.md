@@ -108,6 +108,7 @@ with the message formatted depending on the available context. By default, there
 | `isOneOf(array $choices, ?string $message = null): self`                                             | `value`, `choices`       |
 | `isPositiveInt(?string $message = null): self`                                                       | `value`, `type`          |
 | `isResource(?string $message = null): self`                                                          | `value`, `type`          |
+| `isSameOrSubclassOf(object\|string $class, ?string $message = null): self`                           | `value`, `class`, `type` |
 | `isScalar(?string $message = null): self`                                                            | `value`, `type`          |
 | `isString(?string $message = null): self`                                                            | `value`, `type`          |
 | `isSubclassOf(object\|string $class, ?string $message = null): self`                                 | `value`, `class`, `type` |

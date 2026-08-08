@@ -440,6 +440,7 @@ final class ExpectationMethodResolver
             'isOneOf' => new Resolver\IsOneOfResolver(),
             'isPositiveInt' => new Resolver\IsPositiveIntResolver($isInt),
             'isResource' => new Resolver\IsResourceResolver(),
+            'isSameOrSubclassOf' => new Resolver\IsSameOrSubclassOfResolver(),
             'isScalar' => new Resolver\IsScalarResolver(),
             'isString' => $isString,
             'isSubclassOf' => new Resolver\IsSubclassOfResolver(),

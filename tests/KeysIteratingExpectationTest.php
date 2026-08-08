@@ -414,6 +414,15 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that(['a' => 1])->keys()->isResource();
     }
 
+    public function testIsSameOrSubclassOf(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([\DateTimeImmutable::class => 1])->keys()->isSameOrSubclassOf(\DateTimeImmutable::class));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Key "\'stdClass\'" in iterable is expected to be \'DateTimeInterface\' or a subclass of it but got string instead.');
+        Assert::that([\stdClass::class => 1])->keys()->isSameOrSubclassOf(\DateTimeInterface::class);
+    }
+
     public function testIsScalar(): void
     {
         $stringKeysExpectation = Assert::that(['a' => 1, 'b' => 2])->keys();

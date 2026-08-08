@@ -41,6 +41,7 @@ final class ExpectationVariantsGenerator
         'isIdentical' => ['value', 'other', 'type'],
         'isInstanceOf' => ['value', 'class', 'type'],
         'isOneOf' => ['value', 'choices'],
+        'isSameOrSubclassOf' => ['value', 'class', 'type'],
         'isSubclassOf' => ['value', 'class', 'type'],
         'isUrl' => ['value'],
         'matchesRegularExpression' => ['value', 'pattern='],
