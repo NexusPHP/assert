@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.4.0](https://github.com/NexusPHP/assert/compare/v1.3.0...v1.4.0) - 2026-08-08
+
+### Added
+- `isNonEmptyList()` expectation, narrowing to `non-empty-list<mixed>`
+- `isSameOrSubclassOf(class-string<T>|T $class)` expectation, the non-strict counterpart of `isSubclassOf`, narrowing to `class-string<T>|T` for the given class as well as its subclasses. Unlike `isSubclassOf`, a literal class argument also narrows under `not()`, to `mixed~(class-string<T>|T)`
+- `implementsInterface(class-string<T> $interface)` expectation, narrowing to `class-string<T>`
+- `isInstanceOfAny(non-empty-list<class-string> $classes)` expectation, narrowing to the union of the given classes, or to `object` when the list is not known statically
+- `isClassString()` expectation, narrowing to `class-string`. Accepts interface names as well as class names, matching what PHPStan counts as a `class-string`
+
+### Changed
+- `ExpectationMethodResolver::__construct()` now takes a `PHPStan\Reflection\ReflectionProvider`. The service is autowired through `extension.neon`, so registration is unaffected
+
 ## [v1.3.0](https://github.com/NexusPHP/assert/compare/v1.2.0...v1.3.0) - 2026-08-05
 
 ### Added
