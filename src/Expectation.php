@@ -34,6 +34,7 @@ final readonly class Expectation implements Expectable, MutatingExpectable
     private const MESSAGE_IS_BETWEEN = 'Value "{value}" is expected to be a number between {min} and {max}.';
     private const MESSAGE_IS_BOOL = 'Value "{value}" is expected to be a bool but got {type} instead.';
     private const MESSAGE_IS_CALLABLE = 'Value "{value}" is expected to be callable but got {type} instead.';
+    private const MESSAGE_IS_CLASS_STRING = 'Value "{value}" is expected to be a class string but got {type} instead.';
     private const MESSAGE_IS_COUNTABLE = 'Value "{value}" is expected to be countable but got {type} instead.';
     private const MESSAGE_IS_FALSE = 'Value "{value}" is expected to be false but got {type} instead.';
     private const MESSAGE_IS_FLOAT = 'Value "{value}" is expected to be a float but got {type} instead.';
@@ -352,6 +353,26 @@ final readonly class Expectation implements Expectable, MutatingExpectable
         if (! \is_callable($this->value)) {
             throw new ExpectationFailedException(
                 $message ?? self::MESSAGE_IS_CALLABLE,
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'type' => $this->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isClassString(?string $message = null): self
+    {
+        $this->isString($message);
+
+        if (! class_exists($this->value) && ! interface_exists($this->value)) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_CLASS_STRING,
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),

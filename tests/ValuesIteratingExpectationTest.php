@@ -154,6 +154,15 @@ final class ValuesIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that([42])->values()->isCallable();
     }
 
+    public function testIsClassString(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([\DateTimeImmutable::class, \DateTimeInterface::class])->values()->isClassString());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'NoSuchClass\'" in iterable is expected to be a class string but got string instead.');
+        Assert::that(['NoSuchClass'])->values()->isClassString();
+    }
+
     public function testIsCountable(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that([[], [1, 2]])->values()->isCountable());

@@ -37,6 +37,7 @@ final readonly class KeysIteratingExpectation implements Expectable
     private const MESSAGE_IS_BETWEEN = 'Key "{value}" in iterable is expected to be a number between {min} and {max}.';
     private const MESSAGE_IS_BOOL = 'Key "{value}" in iterable is expected to be a bool but got {type} instead.';
     private const MESSAGE_IS_CALLABLE = 'Key "{value}" in iterable is expected to be callable but got {type} instead.';
+    private const MESSAGE_IS_CLASS_STRING = 'Key "{value}" in iterable is expected to be a class string but got {type} instead.';
     private const MESSAGE_IS_COUNTABLE = 'Key "{value}" in iterable is expected to be countable but got {type} instead.';
     private const MESSAGE_IS_FALSE = 'Key "{value}" in iterable is expected to be false but got {type} instead.';
     private const MESSAGE_IS_FLOAT = 'Key "{value}" in iterable is expected to be a float but got {type} instead.';
@@ -388,6 +389,28 @@ final readonly class KeysIteratingExpectation implements Expectable
             } catch (ExpectationFailedException) {
                 throw new ExpectationFailedException(
                     $message ?? self::MESSAGE_IS_CALLABLE,
+                    [
+                        'value' => $this->expectation->exporter->exportValue($offsetKey),
+                        'type' => $this->expectation->exporter->exportType($offsetKey),
+                    ],
+                );
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isClassString(?string $message = null): self
+    {
+        foreach ($this->value as $offsetKey => $_) {
+            try {
+                Assert::that($offsetKey)->isClassString($message);
+            } catch (ExpectationFailedException) {
+                throw new ExpectationFailedException(
+                    $message ?? self::MESSAGE_IS_CLASS_STRING,
                     [
                         'value' => $this->expectation->exporter->exportValue($offsetKey),
                         'type' => $this->expectation->exporter->exportType($offsetKey),

@@ -22,6 +22,7 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Analyser\SpecifiedTypes;
 use PHPStan\Analyser\TypeSpecifier;
 use PHPStan\Analyser\TypeSpecifierContext;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\Accessory\AccessoryArrayListType;
 use PHPStan\Type\Accessory\NonEmptyArrayType;
 use PHPStan\Type\ArrayType;
@@ -68,9 +69,9 @@ final class ExpectationMethodResolver
      */
     private array $resolvers;
 
-    public function __construct()
+    public function __construct(ReflectionProvider $reflectionProvider)
     {
-        $this->resolvers = self::createExprResolvers();
+        $this->resolvers = self::createExprResolvers($reflectionProvider);
     }
 
     public function isSupported(string $methodName): bool
@@ -393,7 +394,7 @@ final class ExpectationMethodResolver
     /**
      * @return array<string, Resolver\ResolverInterface>
      */
-    private static function createExprResolvers(): array
+    private static function createExprResolvers(ReflectionProvider $reflectionProvider): array
     {
         $isArray = new Resolver\IsArrayResolver();
         $isFloat = new Resolver\IsFloatResolver();
@@ -421,6 +422,7 @@ final class ExpectationMethodResolver
             'isBetween' => new Resolver\IsBetweenResolver($isInt, $isFloat),
             'isBool' => new Resolver\IsBoolResolver(),
             'isCallable' => new Resolver\IsCallableResolver(),
+            'isClassString' => new Resolver\IsClassStringResolver($isString, $reflectionProvider),
             'isCountable' => new Resolver\IsCountableResolver(),
             'isFalse' => new Resolver\IsFalseResolver(),
             'isFloat' => $isFloat,

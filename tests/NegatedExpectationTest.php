@@ -159,6 +159,15 @@ final class NegatedExpectationTest extends AbstractExpectationTestCase
         Assert::that(static function (): void {})->not()->isCallable();
     }
 
+    public function testIsClassString(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that('NoSuchClass')->not()->isClassString());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'DateTimeInterface\'" is not expected to be a class string.');
+        Assert::that(\DateTimeInterface::class)->not()->isClassString();
+    }
+
     public function testIsCountable(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(42)->not()->isCountable());

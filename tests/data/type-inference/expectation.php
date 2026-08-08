@@ -116,6 +116,30 @@ function test_is_callable(mixed $value): void
     assertType('callable(): mixed', $value);
 }
 
+/**
+ * @param class-string<\DateTimeInterface>|int $value2
+ * @param 'DateTimeImmutable'|'oops'           $value3
+ * @param 'oops'                               $value4
+ */
+function test_is_class_string(mixed $value1, mixed $value2, mixed $value3, mixed $value4): void
+{
+    $assert1 = Assert::that($value1)->isClassString();
+    assertType('Nexus\\Assert\\Expectation<class-string>', $assert1);
+    assertType('class-string', $value1);
+
+    $assert2 = Assert::that($value2)->isClassString();
+    assertType('Nexus\\Assert\\Expectation<class-string<DateTimeInterface>>', $assert2);
+    assertType('class-string<DateTimeInterface>', $value2);
+
+    $assert3 = Assert::that($value3)->isClassString();
+    assertType('Nexus\\Assert\\Expectation<\'DateTimeImmutable\'>', $assert3);
+    assertType('\'DateTimeImmutable\'', $value3);
+
+    $assert4 = Assert::that($value4)->isClassString();
+    assertType('*NEVER*', $assert4);
+    assertType('*NEVER*', $value4);
+}
+
 function test_is_countable(mixed $value): void
 {
     $assert = Assert::that($value)->isCountable();

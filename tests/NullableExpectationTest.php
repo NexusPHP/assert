@@ -172,6 +172,16 @@ final class NullableExpectationTest extends AbstractExpectationTestCase
         Assert::that(42)->nullOr()->isCallable();
     }
 
+    public function testIsClassString(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->isClassString());
+        self::assertNoErrorsThrown(static fn() => Assert::that(\DateTimeInterface::class)->nullOr()->isClassString());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'NoSuchClass\'" is expected to be null or a class string but got string instead.');
+        Assert::that('NoSuchClass')->nullOr()->isClassString();
+    }
+
     public function testIsCountable(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->isCountable());

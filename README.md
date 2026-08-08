@@ -88,6 +88,7 @@ with the message formatted depending on the available context. By default, there
 | `isBetween(float\|int $min, float\|int $max, bool $inclusive = true, ?string $message = null): self` | `value`, `min`, `max`        |
 | `isBool(?string $message = null): self`                                                              | `value`, `type`              |
 | `isCallable(?string $message = null): self`                                                          | `value`, `type`              |
+| `isClassString(?string $message = null): self`                                                       | `value`, `type`              |
 | `isCountable(?string $message = null): self`                                                         | `value`, `type`              |
 | `isFalse(?string $message = null): self`                                                             | `value`, `type`              |
 | `isFloat(?string $message = null): self`                                                             | `value`, `type`              |

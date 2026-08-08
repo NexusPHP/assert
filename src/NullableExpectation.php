@@ -37,6 +37,7 @@ final readonly class NullableExpectation implements Expectable
     private const MESSAGE_IS_BETWEEN = 'Value "{value}" is expected to be null or a number between {min} and {max}.';
     private const MESSAGE_IS_BOOL = 'Value "{value}" is expected to be null or a bool but got {type} instead.';
     private const MESSAGE_IS_CALLABLE = 'Value "{value}" is expected to be null or callable but got {type} instead.';
+    private const MESSAGE_IS_CLASS_STRING = 'Value "{value}" is expected to be null or a class string but got {type} instead.';
     private const MESSAGE_IS_COUNTABLE = 'Value "{value}" is expected to be null or countable but got {type} instead.';
     private const MESSAGE_IS_FALSE = 'Value "{value}" is expected to be null or false but got {type} instead.';
     private const MESSAGE_IS_FLOAT = 'Value "{value}" is expected to be null or a float but got {type} instead.';
@@ -389,6 +390,30 @@ final readonly class NullableExpectation implements Expectable
         } catch (ExpectationFailedException) {
             throw new ExpectationFailedException(
                 $message ?? self::MESSAGE_IS_CALLABLE,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'type' => $this->expectation->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<null|TValue>
+     */
+    public function isClassString(?string $message = null): self
+    {
+        if (null === $this->value) {
+            return $this;
+        }
+
+        try {
+            $this->expectation->isClassString($message);
+        } catch (ExpectationFailedException) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_CLASS_STRING,
                 [
                     'value' => $this->expectation->exporter->exportValue($this->value),
                     'type' => $this->expectation->exporter->exportType($this->value),

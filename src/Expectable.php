@@ -155,6 +155,15 @@ interface Expectable
      *
      * @throws ExpectationFailedException
      */
+    public function isClassString(?string $message = null): self;
+
+    /**
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
     public function isCountable(?string $message = null): self;
 
     /**

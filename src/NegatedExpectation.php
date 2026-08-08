@@ -37,6 +37,7 @@ final readonly class NegatedExpectation implements Expectable
     private const MESSAGE_IS_BETWEEN = 'Value "{value}" is not expected to be a number between {min} and {max}.';
     private const MESSAGE_IS_BOOL = 'Value "{value}" is not expected to be a bool.';
     private const MESSAGE_IS_CALLABLE = 'Value "{value}" is not expected to be callable.';
+    private const MESSAGE_IS_CLASS_STRING = 'Value "{value}" is not expected to be a class string.';
     private const MESSAGE_IS_COUNTABLE = 'Value "{value}" is not expected to be countable.';
     private const MESSAGE_IS_FALSE = 'Value "{value}" is not expected to be false.';
     private const MESSAGE_IS_FLOAT = 'Value "{value}" is not expected to be a float.';
@@ -331,6 +332,23 @@ final readonly class NegatedExpectation implements Expectable
 
         throw new ExpectationFailedException(
             $message ?? self::MESSAGE_IS_CALLABLE,
+            ['value' => $this->expectation->exporter->exportValue($this->value)],
+        );
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isClassString(?string $message = null): self
+    {
+        try {
+            $this->expectation->isClassString($message);
+        } catch (ExpectationFailedException) {
+            return $this;
+        }
+
+        throw new ExpectationFailedException(
+            $message ?? self::MESSAGE_IS_CLASS_STRING,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }

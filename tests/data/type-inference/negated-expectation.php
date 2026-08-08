@@ -116,6 +116,13 @@ function test_is_callable(mixed $value): void
     assertType('mixed~callable(): mixed', $value);
 }
 
+function test_is_class_string(mixed $value): void
+{
+    $assert = Assert::that($value)->not()->isClassString();
+    assertType('Nexus\\Assert\\NegatedExpectation<mixed>', $assert);
+    assertType('mixed', $value);
+}
+
 function test_is_countable(mixed $value): void
 {
     $assert = Assert::that($value)->not()->isCountable();

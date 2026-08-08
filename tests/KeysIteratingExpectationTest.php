@@ -183,6 +183,15 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that(['notACallable' => 1])->keys()->isCallable();
     }
 
+    public function testIsClassString(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([\DateTimeImmutable::class => 1, \DateTimeInterface::class => 2])->keys()->isClassString());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Key "\'NoSuchClass\'" in iterable is expected to be a class string but got string instead.');
+        Assert::that(['NoSuchClass' => 1])->keys()->isClassString();
+    }
+
     public function testIsCountable(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(self::asGenerator([[], 1]))->keys()->isCountable());

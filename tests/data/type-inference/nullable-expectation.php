@@ -116,6 +116,13 @@ function test_is_callable(mixed $value): void
     assertType('(callable(): mixed)|null', $value);
 }
 
+function test_is_class_string(mixed $value): void
+{
+    $assert = Assert::that($value)->nullOr()->isClassString();
+    assertType('Nexus\\Assert\\NullableExpectation<class-string|null>', $assert);
+    assertType('class-string|null', $value);
+}
+
 function test_is_countable(mixed $value): void
 {
     $assert = Assert::that($value)->nullOr()->isCountable();

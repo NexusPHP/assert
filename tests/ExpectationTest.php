@@ -204,6 +204,20 @@ final class ExpectationTest extends AbstractExpectationTestCase
         Assert::that(42)->isCallable();
     }
 
+    public function testIsClassString(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(\DateTimeImmutable::class)->isClassString());
+        self::assertNoErrorsThrown(static fn() => Assert::that(\DateTimeInterface::class)->isClassString());
+        self::assertExpectationFails(
+            static fn() => Assert::that('NoSuchClass')->isClassString(),
+            'Value "\'NoSuchClass\'" is expected to be a class string but got string instead.',
+        );
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "42" is expected to be a string but got int instead.');
+        Assert::that(42)->isClassString();
+    }
+
     public function testIsCountable(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that([])->isCountable());

@@ -136,6 +136,13 @@ function test_is_callable(mixed $value): void
     assertType('iterable<callable(): mixed, mixed>', $value);
 }
 
+function test_is_class_string(mixed $value): void
+{
+    $assert = Assert::that($value)->keys()->isClassString();
+    assertType('Nexus\\Assert\\KeysIteratingExpectation<iterable<class-string, mixed>>', $assert);
+    assertType('iterable<class-string, mixed>', $value);
+}
+
 function test_is_countable(mixed $value1, mixed $value2): void
 {
     $assert1 = Assert::that($value1)->keys()->isCountable();
