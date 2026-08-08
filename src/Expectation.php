@@ -28,6 +28,7 @@ final readonly class Expectation implements Expectable, MutatingExpectable
     private const MESSAGE_HAS_MIN_LENGTH = 'Value "{value}" is expected to have a minimum length of {min}.';
     private const MESSAGE_HAS_OFFSET = 'Array "{value}" is expected to have offset "{key}".';
     private const MESSAGE_HAS_PROPERTY = 'Object of class "{value}" is expected to have property "{property}".';
+    private const MESSAGE_IMPLEMENTS_INTERFACE = 'Value "{value}" is expected to be a class string implementing {interface} but got {type} instead.';
     private const MESSAGE_IS_ARRAY = 'Value "{value}" is expected to be an array but got {type} instead.';
     private const MESSAGE_IS_ARRAY_KEY = 'Value "{value}" is expected to be an array key but got {type} instead.';
     private const MESSAGE_IS_BETWEEN = 'Value "{value}" is expected to be a number between {min} and {max}.';
@@ -238,6 +239,25 @@ final readonly class Expectation implements Expectable, MutatingExpectable
                 [
                     'value' => $this->exporter->exportType($this->value),
                     'property' => $property,
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function implementsInterface(string $interface, ?string $message = null): self
+    {
+        if (! \is_string($this->value) || ! is_a($this->value, $interface, true)) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IMPLEMENTS_INTERFACE,
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'interface' => $this->exporter->exportValue($interface),
+                    'type' => $this->exporter->exportType($this->value),
                 ],
             );
         }

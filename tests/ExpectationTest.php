@@ -127,6 +127,20 @@ final class ExpectationTest extends AbstractExpectationTestCase
         Assert::that(new \stdClass())->hasProperty('nonExistentProperty');
     }
 
+    public function testImplementsInterface(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(\DateTimeImmutable::class)->implementsInterface(\DateTimeInterface::class));
+        self::assertNoErrorsThrown(static fn() => Assert::that(\DateTimeInterface::class)->implementsInterface(\DateTimeInterface::class));
+        self::assertExpectationFails(
+            static fn() => Assert::that(new \DateTimeImmutable('2026-01-01T00:00:00+00:00'))->implementsInterface(\DateTimeInterface::class),
+            'Value "object(DateTimeImmutable(2026-01-01T00:00:00+00:00))" is expected to be a class string implementing \'DateTimeInterface\' but got DateTimeImmutable instead.',
+        );
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'stdClass\'" is expected to be a class string implementing \'DateTimeInterface\' but got string instead.');
+        Assert::that(\stdClass::class)->implementsInterface(\DateTimeInterface::class);
+    }
+
     public function testIsArray(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that([])->isArray());

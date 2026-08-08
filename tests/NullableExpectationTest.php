@@ -111,6 +111,16 @@ final class NullableExpectationTest extends AbstractExpectationTestCase
         Assert::that(new \Exception('Test'))->nullOr()->hasProperty('codes');
     }
 
+    public function testImplementsInterface(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->implementsInterface(\DateTimeInterface::class));
+        self::assertNoErrorsThrown(static fn() => Assert::that(\DateTimeImmutable::class)->nullOr()->implementsInterface(\DateTimeInterface::class));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'stdClass\'" is expected to be null or a class string implementing \'DateTimeInterface\' but got string instead.');
+        Assert::that(\stdClass::class)->nullOr()->implementsInterface(\DateTimeInterface::class);
+    }
+
     public function testIsArray(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->isArray());

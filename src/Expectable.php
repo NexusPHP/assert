@@ -92,6 +92,18 @@ interface Expectable
     public function hasProperty(string $property, ?string $message = null): self;
 
     /**
+     * @template T of object
+     *
+     * @param class-string<T>       $interface
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
+    public function implementsInterface(string $interface, ?string $message = null): self;
+
+    /**
      * @param null|non-empty-string $message
      *
      * @return self<TValue>

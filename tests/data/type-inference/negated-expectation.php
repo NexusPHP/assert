@@ -74,6 +74,13 @@ function test_has_property(mixed $value): void
     assertType('mixed', $value);
 }
 
+function test_implements_interface(mixed $value): void
+{
+    $assert = Assert::that($value)->not()->implementsInterface(\Countable::class);
+    assertType('Nexus\\Assert\\NegatedExpectation<mixed~class-string<Countable>>', $assert);
+    assertType('mixed~class-string<Countable>', $value);
+}
+
 function test_is_array(mixed $value): void
 {
     $assert = Assert::that($value)->not()->isArray();

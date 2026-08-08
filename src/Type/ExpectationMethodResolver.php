@@ -403,6 +403,7 @@ final class ExpectationMethodResolver
         $isString = new Resolver\IsStringResolver();
         $isList = new Resolver\IsListResolver($isArray);
         $isNonEmptyString = new Resolver\IsNonEmptyStringResolver($isString);
+        $isSameOrSubclassOf = new Resolver\IsSameOrSubclassOfResolver();
 
         $stringDispatching = new Resolver\StringDispatchingResolver($isString, $isNonEmptyString);
 
@@ -414,6 +415,7 @@ final class ExpectationMethodResolver
             'hasMinLength' => new Resolver\HasMinLengthResolver($isString),
             'hasOffset' => new Resolver\HasOffsetResolver($isArray),
             'hasProperty' => new Resolver\HasPropertyResolver($isObject),
+            'implementsInterface' => new Resolver\ImplementsInterfaceResolver($isString, $isSameOrSubclassOf),
             'isArray' => $isArray,
             'isArrayKey' => new Resolver\IsArrayKeyResolver($isInt, $isString),
             'isBetween' => new Resolver\IsBetweenResolver($isInt, $isFloat),
@@ -440,7 +442,7 @@ final class ExpectationMethodResolver
             'isOneOf' => new Resolver\IsOneOfResolver(),
             'isPositiveInt' => new Resolver\IsPositiveIntResolver($isInt),
             'isResource' => new Resolver\IsResourceResolver(),
-            'isSameOrSubclassOf' => new Resolver\IsSameOrSubclassOfResolver(),
+            'isSameOrSubclassOf' => $isSameOrSubclassOf,
             'isScalar' => new Resolver\IsScalarResolver(),
             'isString' => $isString,
             'isSubclassOf' => new Resolver\IsSubclassOfResolver(),

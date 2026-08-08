@@ -99,6 +99,15 @@ final class ValuesIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that([new \stdClass()])->values()->hasProperty('missing');
     }
 
+    public function testImplementsInterface(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([\DateTimeImmutable::class])->values()->implementsInterface(\DateTimeInterface::class));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'stdClass\'" in iterable is expected to be a class string implementing \'DateTimeInterface\' but got string instead.');
+        Assert::that([\stdClass::class])->values()->implementsInterface(\DateTimeInterface::class);
+    }
+
     public function testIsArray(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that([[], [1, 2]])->values()->isArray());

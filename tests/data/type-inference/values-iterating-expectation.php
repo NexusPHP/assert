@@ -74,6 +74,13 @@ function test_has_property(mixed $value): void
     assertType('iterable<object&hasProperty(length)>', $value);
 }
 
+function test_implements_interface(mixed $value): void
+{
+    $assert = Assert::that($value)->values()->implementsInterface(\Countable::class);
+    assertType('Nexus\\Assert\\ValuesIteratingExpectation<iterable<class-string<Countable>>>', $assert);
+    assertType('iterable<class-string<Countable>>', $value);
+}
+
 function test_is_array(mixed $value): void
 {
     $assert = Assert::that($value)->values()->isArray();

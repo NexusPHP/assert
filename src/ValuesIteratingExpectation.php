@@ -31,6 +31,7 @@ final readonly class ValuesIteratingExpectation implements Expectable
     private const MESSAGE_HAS_MIN_LENGTH = 'Value "{value}" in iterable is expected to have a minimum length of {min}.';
     private const MESSAGE_HAS_OFFSET = 'Value "{value}" in iterable is expected to have offset "{key}".';
     private const MESSAGE_HAS_PROPERTY = 'Value of class "{value}" in iterable is expected to have property "{property}".';
+    private const MESSAGE_IMPLEMENTS_INTERFACE = 'Value "{value}" in iterable is expected to be a class string implementing {interface} but got {type} instead.';
     private const MESSAGE_IS_ARRAY = 'Value "{value}" in iterable is expected to be an array but got {type} instead.';
     private const MESSAGE_IS_ARRAY_KEY = 'Value "{value}" in iterable is expected to be an array key but got {type} instead.';
     private const MESSAGE_IS_BETWEEN = 'Value "{value}" in iterable is expected to be a number between {min} and {max}.';
@@ -232,6 +233,29 @@ final readonly class ValuesIteratingExpectation implements Expectable
                     [
                         'value' => $this->expectation->exporter->exportType($offsetValue),
                         'property' => $property,
+                    ],
+                );
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function implementsInterface(string $interface, ?string $message = null): self
+    {
+        foreach ($this->value as $offsetValue) {
+            try {
+                Assert::that($offsetValue)->implementsInterface($interface, $message);
+            } catch (ExpectationFailedException) {
+                throw new ExpectationFailedException(
+                    $message ?? self::MESSAGE_IMPLEMENTS_INTERFACE,
+                    [
+                        'value' => $this->expectation->exporter->exportValue($offsetValue),
+                        'interface' => $this->expectation->exporter->exportValue($interface),
+                        'type' => $this->expectation->exporter->exportType($offsetValue),
                     ],
                 );
             }

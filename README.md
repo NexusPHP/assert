@@ -73,50 +73,51 @@ with the message formatted depending on the available context. By default, there
 
 ## List of Expectations
 
-| Methods                                                                                              | Available Context        |
-| ---------------------------------------------------------------------------------------------------- | ------------------------ |
-| `contains(string $needle, ?string $message = null): self`                                            | `value`, `needle`        |
-| `endsWith(string $needle, ?string $message = null): self`                                            | `value`, `needle`        |
-| `hasMaxLength(int $max, ?string $message = null): self`                                              | `value`, `max`           |
-| `hasMethod(string $method, ?string $message = null): self`                                           | `value+`, `method=`      |
-| `hasMinLength(int $min, ?string $message = null): self`                                              | `value`, `min`           |
-| `hasOffset(int\|string $key, ?string $message = null): self`                                         | `value`, `key=`          |
-| `hasProperty(string $property, ?string $message = null): self`                                       | `value+`, `property=`    |
-| `isArray(?string $message = null): self`                                                             | `value`, `type`          |
-| `isArrayKey(?string $message = null): self`                                                          | `value`, `type`          |
-| `isBetween(float\|int $min, float\|int $max, bool $inclusive = true, ?string $message = null): self` | `value`, `min`, `max`    |
-| `isBool(?string $message = null): self`                                                              | `value`, `type`          |
-| `isCallable(?string $message = null): self`                                                          | `value`, `type`          |
-| `isCountable(?string $message = null): self`                                                         | `value`, `type`          |
-| `isFalse(?string $message = null): self`                                                             | `value`, `type`          |
-| `isFloat(?string $message = null): self`                                                             | `value`, `type`          |
-| `isIdentical(mixed $other, ?string $message = null): self`                                           | `value`, `other`, `type` |
-| `isInstanceOf(object\|string $class, ?string $message = null): self`                                 | `value`, `class`, `type` |
-| `isInt(?string $message = null): self`                                                               | `value`, `type`          |
-| `isIntOrNonEmptyString(?string $message = null): self`                                               | `value`, `type`          |
-| `isIterable(?string $message = null): self`                                                          | `value`, `type`          |
-| `isList(?string $message = null): self`                                                              | `value`, `type`          |
-| `isLowercaseString(?string $message = null): self`                                                   | `value`, `type`          |
-| `isMap(?string $message = null): self`                                                               | `value`, `type`          |
-| `isNaturalInt(?string $message = null): self`                                                        | `value`, `type`          |
-| `isNegativeInt(?string $message = null): self`                                                       | `value`, `type`          |
-| `isNonEmptyList(?string $message = null): self`                                                      | `value`, `type`          |
-| `isNonEmptyString(?string $message = null): self`                                                    | `value`, `type`          |
-| `isNull(?string $message = null): self`                                                              | `value`, `type`          |
-| `isNumeric(?string $message = null): self`                                                           | `value`, `type`          |
-| `isObject(?string $message = null): self`                                                            | `value`, `type`          |
-| `isOneOf(array $choices, ?string $message = null): self`                                             | `value`, `choices`       |
-| `isPositiveInt(?string $message = null): self`                                                       | `value`, `type`          |
-| `isResource(?string $message = null): self`                                                          | `value`, `type`          |
-| `isSameOrSubclassOf(object\|string $class, ?string $message = null): self`                           | `value`, `class`, `type` |
-| `isScalar(?string $message = null): self`                                                            | `value`, `type`          |
-| `isString(?string $message = null): self`                                                            | `value`, `type`          |
-| `isSubclassOf(object\|string $class, ?string $message = null): self`                                 | `value`, `class`, `type` |
-| `isTrue(?string $message = null): self`                                                              | `value`, `type`          |
-| `isUppercaseString(?string $message = null): self`                                                   | `value`, `type`          |
-| `isUrl(?string $message = null): self`                                                               | `value`                  |
-| `matchesRegularExpression(string $pattern, ?string $message = null): self`                           | `value`, `pattern=`      |
-| `startsWith(string $needle, ?string $message = null): self`                                          | `value`, `needle`        |
+| Methods                                                                                              | Available Context            |
+| ---------------------------------------------------------------------------------------------------- | ---------------------------- |
+| `contains(string $needle, ?string $message = null): self`                                            | `value`, `needle`            |
+| `endsWith(string $needle, ?string $message = null): self`                                            | `value`, `needle`            |
+| `hasMaxLength(int $max, ?string $message = null): self`                                              | `value`, `max`               |
+| `hasMethod(string $method, ?string $message = null): self`                                           | `value+`, `method=`          |
+| `hasMinLength(int $min, ?string $message = null): self`                                              | `value`, `min`               |
+| `hasOffset(int\|string $key, ?string $message = null): self`                                         | `value`, `key=`              |
+| `hasProperty(string $property, ?string $message = null): self`                                       | `value+`, `property=`        |
+| `implementsInterface(string $interface, ?string $message = null): self`                              | `value`, `interface`, `type` |
+| `isArray(?string $message = null): self`                                                             | `value`, `type`              |
+| `isArrayKey(?string $message = null): self`                                                          | `value`, `type`              |
+| `isBetween(float\|int $min, float\|int $max, bool $inclusive = true, ?string $message = null): self` | `value`, `min`, `max`        |
+| `isBool(?string $message = null): self`                                                              | `value`, `type`              |
+| `isCallable(?string $message = null): self`                                                          | `value`, `type`              |
+| `isCountable(?string $message = null): self`                                                         | `value`, `type`              |
+| `isFalse(?string $message = null): self`                                                             | `value`, `type`              |
+| `isFloat(?string $message = null): self`                                                             | `value`, `type`              |
+| `isIdentical(mixed $other, ?string $message = null): self`                                           | `value`, `other`, `type`     |
+| `isInstanceOf(object\|string $class, ?string $message = null): self`                                 | `value`, `class`, `type`     |
+| `isInt(?string $message = null): self`                                                               | `value`, `type`              |
+| `isIntOrNonEmptyString(?string $message = null): self`                                               | `value`, `type`              |
+| `isIterable(?string $message = null): self`                                                          | `value`, `type`              |
+| `isList(?string $message = null): self`                                                              | `value`, `type`              |
+| `isLowercaseString(?string $message = null): self`                                                   | `value`, `type`              |
+| `isMap(?string $message = null): self`                                                               | `value`, `type`              |
+| `isNaturalInt(?string $message = null): self`                                                        | `value`, `type`              |
+| `isNegativeInt(?string $message = null): self`                                                       | `value`, `type`              |
+| `isNonEmptyList(?string $message = null): self`                                                      | `value`, `type`              |
+| `isNonEmptyString(?string $message = null): self`                                                    | `value`, `type`              |
+| `isNull(?string $message = null): self`                                                              | `value`, `type`              |
+| `isNumeric(?string $message = null): self`                                                           | `value`, `type`              |
+| `isObject(?string $message = null): self`                                                            | `value`, `type`              |
+| `isOneOf(array $choices, ?string $message = null): self`                                             | `value`, `choices`           |
+| `isPositiveInt(?string $message = null): self`                                                       | `value`, `type`              |
+| `isResource(?string $message = null): self`                                                          | `value`, `type`              |
+| `isSameOrSubclassOf(object\|string $class, ?string $message = null): self`                           | `value`, `class`, `type`     |
+| `isScalar(?string $message = null): self`                                                            | `value`, `type`              |
+| `isString(?string $message = null): self`                                                            | `value`, `type`              |
+| `isSubclassOf(object\|string $class, ?string $message = null): self`                                 | `value`, `class`, `type`     |
+| `isTrue(?string $message = null): self`                                                              | `value`, `type`              |
+| `isUppercaseString(?string $message = null): self`                                                   | `value`, `type`              |
+| `isUrl(?string $message = null): self`                                                               | `value`                      |
+| `matchesRegularExpression(string $pattern, ?string $message = null): self`                           | `value`, `pattern=`          |
+| `startsWith(string $needle, ?string $message = null): self`                                          | `value`, `needle`            |
 
 > [!NOTE]
 > - The `value` context is always value-exported except when appended by `+` which means it is type-exported instead.

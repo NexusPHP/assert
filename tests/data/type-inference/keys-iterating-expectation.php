@@ -86,6 +86,13 @@ function test_has_property(mixed $value1, mixed $value2): void
     assertType('*NEVER*', $value2);
 }
 
+function test_implements_interface(mixed $value): void
+{
+    $assert = Assert::that($value)->keys()->implementsInterface(\Countable::class);
+    assertType('Nexus\\Assert\\KeysIteratingExpectation<iterable<class-string<Countable>, mixed>>', $assert);
+    assertType('iterable<class-string<Countable>, mixed>', $value);
+}
+
 function test_is_array(mixed $value1, mixed $value2): void
 {
     $assert1 = Assert::that($value1)->keys()->isArray();

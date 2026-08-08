@@ -31,6 +31,7 @@ final readonly class NegatedExpectation implements Expectable
     private const MESSAGE_HAS_MIN_LENGTH = 'Value "{value}" is not expected to have a minimum length of {min}.';
     private const MESSAGE_HAS_OFFSET = 'Array "{value}" is not expected to have offset "{key}".';
     private const MESSAGE_HAS_PROPERTY = 'Object of class "{value}" is not expected to have property "{property}".';
+    private const MESSAGE_IMPLEMENTS_INTERFACE = 'Value "{value}" is not expected to be a class string implementing {interface}.';
     private const MESSAGE_IS_ARRAY = 'Value "{value}" is not expected to be an array.';
     private const MESSAGE_IS_ARRAY_KEY = 'Value "{value}" is not expected to be an array key.';
     private const MESSAGE_IS_BETWEEN = 'Value "{value}" is not expected to be a number between {min} and {max}.';
@@ -220,6 +221,26 @@ final readonly class NegatedExpectation implements Expectable
             [
                 'value' => $this->expectation->exporter->exportType($this->value),
                 'property' => $property,
+            ],
+        );
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function implementsInterface(string $interface, ?string $message = null): self
+    {
+        try {
+            $this->expectation->implementsInterface($interface, $message);
+        } catch (ExpectationFailedException) {
+            return $this;
+        }
+
+        throw new ExpectationFailedException(
+            $message ?? self::MESSAGE_IMPLEMENTS_INTERFACE,
+            [
+                'value' => $this->expectation->exporter->exportValue($this->value),
+                'interface' => $this->expectation->exporter->exportValue($interface),
             ],
         );
     }

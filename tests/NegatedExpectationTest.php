@@ -103,6 +103,16 @@ final class NegatedExpectationTest extends AbstractExpectationTestCase
         Assert::that($obj)->not()->hasProperty('existingProperty');
     }
 
+    public function testImplementsInterface(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(\stdClass::class)->not()->implementsInterface(\DateTimeInterface::class));
+        self::assertNoErrorsThrown(static fn() => Assert::that(new \DateTimeImmutable())->not()->implementsInterface(\DateTimeInterface::class));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'DateTimeImmutable\'" is not expected to be a class string implementing \'DateTimeInterface\'.');
+        Assert::that(\DateTimeImmutable::class)->not()->implementsInterface(\DateTimeInterface::class);
+    }
+
     public function testIsArray(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(42)->not()->isArray());

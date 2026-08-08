@@ -37,6 +37,7 @@ final class ExpectationVariantsGenerator
         'hasMinLength' => ['value', 'min'],
         'hasOffset' => ['value', 'key='],
         'hasProperty' => ['value+', 'property='],
+        'implementsInterface' => ['value', 'interface', 'type'],
         'isBetween' => ['value', 'min', 'max'],
         'isIdentical' => ['value', 'other', 'type'],
         'isInstanceOf' => ['value', 'class', 'type'],

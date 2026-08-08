@@ -110,6 +110,15 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that(['a' => 1])->keys()->hasProperty('foo');
     }
 
+    public function testImplementsInterface(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([\DateTimeImmutable::class => 1])->keys()->implementsInterface(\DateTimeInterface::class));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Key "\'stdClass\'" in iterable is expected to be a class string implementing \'DateTimeInterface\' but got string instead.');
+        Assert::that([\stdClass::class => 1])->keys()->implementsInterface(\DateTimeInterface::class);
+    }
+
     public function testIsArray(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(self::asGenerator([[], 1]))->keys()->isArray());
