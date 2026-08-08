@@ -241,6 +241,16 @@ final class NullableExpectationTest extends AbstractExpectationTestCase
         Assert::that(new \stdClass())->nullOr()->isInstanceOf(\Generator::class);
     }
 
+    public function testIsInstanceOfAny(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->isInstanceOfAny([\Countable::class, \DateTimeInterface::class]));
+        self::assertNoErrorsThrown(static fn() => Assert::that(new \ArrayObject())->nullOr()->isInstanceOfAny([\Countable::class, \DateTimeInterface::class]));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "object(stdClass)" is expected to be null or an instance of any of [\'Countable\', \'DateTimeInterface\'] but got stdClass instead.');
+        Assert::that(new \stdClass())->nullOr()->isInstanceOfAny([\Countable::class, \DateTimeInterface::class]);
+    }
+
     public function testIsInt(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->isInt());

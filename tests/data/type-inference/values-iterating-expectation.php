@@ -151,6 +151,13 @@ function test_is_instance_of(mixed $value): void
     assertType('iterable<stdClass>', $value);
 }
 
+function test_is_instance_of_any(mixed $value): void
+{
+    $assert = Assert::that($value)->values()->isInstanceOfAny([\Countable::class, \DateTimeInterface::class]);
+    assertType('Nexus\\Assert\\ValuesIteratingExpectation<iterable<Countable|DateTimeInterface>>', $assert);
+    assertType('iterable<Countable|DateTimeInterface>', $value);
+}
+
 function test_is_int(mixed $value): void
 {
     $assert = Assert::that($value)->values()->isInt();

@@ -199,6 +199,15 @@ final class ValuesIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that([new \stdClass()])->values()->isInstanceOf(\Exception::class);
     }
 
+    public function testIsInstanceOfAny(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([new \ArrayObject(), new \ArrayIterator()])->values()->isInstanceOfAny([\Countable::class, \DateTimeInterface::class]));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "object(stdClass)" in iterable is expected to be an instance of any of [\'Countable\', \'DateTimeInterface\'] but got stdClass instead.');
+        Assert::that([new \stdClass()])->values()->isInstanceOfAny([\Countable::class, \DateTimeInterface::class]);
+    }
+
     public function testIsInt(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that([1, 2, 3])->values()->isInt());

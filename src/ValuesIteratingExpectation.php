@@ -44,6 +44,7 @@ final readonly class ValuesIteratingExpectation implements Expectable
     private const MESSAGE_IS_INSTANCE_OF = 'Value "{value}" in iterable is expected to be an instance of {class} but got {type} instead.';
     private const MESSAGE_IS_INT = 'Value "{value}" in iterable is expected to be an int but got {type} instead.';
     private const MESSAGE_IS_INT_OR_NON_EMPTY_STRING = 'Value "{value}" in iterable is expected to be an int or non-empty string but got {type} instead.';
+    private const MESSAGE_IS_INSTANCE_OF_ANY = 'Value "{value}" in iterable is expected to be an instance of any of {classes} but got {type} instead.';
     private const MESSAGE_IS_ITERABLE = 'Value "{value}" in iterable is expected to be iterable but got {type} instead.';
     private const MESSAGE_IS_LIST = 'Value "{value}" in iterable is expected to be a list but got {type} instead.';
     private const MESSAGE_IS_LOWERCASE_STRING = 'Value "{value}" in iterable is expected to be a lowercase string but got {type} instead.';
@@ -478,6 +479,29 @@ final readonly class ValuesIteratingExpectation implements Expectable
                     [
                         'value' => $this->expectation->exporter->exportValue($offsetValue),
                         'class' => $this->expectation->exporter->exportValue($class),
+                        'type' => $this->expectation->exporter->exportType($offsetValue),
+                    ],
+                );
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isInstanceOfAny(array $classes, ?string $message = null): self
+    {
+        foreach ($this->value as $offsetValue) {
+            try {
+                Assert::that($offsetValue)->isInstanceOfAny($classes, $message);
+            } catch (ExpectationFailedException) {
+                throw new ExpectationFailedException(
+                    $message ?? self::MESSAGE_IS_INSTANCE_OF_ANY,
+                    [
+                        'value' => $this->expectation->exporter->exportValue($offsetValue),
+                        'classes' => $this->expectation->exporter->exportValue($classes),
                         'type' => $this->expectation->exporter->exportType($offsetValue),
                     ],
                 );

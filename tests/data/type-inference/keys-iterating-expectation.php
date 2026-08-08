@@ -187,6 +187,13 @@ function test_is_instance_of(mixed $value1, mixed $value2): void
     assertType('*NEVER*', $value2);
 }
 
+function test_is_instance_of_any(mixed $value): void
+{
+    $assert = Assert::that($value)->keys()->isInstanceOfAny([\Countable::class, \DateTimeInterface::class]);
+    assertType('Nexus\\Assert\\KeysIteratingExpectation<iterable<Countable|DateTimeInterface, mixed>>', $assert);
+    assertType('iterable<Countable|DateTimeInterface, mixed>', $value);
+}
+
 function test_is_int(mixed $value): void
 {
     $assert = Assert::that($value)->keys()->isInt();

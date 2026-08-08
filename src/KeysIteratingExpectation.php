@@ -44,6 +44,7 @@ final readonly class KeysIteratingExpectation implements Expectable
     private const MESSAGE_IS_INSTANCE_OF = 'Key "{value}" in iterable is expected to be an instance of {class} but got {type} instead.';
     private const MESSAGE_IS_INT = 'Key "{value}" in iterable is expected to be an int but got {type} instead.';
     private const MESSAGE_IS_INT_OR_NON_EMPTY_STRING = 'Key "{value}" in iterable is expected to be an int or non-empty string but got {type} instead.';
+    private const MESSAGE_IS_INSTANCE_OF_ANY = 'Key "{value}" in iterable is expected to be an instance of any of {classes} but got {type} instead.';
     private const MESSAGE_IS_ITERABLE = 'Key "{value}" in iterable is expected to be iterable but got {type} instead.';
     private const MESSAGE_IS_LIST = 'Key "{value}" in iterable is expected to be a list but got {type} instead.';
     private const MESSAGE_IS_LOWERCASE_STRING = 'Key "{value}" in iterable is expected to be a lowercase string but got {type} instead.';
@@ -517,6 +518,33 @@ final readonly class KeysIteratingExpectation implements Expectable
                     [
                         'value' => $this->expectation->exporter->exportValue($offsetKey),
                         'class' => $this->expectation->exporter->exportValue($class),
+                        'type' => $this->expectation->exporter->exportType($offsetKey),
+                    ],
+                );
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isInstanceOfAny(array $classes, ?string $message = null): self
+    {
+        if ($this->isArray) {
+            throw new \LogicException('Method isInstanceOfAny() cannot be called on keys of an array; array keys are constrained to int|string.');
+        }
+
+        foreach ($this->value as $offsetKey => $_) {
+            try {
+                Assert::that($offsetKey)->isInstanceOfAny($classes, $message);
+            } catch (ExpectationFailedException) {
+                throw new ExpectationFailedException(
+                    $message ?? self::MESSAGE_IS_INSTANCE_OF_ANY,
+                    [
+                        'value' => $this->expectation->exporter->exportValue($offsetKey),
+                        'classes' => $this->expectation->exporter->exportValue($classes),
                         'type' => $this->expectation->exporter->exportType($offsetKey),
                     ],
                 );

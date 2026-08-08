@@ -44,6 +44,7 @@ final readonly class NullableExpectation implements Expectable
     private const MESSAGE_IS_INSTANCE_OF = 'Value "{value}" is expected to be null or an instance of {class} but got {type} instead.';
     private const MESSAGE_IS_INT = 'Value "{value}" is expected to be null or an int but got {type} instead.';
     private const MESSAGE_IS_INT_OR_NON_EMPTY_STRING = 'Value "{value}" is expected to be null or an int or non-empty string but got {type} instead.';
+    private const MESSAGE_IS_INSTANCE_OF_ANY = 'Value "{value}" is expected to be null or an instance of any of {classes} but got {type} instead.';
     private const MESSAGE_IS_ITERABLE = 'Value "{value}" is expected to be null or iterable but got {type} instead.';
     private const MESSAGE_IS_LIST = 'Value "{value}" is expected to be null or a list but got {type} instead.';
     private const MESSAGE_IS_LOWERCASE_STRING = 'Value "{value}" is expected to be null or a lowercase string but got {type} instead.';
@@ -512,6 +513,31 @@ final readonly class NullableExpectation implements Expectable
                 [
                     'value' => $this->expectation->exporter->exportValue($this->value),
                     'class' => $this->expectation->exporter->exportValue($class),
+                    'type' => $this->expectation->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<null|TValue>
+     */
+    public function isInstanceOfAny(array $classes, ?string $message = null): self
+    {
+        if (null === $this->value) {
+            return $this;
+        }
+
+        try {
+            $this->expectation->isInstanceOfAny($classes, $message);
+        } catch (ExpectationFailedException) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_INSTANCE_OF_ANY,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'classes' => $this->expectation->exporter->exportValue($classes),
                     'type' => $this->expectation->exporter->exportType($this->value),
                 ],
             );

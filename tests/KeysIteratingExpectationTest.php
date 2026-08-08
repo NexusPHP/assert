@@ -244,6 +244,19 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that(['a' => 1])->keys()->isInstanceOf(\stdClass::class);
     }
 
+    public function testIsInstanceOfAny(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(self::asGenerator([new \ArrayObject(), 1]))->keys()->isInstanceOfAny([\Countable::class, \DateTimeInterface::class]));
+        self::assertExpectationFails(
+            static fn() => Assert::that(self::asGenerator(['oops', 1]))->keys()->isInstanceOfAny([\Countable::class, \DateTimeInterface::class]),
+            'Key "\'oops\'" in iterable is expected to be an instance of any of [\'Countable\', \'DateTimeInterface\'] but got string instead.',
+        );
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Method isInstanceOfAny() cannot be called on keys of an array; array keys are constrained to int|string.');
+        Assert::that(['a' => 1])->keys()->isInstanceOfAny([\Countable::class, \DateTimeInterface::class]);
+    }
+
     public function testIsInt(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that([1, 2, 3])->keys()->isInt());

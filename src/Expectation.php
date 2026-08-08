@@ -41,6 +41,7 @@ final readonly class Expectation implements Expectable, MutatingExpectable
     private const MESSAGE_IS_INSTANCE_OF = 'Value "{value}" is expected to be an instance of {class} but got {type} instead.';
     private const MESSAGE_IS_INT = 'Value "{value}" is expected to be an int but got {type} instead.';
     private const MESSAGE_IS_INT_OR_NON_EMPTY_STRING = 'Value "{value}" is expected to be an int or non-empty string but got {type} instead.';
+    private const MESSAGE_IS_INSTANCE_OF_ANY = 'Value "{value}" is expected to be an instance of any of {classes} but got {type} instead.';
     private const MESSAGE_IS_ITERABLE = 'Value "{value}" is expected to be iterable but got {type} instead.';
     private const MESSAGE_IS_LIST = 'Value "{value}" is expected to be a list but got {type} instead.';
     private const MESSAGE_IS_LOWERCASE_STRING = 'Value "{value}" is expected to be a lowercase string but got {type} instead.';
@@ -450,6 +451,27 @@ final readonly class Expectation implements Expectable, MutatingExpectable
         }
 
         return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isInstanceOfAny(array $classes, ?string $message = null): self
+    {
+        foreach ($classes as $class) {
+            if ($this->value instanceof $class) {
+                return $this;
+            }
+        }
+
+        throw new ExpectationFailedException(
+            $message ?? self::MESSAGE_IS_INSTANCE_OF_ANY,
+            [
+                'value' => $this->exporter->exportValue($this->value),
+                'classes' => $this->exporter->exportValue($classes),
+                'type' => $this->exporter->exportType($this->value),
+            ],
+        );
     }
 
     /**

@@ -197,6 +197,16 @@ interface Expectable
     public function isInstanceOf(object|string $class, ?string $message = null): self;
 
     /**
+     * @param non-empty-list<class-string> $classes
+     * @param null|non-empty-string        $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
+    public function isInstanceOfAny(array $classes, ?string $message = null): self;
+
+    /**
      * @param null|non-empty-string $message
      *
      * @return self<TValue>

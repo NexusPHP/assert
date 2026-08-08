@@ -137,6 +137,13 @@ function test_is_float(mixed $value): void
     assertType('float|null', $value);
 }
 
+function test_is_instance_of_any(mixed $value): void
+{
+    $assert = Assert::that($value)->nullOr()->isInstanceOfAny([\Countable::class, \DateTimeInterface::class]);
+    assertType('Nexus\\Assert\\NullableExpectation<Countable|DateTimeInterface|null>', $assert);
+    assertType('Countable|DateTimeInterface|null', $value);
+}
+
 function test_is_int(mixed $value): void
 {
     $assert = Assert::that($value)->nullOr()->isInt();

@@ -219,6 +219,15 @@ final class NegatedExpectationTest extends AbstractExpectationTestCase
         Assert::that(new \stdClass())->not()->isInstanceOf(\stdClass::class);
     }
 
+    public function testIsInstanceOfAny(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(new \stdClass())->not()->isInstanceOfAny([\Countable::class, \DateTimeInterface::class]));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "object(ArrayObject)" is not expected to be an instance of any of [\'Countable\', \'DateTimeInterface\'].');
+        Assert::that(new \ArrayObject())->not()->isInstanceOfAny([\Countable::class, \DateTimeInterface::class]);
+    }
+
     public function testIsInt(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(3.14)->not()->isInt());

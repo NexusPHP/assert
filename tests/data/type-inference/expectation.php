@@ -137,6 +137,17 @@ function test_is_float(mixed $value): void
     assertType('float', $value);
 }
 
+function test_is_instance_of_any(mixed $value1, mixed $value2, array $classes): void
+{
+    $assert1 = Assert::that($value1)->isInstanceOfAny([\Countable::class, \DateTimeInterface::class]);
+    assertType('Nexus\\Assert\\Expectation<Countable|DateTimeInterface>', $assert1);
+    assertType('Countable|DateTimeInterface', $value1);
+
+    $assert2 = Assert::that($value2)->isInstanceOfAny($classes);
+    assertType('Nexus\\Assert\\Expectation<object>', $assert2);
+    assertType('object', $value2);
+}
+
 function test_is_int(mixed $value): void
 {
     $assert = Assert::that($value)->isInt();
