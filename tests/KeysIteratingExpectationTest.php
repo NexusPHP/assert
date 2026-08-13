@@ -394,6 +394,15 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that(['abc' => 1])->keys()->isNumeric();
     }
 
+    public function testIsNumericString(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(['3.14' => 1, '1e3' => 2])->keys()->isNumericString());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Key "\'abc\'" in iterable is expected to be a numeric string but got string instead.');
+        Assert::that(['abc' => 1])->keys()->isNumericString();
+    }
+
     public function testIsObject(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(self::asGenerator([new \stdClass(), 1]))->keys()->isObject());

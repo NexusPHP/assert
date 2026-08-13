@@ -56,6 +56,7 @@ final readonly class ValuesIteratingExpectation implements Expectable
     private const MESSAGE_IS_NON_EMPTY_STRING = 'Value "{value}" in iterable is expected to be a non-empty string but got {type} instead.';
     private const MESSAGE_IS_NULL = 'Value "{value}" in iterable is expected to be null but got {type} instead.';
     private const MESSAGE_IS_NUMERIC = 'Value "{value}" in iterable is expected to be numeric but got {type} instead.';
+    private const MESSAGE_IS_NUMERIC_STRING = 'Value "{value}" in iterable is expected to be a numeric string but got {type} instead.';
     private const MESSAGE_IS_OBJECT = 'Value "{value}" in iterable is expected to be an object but got {type} instead.';
     private const MESSAGE_IS_ONE_OF = 'Value "{value}" in iterable is expected to be one of {choices}.';
     private const MESSAGE_IS_POSITIVE_INT = 'Value "{value}" in iterable is expected to be a positive int but got {type} instead.';
@@ -787,6 +788,28 @@ final readonly class ValuesIteratingExpectation implements Expectable
             } catch (ExpectationFailedException) {
                 throw new ExpectationFailedException(
                     $message ?? self::MESSAGE_IS_NUMERIC,
+                    [
+                        'value' => $this->expectation->exporter->exportValue($offsetValue),
+                        'type' => $this->expectation->exporter->exportType($offsetValue),
+                    ],
+                );
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isNumericString(?string $message = null): self
+    {
+        foreach ($this->value as $offsetValue) {
+            try {
+                Assert::that($offsetValue)->isNumericString($message);
+            } catch (ExpectationFailedException) {
+                throw new ExpectationFailedException(
+                    $message ?? self::MESSAGE_IS_NUMERIC_STRING,
                     [
                         'value' => $this->expectation->exporter->exportValue($offsetValue),
                         'type' => $this->expectation->exporter->exportType($offsetValue),

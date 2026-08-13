@@ -382,6 +382,16 @@ final class NullableExpectationTest extends AbstractExpectationTestCase
         Assert::that(true)->nullOr()->isNumeric();
     }
 
+    public function testIsNumericString(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->isNumericString());
+        self::assertNoErrorsThrown(static fn() => Assert::that('42')->nullOr()->isNumericString());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'abc\'" is expected to be null or a numeric string but got string instead.');
+        Assert::that('abc')->nullOr()->isNumericString();
+    }
+
     public function testIsObject(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->isObject());

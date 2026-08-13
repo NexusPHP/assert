@@ -409,6 +409,21 @@ final class ExpectationTest extends AbstractExpectationTestCase
         Assert::that(true)->isNumeric();
     }
 
+    public function testIsNumericString(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that('42')->isNumericString());
+        self::assertNoErrorsThrown(static fn() => Assert::that('-3.14')->isNumericString());
+
+        self::assertExpectationFails(
+            static fn() => Assert::that('abc')->isNumericString(),
+            'Value "\'abc\'" is expected to be a numeric string but got string instead.',
+        );
+        self::assertExpectationFails(
+            static fn() => Assert::that('')->isNumericString(),
+            'Value "\'\'" is expected to be a numeric string but got string instead.',
+        );
+    }
+
     public function testIsObject(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(new \stdClass())->isObject());

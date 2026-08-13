@@ -249,6 +249,13 @@ function test_is_numeric(mixed $value): void
     assertType('iterable<float|int|numeric-string>', $value);
 }
 
+function test_is_numeric_string(mixed $value): void
+{
+    $assert = Assert::that($value)->values()->isNumericString();
+    assertType('Nexus\\Assert\\ValuesIteratingExpectation<iterable<numeric-string>>', $assert);
+    assertType('iterable<numeric-string>', $value);
+}
+
 function test_is_object(mixed $value): void
 {
     $assert = Assert::that($value)->values()->isObject();

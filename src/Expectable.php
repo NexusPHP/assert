@@ -330,6 +330,15 @@ interface Expectable
      *
      * @throws ExpectationFailedException
      */
+    public function isNumericString(?string $message = null): self;
+
+    /**
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
     public function isObject(?string $message = null): self;
 
     /**

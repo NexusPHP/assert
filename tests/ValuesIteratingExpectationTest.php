@@ -325,6 +325,15 @@ final class ValuesIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that(['abc'])->values()->isNumeric();
     }
 
+    public function testIsNumericString(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(['42', '-3.14'])->values()->isNumericString());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'abc\'" in iterable is expected to be a numeric string but got string instead.');
+        Assert::that(['abc'])->values()->isNumericString();
+    }
+
     public function testIsObject(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that([new \stdClass(), new \Exception('a')])->values()->isObject());

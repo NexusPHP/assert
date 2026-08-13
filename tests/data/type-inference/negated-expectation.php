@@ -235,6 +235,13 @@ function test_is_numeric(mixed $value): void
     assertType('mixed~(float|int|numeric-string)', $value);
 }
 
+function test_is_numeric_string(mixed $value): void
+{
+    $assert = Assert::that($value)->not()->isNumericString();
+    assertType('Nexus\\Assert\\NegatedExpectation<mixed~numeric-string>', $assert);
+    assertType('mixed~numeric-string', $value);
+}
+
 function test_is_object(mixed $value): void
 {
     $assert = Assert::that($value)->not()->isObject();

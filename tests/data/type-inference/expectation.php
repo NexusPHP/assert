@@ -256,6 +256,30 @@ function test_is_numeric(mixed $value): void
     assertType('float|int|numeric-string', $value);
 }
 
+/**
+ * @param float|int|numeric-string $value2
+ * @param '3.14'|'abc'             $value3
+ * @param 'abc'                    $value4
+ */
+function test_is_numeric_string(mixed $value1, mixed $value2, mixed $value3, mixed $value4): void
+{
+    $assert1 = Assert::that($value1)->isNumericString();
+    assertType('Nexus\\Assert\\Expectation<numeric-string>', $assert1);
+    assertType('numeric-string', $value1);
+
+    $assert2 = Assert::that($value2)->isNumericString();
+    assertType('Nexus\\Assert\\Expectation<numeric-string>', $assert2);
+    assertType('numeric-string', $value2);
+
+    $assert3 = Assert::that($value3)->isNumericString();
+    assertType('Nexus\\Assert\\Expectation<\'3.14\'>', $assert3);
+    assertType('\'3.14\'', $value3);
+
+    $assert4 = Assert::that($value4)->isNumericString();
+    assertType('*NEVER*', $assert4);
+    assertType('*NEVER*', $value4);
+}
+
 function test_is_object(mixed $value): void
 {
     $assert = Assert::that($value)->isObject();

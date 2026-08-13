@@ -347,6 +347,16 @@ final class NegatedExpectationTest extends AbstractExpectationTestCase
         Assert::that(42)->not()->isNumeric();
     }
 
+    public function testIsNumericString(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that('abc')->not()->isNumericString());
+        self::assertNoErrorsThrown(static fn() => Assert::that(42)->not()->isNumericString());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'42\'" is not expected to be a numeric string.');
+        Assert::that('42')->not()->isNumericString();
+    }
+
     public function testIsObject(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(42)->not()->isObject());

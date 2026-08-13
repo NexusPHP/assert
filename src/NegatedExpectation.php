@@ -56,6 +56,7 @@ final readonly class NegatedExpectation implements Expectable
     private const MESSAGE_IS_NON_EMPTY_STRING = 'Value "{value}" is not expected to be a non-empty string.';
     private const MESSAGE_IS_NULL = 'Value "{value}" is not expected to be null.';
     private const MESSAGE_IS_NUMERIC = 'Value "{value}" is not expected to be numeric.';
+    private const MESSAGE_IS_NUMERIC_STRING = 'Value "{value}" is not expected to be a numeric string.';
     private const MESSAGE_IS_OBJECT = 'Value "{value}" is not expected to be an object.';
     private const MESSAGE_IS_ONE_OF = 'Value "{value}" is not expected to be one of {choices}.';
     private const MESSAGE_IS_POSITIVE_INT = 'Value "{value}" is not expected to be a positive int.';
@@ -664,6 +665,23 @@ final readonly class NegatedExpectation implements Expectable
 
         throw new ExpectationFailedException(
             $message ?? self::MESSAGE_IS_NUMERIC,
+            ['value' => $this->expectation->exporter->exportValue($this->value)],
+        );
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isNumericString(?string $message = null): self
+    {
+        try {
+            $this->expectation->isNumericString($message);
+        } catch (ExpectationFailedException) {
+            return $this;
+        }
+
+        throw new ExpectationFailedException(
+            $message ?? self::MESSAGE_IS_NUMERIC_STRING,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }
