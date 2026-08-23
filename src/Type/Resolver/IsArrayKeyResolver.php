@@ -21,7 +21,10 @@ use PHPStan\Analyser\Scope;
  */
 final class IsArrayKeyResolver implements ResolverInterface
 {
-    public function __construct(private readonly IsIntResolver $isInt, private readonly IsStringResolver $isString) {}
+    public function __construct(
+        private readonly IsIntResolver $isInt,
+        private readonly IsStringResolver $isString,
+    ) {}
 
     #[\Override]
     public function resolve(Scope $scope, Node\Arg $arg, Node\Arg ...$args): Node\Expr

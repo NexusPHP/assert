@@ -21,7 +21,10 @@ use PHPStan\Analyser\Scope;
  */
 final class IsBetweenResolver implements ResolverInterface
 {
-    public function __construct(private readonly IsIntResolver $isInt, private readonly IsFloatResolver $isFloat) {}
+    public function __construct(
+        private readonly IsIntResolver $isInt,
+        private readonly IsFloatResolver $isFloat,
+    ) {}
 
     #[\Override]
     public function resolve(Scope $scope, Node\Arg $arg, Node\Arg ...$args): Node\Expr

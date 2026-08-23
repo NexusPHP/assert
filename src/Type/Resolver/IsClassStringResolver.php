@@ -24,7 +24,10 @@ use PHPStan\Type\TypeCombinator;
  */
 final class IsClassStringResolver implements ResolverInterface
 {
-    public function __construct(private readonly IsStringResolver $isString, private readonly ReflectionProvider $reflectionProvider) {}
+    public function __construct(
+        private readonly IsStringResolver $isString,
+        private readonly ReflectionProvider $reflectionProvider,
+    ) {}
 
     #[\Override]
     public function resolve(Scope $scope, Node\Arg $arg, Node\Arg ...$args): Node\Expr

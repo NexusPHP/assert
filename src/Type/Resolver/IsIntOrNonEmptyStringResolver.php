@@ -21,7 +21,10 @@ use PHPStan\Analyser\Scope;
  */
 final class IsIntOrNonEmptyStringResolver implements ResolverInterface
 {
-    public function __construct(private readonly IsIntResolver $isInt, private readonly IsNonEmptyStringResolver $isNonEmptyString) {}
+    public function __construct(
+        private readonly IsIntResolver $isInt,
+        private readonly IsNonEmptyStringResolver $isNonEmptyString,
+    ) {}
 
     #[\Override]
     public function resolve(Scope $scope, Node\Arg $arg, Node\Arg ...$args): Node\Expr

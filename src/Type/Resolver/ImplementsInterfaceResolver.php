@@ -21,7 +21,10 @@ use PHPStan\Analyser\Scope;
  */
 final class ImplementsInterfaceResolver implements ResolverInterface
 {
-    public function __construct(private readonly IsStringResolver $isString, private readonly IsSameOrSubclassOfResolver $isSameOrSubclassOf) {}
+    public function __construct(
+        private readonly IsStringResolver $isString,
+        private readonly IsSameOrSubclassOfResolver $isSameOrSubclassOf,
+    ) {}
 
     #[\Override]
     public function resolve(Scope $scope, Node\Arg $arg, Node\Arg ...$args): Node\Expr

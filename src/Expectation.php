@@ -71,7 +71,10 @@ final readonly class Expectation implements Expectable, MutatingExpectable
     /**
      * @param TValue $value
      */
-    public function __construct(public mixed $value, public ExporterInterface $exporter = new Exporter()) {}
+    public function __construct(
+        public mixed $value,
+        public ExporterInterface $exporter = new Exporter(),
+    ) {}
 
     /**
      * @return NegatedExpectation<TValue>
