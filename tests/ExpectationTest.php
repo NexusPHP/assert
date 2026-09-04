@@ -206,6 +206,16 @@ final class ExpectationTest extends AbstractExpectationTestCase
         Assert::that(42)->isArray();
     }
 
+    public function testIsArrayAccessible(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([])->isArrayAccessible());
+        self::assertNoErrorsThrown(static fn() => Assert::that(new \ArrayObject())->isArrayAccessible());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "42" is expected to be array accessible but got int instead.');
+        Assert::that(42)->isArrayAccessible();
+    }
+
     public function testIsArrayKey(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(42)->isArrayKey());

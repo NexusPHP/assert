@@ -153,6 +153,15 @@ final class ValuesIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that([42])->values()->isArray();
     }
 
+    public function testIsArrayAccessible(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([[], new \ArrayObject()])->values()->isArrayAccessible());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "42" in iterable is expected to be array accessible but got int instead.');
+        Assert::that([42])->values()->isArrayAccessible();
+    }
+
     public function testIsArrayKey(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that([1, 'a'])->values()->isArrayKey());

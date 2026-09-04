@@ -404,6 +404,7 @@ final class ExpectationMethodResolver
         $isString = new Resolver\IsStringResolver();
         $isList = new Resolver\IsListResolver($isArray);
         $isCountable = new Resolver\IsCountableResolver();
+        $isInstanceOf = new Resolver\IsInstanceOfResolver();
         $isMap = new Resolver\IsMapResolver($isArray);
         $isNonEmptyString = new Resolver\IsNonEmptyStringResolver($isString);
         $isSameOrSubclassOf = new Resolver\IsSameOrSubclassOfResolver();
@@ -424,6 +425,7 @@ final class ExpectationMethodResolver
             'hasProperty' => new Resolver\HasPropertyResolver($isObject),
             'implementsInterface' => new Resolver\ImplementsInterfaceResolver($isString, $isSameOrSubclassOf),
             'isArray' => $isArray,
+            'isArrayAccessible' => new Resolver\IsArrayAccessibleResolver($isArray, $isInstanceOf),
             'isArrayKey' => new Resolver\IsArrayKeyResolver($isInt, $isString),
             'isBetween' => new Resolver\IsBetweenResolver($isInt, $isFloat),
             'isBool' => new Resolver\IsBoolResolver(),
@@ -435,7 +437,7 @@ final class ExpectationMethodResolver
             'isGreaterThan' => new Resolver\NumberComparisonResolver(Node\Expr\BinaryOp\Greater::class, $isInt, $isFloat),
             'isGreaterThanOrEqual' => new Resolver\NumberComparisonResolver(Node\Expr\BinaryOp\GreaterOrEqual::class, $isInt, $isFloat),
             'isIdentical' => new Resolver\IsIdenticalResolver(),
-            'isInstanceOf' => new Resolver\IsInstanceOfResolver(),
+            'isInstanceOf' => $isInstanceOf,
             'isInstanceOfAny' => new Resolver\IsInstanceOfAnyResolver($isObject),
             'isInt' => $isInt,
             'isIntOrNonEmptyString' => new Resolver\IsIntOrNonEmptyStringResolver($isInt, $isNonEmptyString),

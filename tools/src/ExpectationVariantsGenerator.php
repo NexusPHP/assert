@@ -179,6 +179,7 @@ final class ExpectationVariantsGenerator
         'hasOffset',
         'hasProperty',
         'isArray',
+        'isArrayAccessible',
         'isBool',
         'isCountable',
         'isFalse',

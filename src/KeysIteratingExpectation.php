@@ -37,6 +37,7 @@ final readonly class KeysIteratingExpectation implements Expectable
     private const MESSAGE_HAS_PROPERTY = 'Key of class "{value}" in iterable is expected to have property "{property}".';
     private const MESSAGE_IMPLEMENTS_INTERFACE = 'Key "{value}" in iterable is expected to be a class string implementing {interface} but got {type} instead.';
     private const MESSAGE_IS_ARRAY = 'Key "{value}" in iterable is expected to be an array but got {type} instead.';
+    private const MESSAGE_IS_ARRAY_ACCESSIBLE = 'Key "{value}" in iterable is expected to be array accessible but got {type} instead.';
     private const MESSAGE_IS_ARRAY_KEY = 'Key "{value}" in iterable is expected to be an array key but got {type} instead.';
     private const MESSAGE_IS_BETWEEN = 'Key "{value}" in iterable is expected to be a number between {min} and {max}.';
     private const MESSAGE_IS_BOOL = 'Key "{value}" in iterable is expected to be a bool but got {type} instead.';
@@ -415,6 +416,32 @@ final readonly class KeysIteratingExpectation implements Expectable
             } catch (ExpectationFailedException) {
                 throw new ExpectationFailedException(
                     $message ?? self::MESSAGE_IS_ARRAY,
+                    [
+                        'value' => $this->expectation->exporter->exportValue($offsetKey),
+                        'type' => $this->expectation->exporter->exportType($offsetKey),
+                    ],
+                );
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isArrayAccessible(?string $message = null): self
+    {
+        if ($this->isArray) {
+            throw new \LogicException('Method isArrayAccessible() cannot be called on keys of an array; array keys are constrained to int|string.');
+        }
+
+        foreach ($this->value as $offsetKey => $_) {
+            try {
+                Assert::that($offsetKey)->isArrayAccessible($message);
+            } catch (ExpectationFailedException) {
+                throw new ExpectationFailedException(
+                    $message ?? self::MESSAGE_IS_ARRAY_ACCESSIBLE,
                     [
                         'value' => $this->expectation->exporter->exportValue($offsetKey),
                         'type' => $this->expectation->exporter->exportType($offsetKey),

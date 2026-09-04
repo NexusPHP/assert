@@ -37,6 +37,7 @@ final readonly class NegatedExpectation implements Expectable
     private const MESSAGE_HAS_PROPERTY = 'Object of class "{value}" is not expected to have property "{property}".';
     private const MESSAGE_IMPLEMENTS_INTERFACE = 'Value "{value}" is not expected to be a class string implementing {interface}.';
     private const MESSAGE_IS_ARRAY = 'Value "{value}" is not expected to be an array.';
+    private const MESSAGE_IS_ARRAY_ACCESSIBLE = 'Value "{value}" is not expected to be array accessible.';
     private const MESSAGE_IS_ARRAY_KEY = 'Value "{value}" is not expected to be an array key.';
     private const MESSAGE_IS_BETWEEN = 'Value "{value}" is not expected to be a number between {min} and {max}.';
     private const MESSAGE_IS_BOOL = 'Value "{value}" is not expected to be a bool.';
@@ -359,6 +360,23 @@ final readonly class NegatedExpectation implements Expectable
 
         throw new ExpectationFailedException(
             $message ?? self::MESSAGE_IS_ARRAY,
+            ['value' => $this->expectation->exporter->exportValue($this->value)],
+        );
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isArrayAccessible(?string $message = null): self
+    {
+        try {
+            $this->expectation->isArrayAccessible($message);
+        } catch (ExpectationFailedException) {
+            return $this;
+        }
+
+        throw new ExpectationFailedException(
+            $message ?? self::MESSAGE_IS_ARRAY_ACCESSIBLE,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }

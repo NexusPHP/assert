@@ -116,6 +116,13 @@ function test_is_array(mixed $value): void
     assertType('mixed~array<mixed, mixed>', $value);
 }
 
+function test_is_array_accessible(mixed $value): void
+{
+    $assert = Assert::that($value)->not()->isArrayAccessible();
+    assertType('Nexus\\Assert\\NegatedExpectation<mixed~(array<mixed, mixed>|ArrayAccess)>', $assert);
+    assertType('mixed~(array<mixed, mixed>|ArrayAccess)', $value);
+}
+
 function test_is_array_key(mixed $value): void
 {
     $assert = Assert::that($value)->not()->isArrayKey();

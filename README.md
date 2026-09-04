@@ -87,6 +87,7 @@ with the message formatted depending on the available context. By default, there
 | `hasProperty(string $property, ?string $message = null): self`                                       | `value+`, `property=`        |
 | `implementsInterface(string $interface, ?string $message = null): self`                              | `value`, `interface`, `type` |
 | `isArray(?string $message = null): self`                                                             | `value`, `type`              |
+| `isArrayAccessible(?string $message = null): self`                                                   | `value`, `type`              |
 | `isArrayKey(?string $message = null): self`                                                          | `value`, `type`              |
 | `isBetween(float\|int $min, float\|int $max, bool $inclusive = true, ?string $message = null): self` | `value`, `min`, `max`        |
 | `isBool(?string $message = null): self`                                                              | `value`, `type`              |

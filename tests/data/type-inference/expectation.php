@@ -131,6 +131,13 @@ function test_is_array(mixed $value): void
     assertType('array<mixed, mixed>', $value);
 }
 
+function test_is_array_accessible(mixed $value): void
+{
+    $assert = Assert::that($value)->isArrayAccessible();
+    assertType('Nexus\\Assert\\Expectation<array<mixed, mixed>|ArrayAccess>', $assert);
+    assertType('array<mixed, mixed>|ArrayAccess', $value);
+}
+
 function test_is_array_key(mixed $value): void
 {
     $assert = Assert::that($value)->isArrayKey();

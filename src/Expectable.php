@@ -159,6 +159,15 @@ interface Expectable
      *
      * @throws ExpectationFailedException
      */
+    public function isArrayAccessible(?string $message = null): self;
+
+    /**
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
     public function isArrayKey(?string $message = null): self;
 
     /**

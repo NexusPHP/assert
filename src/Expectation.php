@@ -34,6 +34,7 @@ final readonly class Expectation implements Expectable, MutatingExpectable
     private const MESSAGE_HAS_PROPERTY = 'Object of class "{value}" is expected to have property "{property}".';
     private const MESSAGE_IMPLEMENTS_INTERFACE = 'Value "{value}" is expected to be a class string implementing {interface} but got {type} instead.';
     private const MESSAGE_IS_ARRAY = 'Value "{value}" is expected to be an array but got {type} instead.';
+    private const MESSAGE_IS_ARRAY_ACCESSIBLE = 'Value "{value}" is expected to be array accessible but got {type} instead.';
     private const MESSAGE_IS_ARRAY_KEY = 'Value "{value}" is expected to be an array key but got {type} instead.';
     private const MESSAGE_IS_BETWEEN = 'Value "{value}" is expected to be a number between {min} and {max}.';
     private const MESSAGE_IS_BOOL = 'Value "{value}" is expected to be a bool but got {type} instead.';
@@ -375,6 +376,24 @@ final readonly class Expectation implements Expectable, MutatingExpectable
         if (! \is_array($this->value)) {
             throw new ExpectationFailedException(
                 $message ?? self::MESSAGE_IS_ARRAY,
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'type' => $this->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isArrayAccessible(?string $message = null): self
+    {
+        if (! \is_array($this->value) && ! $this->value instanceof \ArrayAccess) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_ARRAY_ACCESSIBLE,
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),

@@ -171,6 +171,16 @@ final class NullableExpectationTest extends AbstractExpectationTestCase
         Assert::that(42)->nullOr()->isArray();
     }
 
+    public function testIsArrayAccessible(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->isArrayAccessible());
+        self::assertNoErrorsThrown(static fn() => Assert::that([])->nullOr()->isArrayAccessible());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "42" is expected to be null or array accessible but got int instead.');
+        Assert::that(42)->nullOr()->isArrayAccessible();
+    }
+
     public function testIsArrayKey(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->isArrayKey());

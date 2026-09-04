@@ -160,6 +160,15 @@ final class NegatedExpectationTest extends AbstractExpectationTestCase
         Assert::that([])->not()->isArray();
     }
 
+    public function testIsArrayAccessible(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(42)->not()->isArrayAccessible());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "object(ArrayObject)" is not expected to be array accessible.');
+        Assert::that(new \ArrayObject())->not()->isArrayAccessible();
+    }
+
     public function testIsArrayKey(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(3.14)->not()->isArrayKey());

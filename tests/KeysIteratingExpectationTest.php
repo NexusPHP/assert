@@ -180,6 +180,19 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that(['a' => 1])->keys()->isArray();
     }
 
+    public function testIsArrayAccessible(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(self::asGenerator([[1], 'x']))->keys()->isArrayAccessible());
+        self::assertExpectationFails(
+            static fn() => Assert::that(self::asGenerator(['oops', 'x']))->keys()->isArrayAccessible(),
+            'Key "\'oops\'" in iterable is expected to be array accessible but got string instead.',
+        );
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Method isArrayAccessible() cannot be called on keys of an array; array keys are constrained to int|string.');
+        Assert::that(['a' => 1])->keys()->isArrayAccessible();
+    }
+
     public function testIsArrayKey(): void
     {
         $stringKeysExpectation = Assert::that(['a' => 1, 'b' => 2])->keys();
