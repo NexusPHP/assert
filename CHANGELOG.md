@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.5.0](https://github.com/NexusPHP/assert/compare/v1.4.0...v1.5.0) - 2026-09-04
+
+### Added
+- `isNumericString()` expectation, narrowing to `numeric-string`. The runtime check is `is_string` + `is_numeric`, so it accepts exactly the values PHPStan counts as `numeric-string`, and unknown string literals prune to `never`
+- `hasLength(int<1, max> $length)` expectation for exact byte lengths, narrowing to `non-falsy-string` (`non-empty-string` for a length of 1). The failure context carries `{length}` and `{actual}` (the measured length), so a custom message can report a mismatch without exporting a secret-bearing value
+- `isNonEmptyMap()` expectation, narrowing to `non-empty-array<string, mixed>`
+- `isGreaterThan()`, `isGreaterThanOrEqual()`, `isLessThan()`, and `isLessThanOrEqual()` expectations for one-sided numeric bounds, narrowing to the bounded int range OR'd with the float arm (e.g. `isGreaterThan(5)` gives `float|int<6, max>`). Chained bounds clamp: `isGreaterThanOrEqual(0)->isLessThanOrEqual(10)` narrows to `float|int<0, 10>`
+- `hasCount(int<0, max> $count)`, `hasMinCount(int<0, max> $min)`, and `hasMaxCount(int<0, max> $max)` expectations for countables, narrowing to `array<mixed>|Countable`. A minimum of 1 or more and an exact count statically known to be positive narrow the array arm to `non-empty-array<mixed>`; `hasCount(0)` narrows it to `array{}`
+- `isArrayAccessible()` expectation, narrowing to `array<mixed, mixed>|ArrayAccess`
+
 ## [v1.4.0](https://github.com/NexusPHP/assert/compare/v1.3.0...v1.4.0) - 2026-08-08
 
 ### Added
