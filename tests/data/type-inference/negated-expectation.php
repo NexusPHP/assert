@@ -151,6 +151,20 @@ function test_is_float(mixed $value): void
     assertType('mixed~float', $value);
 }
 
+function test_is_greater_than(mixed $value): void
+{
+    $assert = Assert::that($value)->not()->isGreaterThan(5);
+    assertType('Nexus\\Assert\\NegatedExpectation<mixed~(float|int<6, max>)>', $assert);
+    assertType('mixed~(float|int<6, max>)', $value);
+}
+
+function test_is_greater_than_or_equal(mixed $value): void
+{
+    $assert = Assert::that($value)->not()->isGreaterThanOrEqual(5);
+    assertType('Nexus\\Assert\\NegatedExpectation<mixed~(float|int<5, max>)>', $assert);
+    assertType('mixed~(float|int<5, max>)', $value);
+}
+
 function test_is_instance_of_any(mixed $value): void
 {
     $assert = Assert::that($value)->not()->isInstanceOfAny([\Countable::class, \DateTimeInterface::class]);
@@ -177,6 +191,20 @@ function test_is_iterable(mixed $value): void
     $assert = Assert::that($value)->not()->isIterable();
     assertType('Nexus\\Assert\\NegatedExpectation<mixed~iterable>', $assert);
     assertType('mixed~iterable', $value);
+}
+
+function test_is_less_than(mixed $value): void
+{
+    $assert = Assert::that($value)->not()->isLessThan(5);
+    assertType('Nexus\\Assert\\NegatedExpectation<mixed~(float|int<min, 4>)>', $assert);
+    assertType('mixed~(float|int<min, 4>)', $value);
+}
+
+function test_is_less_than_or_equal(mixed $value): void
+{
+    $assert = Assert::that($value)->not()->isLessThanOrEqual(5);
+    assertType('Nexus\\Assert\\NegatedExpectation<mixed~(float|int<min, 5>)>', $assert);
+    assertType('mixed~(float|int<min, 5>)', $value);
 }
 
 function test_is_list(mixed $value): void

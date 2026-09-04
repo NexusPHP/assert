@@ -240,6 +240,24 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that(['a' => 1])->keys()->isFloat();
     }
 
+    public function testIsGreaterThan(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([6 => 'a', 7 => 'b'])->keys()->isGreaterThan(5));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Key "3" in iterable is expected to be a number greater than 5.');
+        Assert::that([3 => 'a'])->keys()->isGreaterThan(5);
+    }
+
+    public function testIsGreaterThanOrEqual(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([5 => 'a', 6 => 'b'])->keys()->isGreaterThanOrEqual(5));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Key "4" in iterable is expected to be a number greater than or equal to 5.');
+        Assert::that([4 => 'a'])->keys()->isGreaterThanOrEqual(5);
+    }
+
     public function testIsIdentical(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(['foo' => 1])->keys()->isIdentical('foo'));
@@ -304,6 +322,24 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Method isIterable() cannot be called on keys of an array; array keys are constrained to int|string.');
         Assert::that(['a' => 1])->keys()->isIterable();
+    }
+
+    public function testIsLessThan(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([3 => 'a', 4 => 'b'])->keys()->isLessThan(5));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Key "5" in iterable is expected to be a number less than 5.');
+        Assert::that([5 => 'a'])->keys()->isLessThan(5);
+    }
+
+    public function testIsLessThanOrEqual(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([4 => 'a', 5 => 'b'])->keys()->isLessThanOrEqual(5));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Key "6" in iterable is expected to be a number less than or equal to 5.');
+        Assert::that([6 => 'a'])->keys()->isLessThanOrEqual(5);
     }
 
     public function testIsList(): void

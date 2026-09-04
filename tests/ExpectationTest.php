@@ -268,6 +268,26 @@ final class ExpectationTest extends AbstractExpectationTestCase
         Assert::that('hello')->isFloat();
     }
 
+    public function testIsGreaterThan(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(6)->isGreaterThan(5));
+        self::assertNoErrorsThrown(static fn() => Assert::that(5.5)->isGreaterThan(5));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "5" is expected to be a number greater than 5.');
+        Assert::that(5)->isGreaterThan(5);
+    }
+
+    public function testIsGreaterThanOrEqual(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(5)->isGreaterThanOrEqual(5));
+        self::assertNoErrorsThrown(static fn() => Assert::that(5.0)->isGreaterThanOrEqual(5));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "4" is expected to be a number greater than or equal to 5.');
+        Assert::that(4)->isGreaterThanOrEqual(5);
+    }
+
     #[DataProvider('provideIsIdenticalCases')]
     public function testIsIdentical(mixed $value, mixed $other): void
     {
@@ -341,6 +361,26 @@ final class ExpectationTest extends AbstractExpectationTestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "42" is expected to be iterable but got int instead.');
         Assert::that(42)->isIterable();
+    }
+
+    public function testIsLessThan(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(4)->isLessThan(5));
+        self::assertNoErrorsThrown(static fn() => Assert::that(4.5)->isLessThan(5));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "5" is expected to be a number less than 5.');
+        Assert::that(5)->isLessThan(5);
+    }
+
+    public function testIsLessThanOrEqual(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(5)->isLessThanOrEqual(5));
+        self::assertNoErrorsThrown(static fn() => Assert::that(5.0)->isLessThanOrEqual(5));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "6" is expected to be a number less than or equal to 5.');
+        Assert::that(6)->isLessThanOrEqual(5);
     }
 
     public function testIsList(): void

@@ -39,6 +39,20 @@ function test_is_countable_not_is_array(mixed $value): void
     assertType(\Countable::class, $value);
 }
 
+function test_is_greater_than_is_less_than(mixed $value): void
+{
+    $assert = Assert::that($value)->isGreaterThan(0)->isLessThan(10);
+    assertType('Nexus\\Assert\\Expectation<float|int<1, 9>>', $assert);
+    assertType('float|int<1, 9>', $value);
+}
+
+function test_is_greater_than_or_equal_is_less_than_or_equal(mixed $value): void
+{
+    $assert = Assert::that($value)->isGreaterThanOrEqual(0)->isLessThanOrEqual(10);
+    assertType('Nexus\\Assert\\Expectation<float|int<0, 10>>', $assert);
+    assertType('float|int<0, 10>', $value);
+}
+
 function test_is_int_is_between(mixed $value): void
 {
     $assert = Assert::that($value)->isInt()->isBetween(0, 10);

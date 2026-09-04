@@ -42,12 +42,16 @@ final readonly class KeysIteratingExpectation implements Expectable
     private const MESSAGE_IS_COUNTABLE = 'Key "{value}" in iterable is expected to be countable but got {type} instead.';
     private const MESSAGE_IS_FALSE = 'Key "{value}" in iterable is expected to be false but got {type} instead.';
     private const MESSAGE_IS_FLOAT = 'Key "{value}" in iterable is expected to be a float but got {type} instead.';
+    private const MESSAGE_IS_GREATER_THAN = 'Key "{value}" in iterable is expected to be a number greater than {limit}.';
+    private const MESSAGE_IS_GREATER_THAN_OR_EQUAL = 'Key "{value}" in iterable is expected to be a number greater than or equal to {limit}.';
     private const MESSAGE_IS_IDENTICAL = 'Key "{value}" in iterable is expected to be identical to "{other}".';
     private const MESSAGE_IS_INSTANCE_OF = 'Key "{value}" in iterable is expected to be an instance of {class} but got {type} instead.';
     private const MESSAGE_IS_INT = 'Key "{value}" in iterable is expected to be an int but got {type} instead.';
     private const MESSAGE_IS_INT_OR_NON_EMPTY_STRING = 'Key "{value}" in iterable is expected to be an int or non-empty string but got {type} instead.';
     private const MESSAGE_IS_INSTANCE_OF_ANY = 'Key "{value}" in iterable is expected to be an instance of any of {classes} but got {type} instead.';
     private const MESSAGE_IS_ITERABLE = 'Key "{value}" in iterable is expected to be iterable but got {type} instead.';
+    private const MESSAGE_IS_LESS_THAN = 'Key "{value}" in iterable is expected to be a number less than {limit}.';
+    private const MESSAGE_IS_LESS_THAN_OR_EQUAL = 'Key "{value}" in iterable is expected to be a number less than or equal to {limit}.';
     private const MESSAGE_IS_LIST = 'Key "{value}" in iterable is expected to be a list but got {type} instead.';
     private const MESSAGE_IS_LOWERCASE_STRING = 'Key "{value}" in iterable is expected to be a lowercase string but got {type} instead.';
     private const MESSAGE_IS_MAP = 'Key "{value}" in iterable is expected to be a map but got {type} instead.';
@@ -531,6 +535,50 @@ final readonly class KeysIteratingExpectation implements Expectable
     /**
      * @return self<TValue>
      */
+    public function isGreaterThan(float|int $limit, ?string $message = null): self
+    {
+        foreach ($this->value as $offsetKey => $_) {
+            try {
+                Assert::that($offsetKey)->isGreaterThan($limit, $message);
+            } catch (ExpectationFailedException) {
+                throw new ExpectationFailedException(
+                    $message ?? self::MESSAGE_IS_GREATER_THAN,
+                    [
+                        'value' => $this->expectation->exporter->exportValue($offsetKey),
+                        'limit' => $this->expectation->exporter->exportValue($limit),
+                    ],
+                );
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isGreaterThanOrEqual(float|int $limit, ?string $message = null): self
+    {
+        foreach ($this->value as $offsetKey => $_) {
+            try {
+                Assert::that($offsetKey)->isGreaterThanOrEqual($limit, $message);
+            } catch (ExpectationFailedException) {
+                throw new ExpectationFailedException(
+                    $message ?? self::MESSAGE_IS_GREATER_THAN_OR_EQUAL,
+                    [
+                        'value' => $this->expectation->exporter->exportValue($offsetKey),
+                        'limit' => $this->expectation->exporter->exportValue($limit),
+                    ],
+                );
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
     public function isIdentical(mixed $other, ?string $message = null): self
     {
         foreach ($this->value as $offsetKey => $_) {
@@ -667,6 +715,50 @@ final readonly class KeysIteratingExpectation implements Expectable
                     [
                         'value' => $this->expectation->exporter->exportValue($offsetKey),
                         'type' => $this->expectation->exporter->exportType($offsetKey),
+                    ],
+                );
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isLessThan(float|int $limit, ?string $message = null): self
+    {
+        foreach ($this->value as $offsetKey => $_) {
+            try {
+                Assert::that($offsetKey)->isLessThan($limit, $message);
+            } catch (ExpectationFailedException) {
+                throw new ExpectationFailedException(
+                    $message ?? self::MESSAGE_IS_LESS_THAN,
+                    [
+                        'value' => $this->expectation->exporter->exportValue($offsetKey),
+                        'limit' => $this->expectation->exporter->exportValue($limit),
+                    ],
+                );
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isLessThanOrEqual(float|int $limit, ?string $message = null): self
+    {
+        foreach ($this->value as $offsetKey => $_) {
+            try {
+                Assert::that($offsetKey)->isLessThanOrEqual($limit, $message);
+            } catch (ExpectationFailedException) {
+                throw new ExpectationFailedException(
+                    $message ?? self::MESSAGE_IS_LESS_THAN_OR_EQUAL,
+                    [
+                        'value' => $this->expectation->exporter->exportValue($offsetKey),
+                        'limit' => $this->expectation->exporter->exportValue($limit),
                     ],
                 );
             }

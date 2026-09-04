@@ -201,6 +201,24 @@ interface Expectable
      *
      * @throws ExpectationFailedException
      */
+    public function isGreaterThan(float|int $limit, ?string $message = null): self;
+
+    /**
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
+    public function isGreaterThanOrEqual(float|int $limit, ?string $message = null): self;
+
+    /**
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
     public function isIdentical(mixed $other, ?string $message = null): self;
 
     /**
@@ -251,6 +269,24 @@ interface Expectable
      * @throws ExpectationFailedException
      */
     public function isIterable(?string $message = null): self;
+
+    /**
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
+    public function isLessThan(float|int $limit, ?string $message = null): self;
+
+    /**
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
+    public function isLessThanOrEqual(float|int $limit, ?string $message = null): self;
 
     /**
      * @param null|non-empty-string $message

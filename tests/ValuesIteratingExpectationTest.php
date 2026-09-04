@@ -199,6 +199,24 @@ final class ValuesIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that([42])->values()->isFloat();
     }
 
+    public function testIsGreaterThan(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([6, 7.5])->values()->isGreaterThan(5));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "5" in iterable is expected to be a number greater than 5.');
+        Assert::that([5])->values()->isGreaterThan(5);
+    }
+
+    public function testIsGreaterThanOrEqual(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([5, 6.5])->values()->isGreaterThanOrEqual(5));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "4" in iterable is expected to be a number greater than or equal to 5.');
+        Assert::that([4])->values()->isGreaterThanOrEqual(5);
+    }
+
     public function testIsIdentical(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(['x', 'x'])->values()->isIdentical('x'));
@@ -251,6 +269,24 @@ final class ValuesIteratingExpectationTest extends AbstractExpectationTestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "42" in iterable is expected to be iterable but got int instead.');
         Assert::that([42])->values()->isIterable();
+    }
+
+    public function testIsLessThan(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([3, 4.5])->values()->isLessThan(5));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "5" in iterable is expected to be a number less than 5.');
+        Assert::that([5])->values()->isLessThan(5);
+    }
+
+    public function testIsLessThanOrEqual(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([4, 5.0])->values()->isLessThanOrEqual(5));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "6" in iterable is expected to be a number less than or equal to 5.');
+        Assert::that([6])->values()->isLessThanOrEqual(5);
     }
 
     public function testIsList(): void

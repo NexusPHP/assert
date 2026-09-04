@@ -42,12 +42,16 @@ final readonly class NullableExpectation implements Expectable
     private const MESSAGE_IS_COUNTABLE = 'Value "{value}" is expected to be null or countable but got {type} instead.';
     private const MESSAGE_IS_FALSE = 'Value "{value}" is expected to be null or false but got {type} instead.';
     private const MESSAGE_IS_FLOAT = 'Value "{value}" is expected to be null or a float but got {type} instead.';
+    private const MESSAGE_IS_GREATER_THAN = 'Value "{value}" is expected to be null or a number greater than {limit}.';
+    private const MESSAGE_IS_GREATER_THAN_OR_EQUAL = 'Value "{value}" is expected to be null or a number greater than or equal to {limit}.';
     private const MESSAGE_IS_IDENTICAL = 'Value "{value}" is expected to be null or identical to "{other}".';
     private const MESSAGE_IS_INSTANCE_OF = 'Value "{value}" is expected to be null or an instance of {class} but got {type} instead.';
     private const MESSAGE_IS_INT = 'Value "{value}" is expected to be null or an int but got {type} instead.';
     private const MESSAGE_IS_INT_OR_NON_EMPTY_STRING = 'Value "{value}" is expected to be null or an int or non-empty string but got {type} instead.';
     private const MESSAGE_IS_INSTANCE_OF_ANY = 'Value "{value}" is expected to be null or an instance of any of {classes} but got {type} instead.';
     private const MESSAGE_IS_ITERABLE = 'Value "{value}" is expected to be null or iterable but got {type} instead.';
+    private const MESSAGE_IS_LESS_THAN = 'Value "{value}" is expected to be null or a number less than {limit}.';
+    private const MESSAGE_IS_LESS_THAN_OR_EQUAL = 'Value "{value}" is expected to be null or a number less than or equal to {limit}.';
     private const MESSAGE_IS_LIST = 'Value "{value}" is expected to be null or a list but got {type} instead.';
     private const MESSAGE_IS_LOWERCASE_STRING = 'Value "{value}" is expected to be null or a lowercase string but got {type} instead.';
     private const MESSAGE_IS_MAP = 'Value "{value}" is expected to be null or a map but got {type} instead.';
@@ -529,6 +533,54 @@ final readonly class NullableExpectation implements Expectable
     /**
      * @return self<null|TValue>
      */
+    public function isGreaterThan(float|int $limit, ?string $message = null): self
+    {
+        if (null === $this->value) {
+            return $this;
+        }
+
+        try {
+            $this->expectation->isGreaterThan($limit, $message);
+        } catch (ExpectationFailedException) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_GREATER_THAN,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'limit' => $this->expectation->exporter->exportValue($limit),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<null|TValue>
+     */
+    public function isGreaterThanOrEqual(float|int $limit, ?string $message = null): self
+    {
+        if (null === $this->value) {
+            return $this;
+        }
+
+        try {
+            $this->expectation->isGreaterThanOrEqual($limit, $message);
+        } catch (ExpectationFailedException) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_GREATER_THAN_OR_EQUAL,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'limit' => $this->expectation->exporter->exportValue($limit),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<null|TValue>
+     */
     public function isIdentical(mixed $other, ?string $message = null): self
     {
         if (null === $this->value) {
@@ -666,6 +718,54 @@ final readonly class NullableExpectation implements Expectable
                 [
                     'value' => $this->expectation->exporter->exportValue($this->value),
                     'type' => $this->expectation->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<null|TValue>
+     */
+    public function isLessThan(float|int $limit, ?string $message = null): self
+    {
+        if (null === $this->value) {
+            return $this;
+        }
+
+        try {
+            $this->expectation->isLessThan($limit, $message);
+        } catch (ExpectationFailedException) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_LESS_THAN,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'limit' => $this->expectation->exporter->exportValue($limit),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<null|TValue>
+     */
+    public function isLessThanOrEqual(float|int $limit, ?string $message = null): self
+    {
+        if (null === $this->value) {
+            return $this;
+        }
+
+        try {
+            $this->expectation->isLessThanOrEqual($limit, $message);
+        } catch (ExpectationFailedException) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_LESS_THAN_OR_EQUAL,
+                [
+                    'value' => $this->expectation->exporter->exportValue($this->value),
+                    'limit' => $this->expectation->exporter->exportValue($limit),
                 ],
             );
         }

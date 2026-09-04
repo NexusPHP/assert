@@ -92,12 +92,16 @@ with the message formatted depending on the available context. By default, there
 | `isCountable(?string $message = null): self`                                                         | `value`, `type`              |
 | `isFalse(?string $message = null): self`                                                             | `value`, `type`              |
 | `isFloat(?string $message = null): self`                                                             | `value`, `type`              |
+| `isGreaterThan(float\|int $limit, ?string $message = null): self`                                    | `value`, `limit`             |
+| `isGreaterThanOrEqual(float\|int $limit, ?string $message = null): self`                             | `value`, `limit`             |
 | `isIdentical(mixed $other, ?string $message = null): self`                                           | `value`, `other`, `type`     |
 | `isInstanceOf(object\|string $class, ?string $message = null): self`                                 | `value`, `class`, `type`     |
 | `isInstanceOfAny(array $classes, ?string $message = null): self`                                     | `value`, `classes`, `type`   |
 | `isInt(?string $message = null): self`                                                               | `value`, `type`              |
 | `isIntOrNonEmptyString(?string $message = null): self`                                               | `value`, `type`              |
 | `isIterable(?string $message = null): self`                                                          | `value`, `type`              |
+| `isLessThan(float\|int $limit, ?string $message = null): self`                                       | `value`, `limit`             |
+| `isLessThanOrEqual(float\|int $limit, ?string $message = null): self`                                | `value`, `limit`             |
 | `isList(?string $message = null): self`                                                              | `value`, `type`              |
 | `isLowercaseString(?string $message = null): self`                                                   | `value`, `type`              |
 | `isMap(?string $message = null): self`                                                               | `value`, `type`              |

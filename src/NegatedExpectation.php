@@ -42,12 +42,16 @@ final readonly class NegatedExpectation implements Expectable
     private const MESSAGE_IS_COUNTABLE = 'Value "{value}" is not expected to be countable.';
     private const MESSAGE_IS_FALSE = 'Value "{value}" is not expected to be false.';
     private const MESSAGE_IS_FLOAT = 'Value "{value}" is not expected to be a float.';
+    private const MESSAGE_IS_GREATER_THAN = 'Value "{value}" is not expected to be a number greater than {limit}.';
+    private const MESSAGE_IS_GREATER_THAN_OR_EQUAL = 'Value "{value}" is not expected to be a number greater than or equal to {limit}.';
     private const MESSAGE_IS_IDENTICAL = 'Value "{value}" is not expected to be identical to "{other}".';
     private const MESSAGE_IS_INSTANCE_OF = 'Value "{value}" is not expected to be an instance of {class}.';
     private const MESSAGE_IS_INT = 'Value "{value}" is not expected to be an int.';
     private const MESSAGE_IS_INT_OR_NON_EMPTY_STRING = 'Value "{value}" is not expected to be an int or non-empty string.';
     private const MESSAGE_IS_INSTANCE_OF_ANY = 'Value "{value}" is not expected to be an instance of any of {classes}.';
     private const MESSAGE_IS_ITERABLE = 'Value "{value}" is not expected to be iterable.';
+    private const MESSAGE_IS_LESS_THAN = 'Value "{value}" is not expected to be a number less than {limit}.';
+    private const MESSAGE_IS_LESS_THAN_OR_EQUAL = 'Value "{value}" is not expected to be a number less than or equal to {limit}.';
     private const MESSAGE_IS_LIST = 'Value "{value}" is not expected to be a list.';
     private const MESSAGE_IS_LOWERCASE_STRING = 'Value "{value}" is not expected to be a lowercase string.';
     private const MESSAGE_IS_MAP = 'Value "{value}" is not expected to be a map.';
@@ -433,6 +437,46 @@ final readonly class NegatedExpectation implements Expectable
     /**
      * @return self<TValue>
      */
+    public function isGreaterThan(float|int $limit, ?string $message = null): self
+    {
+        try {
+            $this->expectation->isGreaterThan($limit, $message);
+        } catch (ExpectationFailedException) {
+            return $this;
+        }
+
+        throw new ExpectationFailedException(
+            $message ?? self::MESSAGE_IS_GREATER_THAN,
+            [
+                'value' => $this->expectation->exporter->exportValue($this->value),
+                'limit' => $this->expectation->exporter->exportValue($limit),
+            ],
+        );
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isGreaterThanOrEqual(float|int $limit, ?string $message = null): self
+    {
+        try {
+            $this->expectation->isGreaterThanOrEqual($limit, $message);
+        } catch (ExpectationFailedException) {
+            return $this;
+        }
+
+        throw new ExpectationFailedException(
+            $message ?? self::MESSAGE_IS_GREATER_THAN_OR_EQUAL,
+            [
+                'value' => $this->expectation->exporter->exportValue($this->value),
+                'limit' => $this->expectation->exporter->exportValue($limit),
+            ],
+        );
+    }
+
+    /**
+     * @return self<TValue>
+     */
     public function isIdentical(mixed $other, ?string $message = null): self
     {
         try {
@@ -538,6 +582,46 @@ final readonly class NegatedExpectation implements Expectable
         throw new ExpectationFailedException(
             $message ?? self::MESSAGE_IS_ITERABLE,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
+        );
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isLessThan(float|int $limit, ?string $message = null): self
+    {
+        try {
+            $this->expectation->isLessThan($limit, $message);
+        } catch (ExpectationFailedException) {
+            return $this;
+        }
+
+        throw new ExpectationFailedException(
+            $message ?? self::MESSAGE_IS_LESS_THAN,
+            [
+                'value' => $this->expectation->exporter->exportValue($this->value),
+                'limit' => $this->expectation->exporter->exportValue($limit),
+            ],
+        );
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isLessThanOrEqual(float|int $limit, ?string $message = null): self
+    {
+        try {
+            $this->expectation->isLessThanOrEqual($limit, $message);
+        } catch (ExpectationFailedException) {
+            return $this;
+        }
+
+        throw new ExpectationFailedException(
+            $message ?? self::MESSAGE_IS_LESS_THAN_OR_EQUAL,
+            [
+                'value' => $this->expectation->exporter->exportValue($this->value),
+                'limit' => $this->expectation->exporter->exportValue($limit),
+            ],
         );
     }
 

@@ -183,6 +183,20 @@ function test_is_float(mixed $value1, mixed $value2): void
     assertType('*NEVER*', $value2);
 }
 
+function test_is_greater_than(mixed $value): void
+{
+    $assert = Assert::that($value)->keys()->isGreaterThan(5);
+    assertType('Nexus\\Assert\\KeysIteratingExpectation<iterable<float|int<6, max>, mixed>>', $assert);
+    assertType('iterable<float|int<6, max>, mixed>', $value);
+}
+
+function test_is_greater_than_or_equal(mixed $value): void
+{
+    $assert = Assert::that($value)->keys()->isGreaterThanOrEqual(5);
+    assertType('Nexus\\Assert\\KeysIteratingExpectation<iterable<float|int<5, max>, mixed>>', $assert);
+    assertType('iterable<float|int<5, max>, mixed>', $value);
+}
+
 function test_is_identical(mixed $value, string $other): void
 {
     $assert = Assert::that($value)->keys()->isIdentical($other);
@@ -231,6 +245,20 @@ function test_is_iterable(mixed $value1, mixed $value2): void
     $assert2 = Assert::that($value2)->isArray()->keys()->isIterable();
     assertType('*NEVER*', $assert2);
     assertType('*NEVER*', $value2);
+}
+
+function test_is_less_than(mixed $value): void
+{
+    $assert = Assert::that($value)->keys()->isLessThan(5);
+    assertType('Nexus\\Assert\\KeysIteratingExpectation<iterable<float|int<min, 4>, mixed>>', $assert);
+    assertType('iterable<float|int<min, 4>, mixed>', $value);
+}
+
+function test_is_less_than_or_equal(mixed $value): void
+{
+    $assert = Assert::that($value)->keys()->isLessThanOrEqual(5);
+    assertType('Nexus\\Assert\\KeysIteratingExpectation<iterable<float|int<min, 5>, mixed>>', $assert);
+    assertType('iterable<float|int<min, 5>, mixed>', $value);
 }
 
 function test_is_list(mixed $value1, mixed $value2): void
