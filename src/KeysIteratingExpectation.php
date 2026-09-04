@@ -26,6 +26,7 @@ final readonly class KeysIteratingExpectation implements Expectable
 {
     private const MESSAGE_CONTAINS = 'Key "{value}" in iterable is expected to contain "{needle}".';
     private const MESSAGE_ENDS_WITH = 'Key "{value}" in iterable is expected to end with "{needle}".';
+    private const MESSAGE_HAS_LENGTH = 'Key "{value}" in iterable is expected to have a length of {length}.';
     private const MESSAGE_HAS_MAX_LENGTH = 'Key "{value}" in iterable is expected to have a maximum length of {max}.';
     private const MESSAGE_HAS_METHOD = 'Key of class "{value}" in iterable is expected to have method "{method}".';
     private const MESSAGE_HAS_MIN_LENGTH = 'Key "{value}" in iterable is expected to have a minimum length of {min}.';
@@ -125,6 +126,31 @@ final readonly class KeysIteratingExpectation implements Expectable
                     [
                         'value' => $this->expectation->exporter->exportValue($offsetKey),
                         'needle' => $this->expectation->exporter->exportValue($needle),
+                    ],
+                );
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param int<1, max> $length
+     *
+     * @return self<TValue>
+     */
+    public function hasLength(int $length, ?string $message = null): self
+    {
+        foreach ($this->value as $offsetKey => $_) {
+            try {
+                Assert::that($offsetKey)->hasLength($length, $message);
+            } catch (ExpectationFailedException) {
+                throw new ExpectationFailedException(
+                    $message ?? self::MESSAGE_HAS_LENGTH,
+                    [
+                        'value' => $this->expectation->exporter->exportValue($offsetKey),
+                        'length' => $this->expectation->exporter->exportValue($length),
+                        'actual' => \is_string($offsetKey) ? \strlen($offsetKey) : $this->expectation->exporter->exportType($offsetKey),
                     ],
                 );
             }

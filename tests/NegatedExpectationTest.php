@@ -56,6 +56,16 @@ final class NegatedExpectationTest extends AbstractExpectationTestCase
         Assert::that('hello world')->not()->endsWith('world');
     }
 
+    public function testHasLength(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that('abcdef')->not()->hasLength(5));
+        self::assertNoErrorsThrown(static fn() => Assert::that(42)->not()->hasLength(5));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'abcde\'" is not expected to have a length of 5.');
+        Assert::that('abcde')->not()->hasLength(5);
+    }
+
     public function testHasMaxLength(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that('abcdef')->not()->hasMaxLength(5));

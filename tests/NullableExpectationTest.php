@@ -58,6 +58,16 @@ final class NullableExpectationTest extends AbstractExpectationTestCase
         Assert::that('hello world')->nullOr()->endsWith('planet');
     }
 
+    public function testHasLength(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->hasLength(5));
+        self::assertNoErrorsThrown(static fn() => Assert::that('abcde')->nullOr()->hasLength(5));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'abcdef\'" is expected to be null or to have a length of 5.');
+        Assert::that('abcdef')->nullOr()->hasLength(5);
+    }
+
     public function testHasMaxLength(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->hasMaxLength(5));

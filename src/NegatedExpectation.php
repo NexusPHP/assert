@@ -26,6 +26,7 @@ final readonly class NegatedExpectation implements Expectable
 {
     private const MESSAGE_CONTAINS = 'Value "{value}" is not expected to contain "{needle}".';
     private const MESSAGE_ENDS_WITH = 'Value "{value}" is not expected to end with "{needle}".';
+    private const MESSAGE_HAS_LENGTH = 'Value "{value}" is not expected to have a length of {length}.';
     private const MESSAGE_HAS_MAX_LENGTH = 'Value "{value}" is not expected to have a maximum length of {max}.';
     private const MESSAGE_HAS_METHOD = 'Object of class "{value}" is not expected to have method "{method}".';
     private const MESSAGE_HAS_MIN_LENGTH = 'Value "{value}" is not expected to have a minimum length of {min}.';
@@ -120,6 +121,29 @@ final readonly class NegatedExpectation implements Expectable
             [
                 'value' => $this->expectation->exporter->exportValue($this->value),
                 'needle' => $this->expectation->exporter->exportValue($needle),
+            ],
+        );
+    }
+
+    /**
+     * @param int<1, max> $length
+     *
+     * @return self<TValue>
+     */
+    public function hasLength(int $length, ?string $message = null): self
+    {
+        try {
+            $this->expectation->hasLength($length, $message);
+        } catch (ExpectationFailedException) {
+            return $this;
+        }
+
+        throw new ExpectationFailedException(
+            $message ?? self::MESSAGE_HAS_LENGTH,
+            [
+                'value' => $this->expectation->exporter->exportValue($this->value),
+                'length' => $this->expectation->exporter->exportValue($length),
+                'actual' => \is_string($this->value) ? \strlen($this->value) : $this->expectation->exporter->exportType($this->value),
             ],
         );
     }

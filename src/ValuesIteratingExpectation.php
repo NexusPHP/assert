@@ -26,6 +26,7 @@ final readonly class ValuesIteratingExpectation implements Expectable
 {
     private const MESSAGE_CONTAINS = 'Value "{value}" in iterable is expected to contain "{needle}".';
     private const MESSAGE_ENDS_WITH = 'Value "{value}" in iterable is expected to end with "{needle}".';
+    private const MESSAGE_HAS_LENGTH = 'Value "{value}" in iterable is expected to have a length of {length}.';
     private const MESSAGE_HAS_MAX_LENGTH = 'Value "{value}" in iterable is expected to have a maximum length of {max}.';
     private const MESSAGE_HAS_METHOD = 'Value of class "{value}" in iterable is expected to have method "{method}".';
     private const MESSAGE_HAS_MIN_LENGTH = 'Value "{value}" in iterable is expected to have a minimum length of {min}.';
@@ -122,6 +123,31 @@ final readonly class ValuesIteratingExpectation implements Expectable
                     [
                         'value' => $this->expectation->exporter->exportValue($offsetValue),
                         'needle' => $this->expectation->exporter->exportValue($needle),
+                    ],
+                );
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param int<1, max> $length
+     *
+     * @return self<TValue>
+     */
+    public function hasLength(int $length, ?string $message = null): self
+    {
+        foreach ($this->value as $offsetValue) {
+            try {
+                Assert::that($offsetValue)->hasLength($length, $message);
+            } catch (ExpectationFailedException) {
+                throw new ExpectationFailedException(
+                    $message ?? self::MESSAGE_HAS_LENGTH,
+                    [
+                        'value' => $this->expectation->exporter->exportValue($offsetValue),
+                        'length' => $this->expectation->exporter->exportValue($length),
+                        'actual' => \is_string($offsetValue) ? \strlen($offsetValue) : $this->expectation->exporter->exportType($offsetValue),
                     ],
                 );
             }

@@ -411,6 +411,7 @@ final class ExpectationMethodResolver
         return [
             'contains' => $stringDispatching,
             'endsWith' => $stringDispatching,
+            'hasLength' => new Resolver\HasLengthResolver($isString),
             'hasMaxLength' => new Resolver\HasMaxLengthResolver($isString),
             'hasMethod' => new Resolver\HasMethodResolver($isObject),
             'hasMinLength' => new Resolver\HasMinLengthResolver($isString),

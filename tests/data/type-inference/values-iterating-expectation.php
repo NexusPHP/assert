@@ -39,6 +39,13 @@ function test_ends_with(mixed $a, mixed $b): void
     assertType('iterable<string>', $b);
 }
 
+function test_has_length(mixed $value): void
+{
+    $assert = Assert::that($value)->values()->hasLength(32);
+    assertType('Nexus\\Assert\\ValuesIteratingExpectation<iterable<non-falsy-string>>', $assert);
+    assertType('iterable<non-falsy-string>', $value);
+}
+
 function test_has_max_length(mixed $value): void
 {
     $assert = Assert::that($value)->values()->hasMaxLength(10);

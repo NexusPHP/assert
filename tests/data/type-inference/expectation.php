@@ -39,6 +39,17 @@ function test_ends_with(mixed $a, mixed $b): void
     assertType('string', $b);
 }
 
+function test_has_length(mixed $value1, mixed $value2): void
+{
+    $assert1 = Assert::that($value1)->hasLength(32);
+    assertType('Nexus\\Assert\\Expectation<non-falsy-string>', $assert1);
+    assertType('non-falsy-string', $value1);
+
+    $assert2 = Assert::that($value2)->hasLength(1);
+    assertType('Nexus\\Assert\\Expectation<non-empty-string>', $assert2);
+    assertType('non-empty-string', $value2);
+}
+
 function test_has_max_length(mixed $value): void
 {
     $assert = Assert::that($value)->hasMaxLength(10);

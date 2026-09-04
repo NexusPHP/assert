@@ -32,6 +32,7 @@ final class ExpectationVariantsGenerator
     public const NON_DEFAULT_CONTEXT = [
         'contains' => ['value', 'needle'],
         'endsWith' => ['value', 'needle'],
+        'hasLength' => ['value', 'length', 'actual'],
         'hasMaxLength' => ['value', 'max'],
         'hasMethod' => ['value+', 'method='],
         'hasMinLength' => ['value', 'min'],
@@ -48,6 +49,14 @@ final class ExpectationVariantsGenerator
         'isUrl' => ['value'],
         'matchesRegularExpression' => ['value', 'pattern='],
         'startsWith' => ['value', 'needle'],
+    ];
+
+    /**
+     * Context keys derived from the asserted value rather than a method parameter, as sprintf
+     * templates receiving the value expression.
+     */
+    private const COMPUTED_CONTEXT = [
+        'actual' => '\\is_string(%1$s) ? \\strlen(%1$s) : $this->expectation->exporter->exportType(%1$s)',
     ];
 
     private const EXPECTATION_CLASS_TEMPLATE = <<<'PHP'
@@ -396,7 +405,9 @@ final class ExpectationVariantsGenerator
             $isTypeExported = str_ends_with($variable, '+');
             $variableName = rtrim($variable, '=+');
 
-            if ('type' === $variableName) {
+            if (isset(self::COMPUTED_CONTEXT[$variableName])) {
+                $exportCode = \sprintf(self::COMPUTED_CONTEXT[$variableName], $valueExpression);
+            } elseif ('type' === $variableName) {
                 $exportCode = '$this->expectation->exporter->exportType('.$valueExpression.')';
             } elseif ('value' === $variableName && $isTypeExported) {
                 $exportCode = '$this->expectation->exporter->exportType('.$valueExpression.')';

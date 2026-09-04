@@ -23,6 +23,7 @@ final readonly class Expectation implements Expectable, MutatingExpectable
 {
     private const MESSAGE_CONTAINS = 'Value "{value}" is expected to contain "{needle}".';
     private const MESSAGE_ENDS_WITH = 'Value "{value}" is expected to end with "{needle}".';
+    private const MESSAGE_HAS_LENGTH = 'Value "{value}" is expected to have a length of {length}.';
     private const MESSAGE_HAS_MAX_LENGTH = 'Value "{value}" is expected to have a maximum length of {max}.';
     private const MESSAGE_HAS_METHOD = 'Object of class "{value}" is expected to have method "{method}".';
     private const MESSAGE_HAS_MIN_LENGTH = 'Value "{value}" is expected to have a minimum length of {min}.';
@@ -141,6 +142,27 @@ final readonly class Expectation implements Expectable, MutatingExpectable
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'needle' => $this->exporter->exportValue($needle),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param int<1, max> $length
+     *
+     * @return self<TValue>
+     */
+    public function hasLength(int $length, ?string $message = null): self
+    {
+        if (! \is_string($this->value) || \strlen($this->value) !== $length) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_HAS_LENGTH,
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'length' => $this->exporter->exportValue($length),
+                    'actual' => \is_string($this->value) ? \strlen($this->value) : $this->exporter->exportType($this->value),
                 ],
             );
         }

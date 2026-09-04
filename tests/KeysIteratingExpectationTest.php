@@ -51,6 +51,15 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that(['index.php' => 1])->keys()->endsWith('.html');
     }
 
+    public function testHasLength(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(['abcde' => 1, 'fghij' => 2])->keys()->hasLength(5));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Key "\'abcdef\'" in iterable is expected to have a length of 5.');
+        Assert::that(['abcdef' => 1])->keys()->hasLength(5);
+    }
+
     public function testHasMaxLength(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(['abc' => 1, 'de' => 2])->keys()->hasMaxLength(5));

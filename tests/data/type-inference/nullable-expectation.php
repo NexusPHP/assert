@@ -39,6 +39,13 @@ function test_ends_with(mixed $a, mixed $b): void
     assertType('string|null', $b);
 }
 
+function test_has_length(mixed $value): void
+{
+    $assert = Assert::that($value)->nullOr()->hasLength(32);
+    assertType('Nexus\\Assert\\NullableExpectation<non-falsy-string|null>', $assert);
+    assertType('non-falsy-string|null', $value);
+}
+
 function test_has_max_length(mixed $value): void
 {
     $assert = Assert::that($value)->nullOr()->hasMaxLength(10);

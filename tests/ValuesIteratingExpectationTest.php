@@ -51,6 +51,15 @@ final class ValuesIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that(['index.html'])->values()->endsWith('.php');
     }
 
+    public function testHasLength(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(['abcde', 'fghij'])->values()->hasLength(5));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "\'abcdef\'" in iterable is expected to have a length of 5.');
+        Assert::that(['abcdef'])->values()->hasLength(5);
+    }
+
     public function testHasMaxLength(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(['abc', 'de'])->values()->hasMaxLength(5));

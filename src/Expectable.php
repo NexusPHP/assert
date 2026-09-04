@@ -42,6 +42,16 @@ interface Expectable
     public function endsWith(string $needle, ?string $message = null): self;
 
     /**
+     * @param int<1, max>           $length
+     * @param null|non-empty-string $message
+     *
+     * @return self<TValue>
+     *
+     * @throws ExpectationFailedException
+     */
+    public function hasLength(int $length, ?string $message = null): self;
+
+    /**
      * @param int<1, max>           $max
      * @param null|non-empty-string $message
      *

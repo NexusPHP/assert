@@ -77,6 +77,27 @@ final class ExpectationTest extends AbstractExpectationTestCase
         Assert::that('hello world')->endsWith('planet');
     }
 
+    public function testHasLength(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that('abcde')->hasLength(5));
+        self::assertExpectationFails(
+            static fn() => Assert::that('abcdef')->hasLength(5),
+            'Value "\'abcdef\'" is expected to have a length of 5.',
+        );
+        self::assertExpectationFails(
+            static fn() => Assert::that('abcdef')->hasLength(32, 'Key must be exactly {length} bytes long, {actual} given.'),
+            'Key must be exactly 32 bytes long, 6 given.',
+        );
+        self::assertExpectationFails(
+            static fn() => Assert::that(42)->hasLength(5, 'Expected {length} bytes, {actual} given.'),
+            'Expected 5 bytes, int given.',
+        );
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "42" is expected to have a length of 5.');
+        Assert::that(42)->hasLength(5);
+    }
+
     public function testHasMaxLength(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that('abc')->hasMaxLength(5));
