@@ -51,6 +51,7 @@ final readonly class Expectation implements Expectable, MutatingExpectable
     private const MESSAGE_IS_NATURAL_INT = 'Value "{value}" is expected to be a natural int but got {type} instead.';
     private const MESSAGE_IS_NEGATIVE_INT = 'Value "{value}" is expected to be a negative int but got {type} instead.';
     private const MESSAGE_IS_NON_EMPTY_LIST = 'Value "{value}" is expected to be a non-empty list but got {type} instead.';
+    private const MESSAGE_IS_NON_EMPTY_MAP = 'Value "{value}" is expected to be a non-empty map but got {type} instead.';
     private const MESSAGE_IS_NON_EMPTY_STRING = 'Value "{value}" is expected to be a non-empty string but got {type} instead.';
     private const MESSAGE_IS_NULL = 'Value "{value}" is expected to be null but got {type} instead.';
     private const MESSAGE_IS_NUMERIC = 'Value "{value}" is expected to be numeric but got {type} instead.';
@@ -687,6 +688,26 @@ final readonly class Expectation implements Expectable, MutatingExpectable
         if ([] === $this->value) {
             throw new ExpectationFailedException(
                 $message ?? self::MESSAGE_IS_NON_EMPTY_LIST,
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'type' => $this->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isNonEmptyMap(?string $message = null): self
+    {
+        $this->isMap($message);
+
+        if ([] === $this->value) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_IS_NON_EMPTY_MAP,
                 [
                     'value' => $this->exporter->exportValue($this->value),
                     'type' => $this->exporter->exportType($this->value),

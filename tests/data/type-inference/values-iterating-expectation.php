@@ -235,6 +235,13 @@ function test_is_non_empty_list(mixed $value): void
     assertType('iterable<non-empty-list<mixed>>', $value);
 }
 
+function test_is_non_empty_map(mixed $value): void
+{
+    $assert = Assert::that($value)->values()->isNonEmptyMap();
+    assertType('Nexus\\Assert\\ValuesIteratingExpectation<iterable<non-empty-array<string, mixed>>>', $assert);
+    assertType('iterable<non-empty-array<string, mixed>>', $value);
+}
+
 function test_is_non_empty_string(mixed $value): void
 {
     $assert = Assert::that($value)->values()->isNonEmptyString();

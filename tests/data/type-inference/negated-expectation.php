@@ -221,6 +221,13 @@ function test_is_non_empty_list(mixed $value): void
     assertType('mixed', $value);
 }
 
+function test_is_non_empty_map(mixed $value): void
+{
+    $assert = Assert::that($value)->not()->isNonEmptyMap();
+    assertType('Nexus\\Assert\\NegatedExpectation<mixed>', $assert);
+    assertType('mixed', $value);
+}
+
 function test_is_non_empty_string(mixed $value): void
 {
     $assert = Assert::that($value)->not()->isNonEmptyString();

@@ -54,6 +54,7 @@ final readonly class NegatedExpectation implements Expectable
     private const MESSAGE_IS_NATURAL_INT = 'Value "{value}" is not expected to be a natural int.';
     private const MESSAGE_IS_NEGATIVE_INT = 'Value "{value}" is not expected to be a negative int.';
     private const MESSAGE_IS_NON_EMPTY_LIST = 'Value "{value}" is not expected to be a non-empty list.';
+    private const MESSAGE_IS_NON_EMPTY_MAP = 'Value "{value}" is not expected to be a non-empty map.';
     private const MESSAGE_IS_NON_EMPTY_STRING = 'Value "{value}" is not expected to be a non-empty string.';
     private const MESSAGE_IS_NULL = 'Value "{value}" is not expected to be null.';
     private const MESSAGE_IS_NUMERIC = 'Value "{value}" is not expected to be numeric.';
@@ -638,6 +639,23 @@ final readonly class NegatedExpectation implements Expectable
 
         throw new ExpectationFailedException(
             $message ?? self::MESSAGE_IS_NON_EMPTY_LIST,
+            ['value' => $this->expectation->exporter->exportValue($this->value)],
+        );
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isNonEmptyMap(?string $message = null): self
+    {
+        try {
+            $this->expectation->isNonEmptyMap($message);
+        } catch (ExpectationFailedException) {
+            return $this;
+        }
+
+        throw new ExpectationFailedException(
+            $message ?? self::MESSAGE_IS_NON_EMPTY_MAP,
             ['value' => $this->expectation->exporter->exportValue($this->value)],
         );
     }

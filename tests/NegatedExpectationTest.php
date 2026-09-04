@@ -330,6 +330,16 @@ final class NegatedExpectationTest extends AbstractExpectationTestCase
         Assert::that([0, 1, 2])->not()->isNonEmptyList();
     }
 
+    public function testIsNonEmptyMap(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([])->not()->isNonEmptyMap());
+        self::assertNoErrorsThrown(static fn() => Assert::that([0, 1, 2])->not()->isNonEmptyMap());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "[\'a\' => 1]" is not expected to be a non-empty map.');
+        Assert::that(['a' => 1])->not()->isNonEmptyMap();
+    }
+
     public function testIsNonEmptyString(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that('')->not()->isNonEmptyString());

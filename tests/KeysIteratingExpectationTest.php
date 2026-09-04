@@ -372,6 +372,19 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that(['a' => 1])->keys()->isNonEmptyList();
     }
 
+    public function testIsNonEmptyMap(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(self::asGenerator([['a' => 1], 'x']))->keys()->isNonEmptyMap());
+        self::assertExpectationFails(
+            static fn() => Assert::that(self::asGenerator([[], 'x']))->keys()->isNonEmptyMap(),
+            'Key "[]" in iterable is expected to be a non-empty map but got array instead.',
+        );
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Method isNonEmptyMap() cannot be called on keys of an array; array keys are constrained to int|string.');
+        Assert::that(['a' => 1])->keys()->isNonEmptyMap();
+    }
+
     public function testIsNonEmptyString(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(['a' => 1, 'b' => 2])->keys()->isNonEmptyString());

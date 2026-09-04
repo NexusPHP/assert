@@ -307,6 +307,15 @@ final class ValuesIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that([[]])->values()->isNonEmptyList();
     }
 
+    public function testIsNonEmptyMap(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([['a' => 1], ['b' => 2]])->values()->isNonEmptyMap());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "[]" in iterable is expected to be a non-empty map but got array instead.');
+        Assert::that([[]])->values()->isNonEmptyMap();
+    }
+
     public function testIsNonEmptyString(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(['a', 'b'])->values()->isNonEmptyString());

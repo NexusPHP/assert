@@ -362,6 +362,16 @@ final class NullableExpectationTest extends AbstractExpectationTestCase
         Assert::that([])->nullOr()->isNonEmptyList();
     }
 
+    public function testIsNonEmptyMap(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->isNonEmptyMap());
+        self::assertNoErrorsThrown(static fn() => Assert::that(['a' => 1])->nullOr()->isNonEmptyMap());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "[]" is expected to be null or a non-empty map but got array instead.');
+        Assert::that([])->nullOr()->isNonEmptyMap();
+    }
+
     public function testIsNonEmptyString(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->isNonEmptyString());

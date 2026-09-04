@@ -54,6 +54,7 @@ final readonly class ValuesIteratingExpectation implements Expectable
     private const MESSAGE_IS_NATURAL_INT = 'Value "{value}" in iterable is expected to be a natural int but got {type} instead.';
     private const MESSAGE_IS_NEGATIVE_INT = 'Value "{value}" in iterable is expected to be a negative int but got {type} instead.';
     private const MESSAGE_IS_NON_EMPTY_LIST = 'Value "{value}" in iterable is expected to be a non-empty list but got {type} instead.';
+    private const MESSAGE_IS_NON_EMPTY_MAP = 'Value "{value}" in iterable is expected to be a non-empty map but got {type} instead.';
     private const MESSAGE_IS_NON_EMPTY_STRING = 'Value "{value}" in iterable is expected to be a non-empty string but got {type} instead.';
     private const MESSAGE_IS_NULL = 'Value "{value}" in iterable is expected to be null but got {type} instead.';
     private const MESSAGE_IS_NUMERIC = 'Value "{value}" in iterable is expected to be numeric but got {type} instead.';
@@ -748,6 +749,28 @@ final readonly class ValuesIteratingExpectation implements Expectable
             } catch (ExpectationFailedException) {
                 throw new ExpectationFailedException(
                     $message ?? self::MESSAGE_IS_NON_EMPTY_LIST,
+                    [
+                        'value' => $this->expectation->exporter->exportValue($offsetValue),
+                        'type' => $this->expectation->exporter->exportType($offsetValue),
+                    ],
+                );
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return self<TValue>
+     */
+    public function isNonEmptyMap(?string $message = null): self
+    {
+        foreach ($this->value as $offsetValue) {
+            try {
+                Assert::that($offsetValue)->isNonEmptyMap($message);
+            } catch (ExpectationFailedException) {
+                throw new ExpectationFailedException(
+                    $message ?? self::MESSAGE_IS_NON_EMPTY_MAP,
                     [
                         'value' => $this->expectation->exporter->exportValue($offsetValue),
                         'type' => $this->expectation->exporter->exportType($offsetValue),

@@ -400,6 +400,15 @@ final class ExpectationTest extends AbstractExpectationTestCase
         Assert::that([])->isNonEmptyList();
     }
 
+    public function testIsNonEmptyMap(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(['a' => 1])->isNonEmptyMap());
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "[]" is expected to be a non-empty map but got array instead.');
+        Assert::that([])->isNonEmptyMap();
+    }
+
     public function testIsNonEmptyString(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that('hello')->isNonEmptyString());

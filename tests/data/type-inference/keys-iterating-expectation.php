@@ -287,6 +287,16 @@ function test_is_non_empty_list(mixed $value1, mixed $value2): void
     assertType('*NEVER*', $value2);
 }
 
+function test_is_non_empty_map(mixed $value1, mixed $value2): void
+{
+    $assert1 = Assert::that($value1)->keys()->isNonEmptyMap();
+    assertType('Nexus\\Assert\\KeysIteratingExpectation<iterable<non-empty-array<string, mixed>, mixed>>', $assert1);
+    assertType('iterable<non-empty-array<string, mixed>, mixed>', $value1);
+
+    $assert2 = Assert::that($value2)->isArray()->keys()->isNonEmptyMap();
+    assertType('*NEVER*', $assert2);
+}
+
 function test_is_non_empty_string(mixed $value): void
 {
     $assert = Assert::that($value)->keys()->isNonEmptyString();
