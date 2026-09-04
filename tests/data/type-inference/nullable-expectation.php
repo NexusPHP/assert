@@ -39,11 +39,25 @@ function test_ends_with(mixed $a, mixed $b): void
     assertType('string|null', $b);
 }
 
+function test_has_count(mixed $value): void
+{
+    $assert = Assert::that($value)->nullOr()->hasCount(3);
+    assertType('Nexus\\Assert\\NullableExpectation<non-empty-array<mixed>|Countable|null>', $assert);
+    assertType('non-empty-array<mixed>|Countable|null', $value);
+}
+
 function test_has_length(mixed $value): void
 {
     $assert = Assert::that($value)->nullOr()->hasLength(32);
     assertType('Nexus\\Assert\\NullableExpectation<non-falsy-string|null>', $assert);
     assertType('non-falsy-string|null', $value);
+}
+
+function test_has_max_count(mixed $value): void
+{
+    $assert = Assert::that($value)->nullOr()->hasMaxCount(3);
+    assertType('Nexus\\Assert\\NullableExpectation<array<mixed>|Countable|null>', $assert);
+    assertType('array<mixed>|Countable|null', $value);
 }
 
 function test_has_max_length(mixed $value): void
@@ -58,6 +72,13 @@ function test_has_method(mixed $value): void
     $assert = Assert::that($value)->nullOr()->hasMethod('jsonSerialize');
     assertType('Nexus\\Assert\\NullableExpectation<(object&hasMethod(jsonSerialize))|null>', $assert);
     assertType('(object&hasMethod(jsonSerialize))|null', $value);
+}
+
+function test_has_min_count(mixed $value): void
+{
+    $assert = Assert::that($value)->nullOr()->hasMinCount(1);
+    assertType('Nexus\\Assert\\NullableExpectation<non-empty-array<mixed>|Countable|null>', $assert);
+    assertType('non-empty-array<mixed>|Countable|null', $value);
 }
 
 function test_has_min_length(mixed $value): void

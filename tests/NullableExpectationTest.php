@@ -58,6 +58,16 @@ final class NullableExpectationTest extends AbstractExpectationTestCase
         Assert::that('hello world')->nullOr()->endsWith('planet');
     }
 
+    public function testHasCount(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->hasCount(3));
+        self::assertNoErrorsThrown(static fn() => Assert::that([1, 2, 3])->nullOr()->hasCount(3));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "[1, 2]" is expected to be null or to have a count of 3.');
+        Assert::that([1, 2])->nullOr()->hasCount(3);
+    }
+
     public function testHasLength(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->hasLength(5));
@@ -66,6 +76,16 @@ final class NullableExpectationTest extends AbstractExpectationTestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "\'abcdef\'" is expected to be null or to have a length of 5.');
         Assert::that('abcdef')->nullOr()->hasLength(5);
+    }
+
+    public function testHasMaxCount(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->hasMaxCount(3));
+        self::assertNoErrorsThrown(static fn() => Assert::that([1, 2])->nullOr()->hasMaxCount(3));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "[1, 2, 3, 4]" is expected to be null or to have a maximum count of 3.');
+        Assert::that([1, 2, 3, 4])->nullOr()->hasMaxCount(3);
     }
 
     public function testHasMaxLength(): void
@@ -86,6 +106,16 @@ final class NullableExpectationTest extends AbstractExpectationTestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Object of class "stdClass" is expected to be null or to have method "__toString".');
         Assert::that(new \stdClass())->nullOr()->hasMethod('__toString');
+    }
+
+    public function testHasMinCount(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(null)->nullOr()->hasMinCount(1));
+        self::assertNoErrorsThrown(static fn() => Assert::that([1, 2])->nullOr()->hasMinCount(1));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "[]" is expected to be null or to have a minimum count of 1.');
+        Assert::that([])->nullOr()->hasMinCount(1);
     }
 
     public function testHasMinLength(): void

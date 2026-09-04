@@ -39,11 +39,25 @@ function test_ends_with(mixed $value1, mixed $value2): void
     assertType('iterable<string, mixed>', $value2);
 }
 
+function test_has_count(mixed $value): void
+{
+    $assert = Assert::that($value)->keys()->hasCount(3);
+    assertType('Nexus\\Assert\\KeysIteratingExpectation<iterable<non-empty-array<mixed>|Countable, mixed>>', $assert);
+    assertType('iterable<non-empty-array<mixed>|Countable, mixed>', $value);
+}
+
 function test_has_length(mixed $value): void
 {
     $assert = Assert::that($value)->keys()->hasLength(32);
     assertType('Nexus\\Assert\\KeysIteratingExpectation<iterable<non-falsy-string, mixed>>', $assert);
     assertType('iterable<non-falsy-string, mixed>', $value);
+}
+
+function test_has_max_count(mixed $value): void
+{
+    $assert = Assert::that($value)->keys()->hasMaxCount(3);
+    assertType('Nexus\\Assert\\KeysIteratingExpectation<iterable<array<mixed>|Countable, mixed>>', $assert);
+    assertType('iterable<array<mixed>|Countable, mixed>', $value);
 }
 
 function test_has_max_length(mixed $value): void
@@ -62,6 +76,13 @@ function test_has_method(mixed $value1, mixed $value2): void
     $assert2 = Assert::that($value2)->isArray()->keys()->hasMethod('jsonSerialize');
     assertType('*NEVER*', $assert2);
     assertType('*NEVER*', $value2);
+}
+
+function test_has_min_count(mixed $value): void
+{
+    $assert = Assert::that($value)->keys()->hasMinCount(1);
+    assertType('Nexus\\Assert\\KeysIteratingExpectation<iterable<non-empty-array<mixed>|Countable, mixed>>', $assert);
+    assertType('iterable<non-empty-array<mixed>|Countable, mixed>', $value);
 }
 
 function test_has_min_length(mixed $value): void

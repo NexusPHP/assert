@@ -39,6 +39,24 @@ function test_ends_with(mixed $a, mixed $b): void
     assertType('string', $b);
 }
 
+/**
+ * @param int<0, max> $count
+ */
+function test_has_count(mixed $value1, mixed $value2, mixed $value3, int $count): void
+{
+    $assert1 = Assert::that($value1)->hasCount(3);
+    assertType('Nexus\\Assert\\Expectation<non-empty-array<mixed>|Countable>', $assert1);
+    assertType('non-empty-array<mixed>|Countable', $value1);
+
+    $assert2 = Assert::that($value2)->hasCount(0);
+    assertType('Nexus\\Assert\\Expectation<array{}|Countable>', $assert2);
+    assertType('array{}|Countable', $value2);
+
+    $assert3 = Assert::that($value3)->hasCount($count);
+    assertType('Nexus\\Assert\\Expectation<array<mixed>|Countable>', $assert3);
+    assertType('array<mixed>|Countable', $value3);
+}
+
 function test_has_length(mixed $value1, mixed $value2): void
 {
     $assert1 = Assert::that($value1)->hasLength(32);
@@ -48,6 +66,13 @@ function test_has_length(mixed $value1, mixed $value2): void
     $assert2 = Assert::that($value2)->hasLength(1);
     assertType('Nexus\\Assert\\Expectation<non-empty-string>', $assert2);
     assertType('non-empty-string', $value2);
+}
+
+function test_has_max_count(mixed $value): void
+{
+    $assert = Assert::that($value)->hasMaxCount(3);
+    assertType('Nexus\\Assert\\Expectation<array<mixed>|Countable>', $assert);
+    assertType('array<mixed>|Countable', $value);
 }
 
 function test_has_max_length(mixed $value): void
@@ -62,6 +87,13 @@ function test_has_method(mixed $value): void
     $assert = Assert::that($value)->hasMethod('jsonSerialize');
     assertType('Nexus\\Assert\\Expectation<object&hasMethod(jsonSerialize)>', $assert);
     assertType('object&hasMethod(jsonSerialize)', $value);
+}
+
+function test_has_min_count(mixed $value): void
+{
+    $assert = Assert::that($value)->hasMinCount(1);
+    assertType('Nexus\\Assert\\Expectation<non-empty-array<mixed>|Countable>', $assert);
+    assertType('non-empty-array<mixed>|Countable', $value);
 }
 
 function test_has_min_length(mixed $value): void

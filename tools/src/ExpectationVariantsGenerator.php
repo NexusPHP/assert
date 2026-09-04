@@ -32,9 +32,12 @@ final class ExpectationVariantsGenerator
     public const NON_DEFAULT_CONTEXT = [
         'contains' => ['value', 'needle'],
         'endsWith' => ['value', 'needle'],
+        'hasCount' => ['value', 'count'],
         'hasLength' => ['value', 'length', 'actual'],
+        'hasMaxCount' => ['value', 'max'],
         'hasMaxLength' => ['value', 'max'],
         'hasMethod' => ['value+', 'method='],
+        'hasMinCount' => ['value', 'min'],
         'hasMinLength' => ['value', 'min'],
         'hasOffset' => ['value', 'key='],
         'hasProperty' => ['value+', 'property='],
@@ -169,6 +172,9 @@ final class ExpectationVariantsGenerator
         ],
     ];
     private const KEYS_UNREACHABLE_FOR_ARRAYS = [
+        'hasCount',
+        'hasMaxCount',
+        'hasMinCount',
         'hasMethod',
         'hasOffset',
         'hasProperty',

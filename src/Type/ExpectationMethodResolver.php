@@ -403,6 +403,7 @@ final class ExpectationMethodResolver
         $isObject = new Resolver\IsObjectResolver();
         $isString = new Resolver\IsStringResolver();
         $isList = new Resolver\IsListResolver($isArray);
+        $isCountable = new Resolver\IsCountableResolver();
         $isMap = new Resolver\IsMapResolver($isArray);
         $isNonEmptyString = new Resolver\IsNonEmptyStringResolver($isString);
         $isSameOrSubclassOf = new Resolver\IsSameOrSubclassOfResolver();
@@ -412,9 +413,12 @@ final class ExpectationMethodResolver
         return [
             'contains' => $stringDispatching,
             'endsWith' => $stringDispatching,
+            'hasCount' => new Resolver\CountComparisonResolver(Node\Expr\BinaryOp\Identical::class, $isCountable),
             'hasLength' => new Resolver\HasLengthResolver($isString),
+            'hasMaxCount' => new Resolver\CountComparisonResolver(Node\Expr\BinaryOp\SmallerOrEqual::class, $isCountable),
             'hasMaxLength' => new Resolver\HasMaxLengthResolver($isString),
             'hasMethod' => new Resolver\HasMethodResolver($isObject),
+            'hasMinCount' => new Resolver\CountComparisonResolver(Node\Expr\BinaryOp\GreaterOrEqual::class, $isCountable),
             'hasMinLength' => new Resolver\HasMinLengthResolver($isString),
             'hasOffset' => new Resolver\HasOffsetResolver($isArray),
             'hasProperty' => new Resolver\HasPropertyResolver($isObject),
@@ -425,7 +429,7 @@ final class ExpectationMethodResolver
             'isBool' => new Resolver\IsBoolResolver(),
             'isCallable' => new Resolver\IsCallableResolver(),
             'isClassString' => new Resolver\IsClassStringResolver($isString, $reflectionProvider),
-            'isCountable' => new Resolver\IsCountableResolver(),
+            'isCountable' => $isCountable,
             'isFalse' => new Resolver\IsFalseResolver(),
             'isFloat' => $isFloat,
             'isGreaterThan' => new Resolver\NumberComparisonResolver(Node\Expr\BinaryOp\Greater::class, $isInt, $isFloat),
@@ -463,7 +467,7 @@ final class ExpectationMethodResolver
             'matchesRegularExpression' => $isString,
             'startsWith' => $stringDispatching,
             // iterating variant methods (`keys`, `values`) just assert the
-            // outer value is iterable; the element-narrowing happens in
+            // outer value is iterable. the element-narrowing happens in
             // `narrowIterating` against the next method's resolver.
             'keys' => $isIterable,
             'values' => $isIterable,

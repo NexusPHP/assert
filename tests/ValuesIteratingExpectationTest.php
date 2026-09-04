@@ -51,6 +51,15 @@ final class ValuesIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that(['index.html'])->values()->endsWith('.php');
     }
 
+    public function testHasCount(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([[1, 2], [3, 4]])->values()->hasCount(2));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "[1]" in iterable is expected to have a count of 2.');
+        Assert::that([[1]])->values()->hasCount(2);
+    }
+
     public function testHasLength(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(['abcde', 'fghij'])->values()->hasLength(5));
@@ -58,6 +67,15 @@ final class ValuesIteratingExpectationTest extends AbstractExpectationTestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "\'abcdef\'" in iterable is expected to have a length of 5.');
         Assert::that(['abcdef'])->values()->hasLength(5);
+    }
+
+    public function testHasMaxCount(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([[1, 2], []])->values()->hasMaxCount(3));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "[1, 2, 3, 4]" in iterable is expected to have a maximum count of 3.');
+        Assert::that([[1, 2, 3, 4]])->values()->hasMaxCount(3);
     }
 
     public function testHasMaxLength(): void
@@ -76,6 +94,15 @@ final class ValuesIteratingExpectationTest extends AbstractExpectationTestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value of class "stdClass" in iterable is expected to have method "__toString".');
         Assert::that([new \stdClass()])->values()->hasMethod('__toString');
+    }
+
+    public function testHasMinCount(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([[1, 2], [3]])->values()->hasMinCount(1));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "[]" in iterable is expected to have a minimum count of 1.');
+        Assert::that([[]])->values()->hasMinCount(1);
     }
 
     public function testHasMinLength(): void

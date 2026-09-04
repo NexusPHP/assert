@@ -26,9 +26,12 @@ final readonly class KeysIteratingExpectation implements Expectable
 {
     private const MESSAGE_CONTAINS = 'Key "{value}" in iterable is expected to contain "{needle}".';
     private const MESSAGE_ENDS_WITH = 'Key "{value}" in iterable is expected to end with "{needle}".';
+    private const MESSAGE_HAS_COUNT = 'Key "{value}" in iterable is expected to have a count of {count}.';
     private const MESSAGE_HAS_LENGTH = 'Key "{value}" in iterable is expected to have a length of {length}.';
+    private const MESSAGE_HAS_MAX_COUNT = 'Key "{value}" in iterable is expected to have a maximum count of {max}.';
     private const MESSAGE_HAS_MAX_LENGTH = 'Key "{value}" in iterable is expected to have a maximum length of {max}.';
     private const MESSAGE_HAS_METHOD = 'Key of class "{value}" in iterable is expected to have method "{method}".';
+    private const MESSAGE_HAS_MIN_COUNT = 'Key "{value}" in iterable is expected to have a minimum count of {min}.';
     private const MESSAGE_HAS_MIN_LENGTH = 'Key "{value}" in iterable is expected to have a minimum length of {min}.';
     private const MESSAGE_HAS_OFFSET = 'Key "{value}" in iterable is expected to have offset "{key}".';
     private const MESSAGE_HAS_PROPERTY = 'Key of class "{value}" in iterable is expected to have property "{property}".';
@@ -140,6 +143,34 @@ final readonly class KeysIteratingExpectation implements Expectable
     }
 
     /**
+     * @param int<0, max> $count
+     *
+     * @return self<TValue>
+     */
+    public function hasCount(int $count, ?string $message = null): self
+    {
+        if ($this->isArray) {
+            throw new \LogicException('Method hasCount() cannot be called on keys of an array; array keys are constrained to int|string.');
+        }
+
+        foreach ($this->value as $offsetKey => $_) {
+            try {
+                Assert::that($offsetKey)->hasCount($count, $message);
+            } catch (ExpectationFailedException) {
+                throw new ExpectationFailedException(
+                    $message ?? self::MESSAGE_HAS_COUNT,
+                    [
+                        'value' => $this->expectation->exporter->exportValue($offsetKey),
+                        'count' => $this->expectation->exporter->exportValue($count),
+                    ],
+                );
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * @param int<1, max> $length
      *
      * @return self<TValue>
@@ -156,6 +187,34 @@ final readonly class KeysIteratingExpectation implements Expectable
                         'value' => $this->expectation->exporter->exportValue($offsetKey),
                         'length' => $this->expectation->exporter->exportValue($length),
                         'actual' => \is_string($offsetKey) ? \strlen($offsetKey) : $this->expectation->exporter->exportType($offsetKey),
+                    ],
+                );
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param int<0, max> $max
+     *
+     * @return self<TValue>
+     */
+    public function hasMaxCount(int $max, ?string $message = null): self
+    {
+        if ($this->isArray) {
+            throw new \LogicException('Method hasMaxCount() cannot be called on keys of an array; array keys are constrained to int|string.');
+        }
+
+        foreach ($this->value as $offsetKey => $_) {
+            try {
+                Assert::that($offsetKey)->hasMaxCount($max, $message);
+            } catch (ExpectationFailedException) {
+                throw new ExpectationFailedException(
+                    $message ?? self::MESSAGE_HAS_MAX_COUNT,
+                    [
+                        'value' => $this->expectation->exporter->exportValue($offsetKey),
+                        'max' => $this->expectation->exporter->exportValue($max),
                     ],
                 );
             }
@@ -206,6 +265,34 @@ final readonly class KeysIteratingExpectation implements Expectable
                     [
                         'value' => $this->expectation->exporter->exportType($offsetKey),
                         'method' => $method,
+                    ],
+                );
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param int<0, max> $min
+     *
+     * @return self<TValue>
+     */
+    public function hasMinCount(int $min, ?string $message = null): self
+    {
+        if ($this->isArray) {
+            throw new \LogicException('Method hasMinCount() cannot be called on keys of an array; array keys are constrained to int|string.');
+        }
+
+        foreach ($this->value as $offsetKey => $_) {
+            try {
+                Assert::that($offsetKey)->hasMinCount($min, $message);
+            } catch (ExpectationFailedException) {
+                throw new ExpectationFailedException(
+                    $message ?? self::MESSAGE_HAS_MIN_COUNT,
+                    [
+                        'value' => $this->expectation->exporter->exportValue($offsetKey),
+                        'min' => $this->expectation->exporter->exportValue($min),
                     ],
                 );
             }

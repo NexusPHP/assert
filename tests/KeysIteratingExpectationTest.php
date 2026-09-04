@@ -51,6 +51,19 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
         Assert::that(['index.php' => 1])->keys()->endsWith('.html');
     }
 
+    public function testHasCount(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(self::asGenerator([[1, 2], 'x']))->keys()->hasCount(2));
+        self::assertExpectationFails(
+            static fn() => Assert::that(self::asGenerator([[1], 'x']))->keys()->hasCount(2),
+            'Key "[1]" in iterable is expected to have a count of 2.',
+        );
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Method hasCount() cannot be called on keys of an array; array keys are constrained to int|string.');
+        Assert::that(['a' => 1])->keys()->hasCount(2);
+    }
+
     public function testHasLength(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that(['abcde' => 1, 'fghij' => 2])->keys()->hasLength(5));
@@ -58,6 +71,19 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Key "\'abcdef\'" in iterable is expected to have a length of 5.');
         Assert::that(['abcdef' => 1])->keys()->hasLength(5);
+    }
+
+    public function testHasMaxCount(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(self::asGenerator([[1, 2], 'x']))->keys()->hasMaxCount(3));
+        self::assertExpectationFails(
+            static fn() => Assert::that(self::asGenerator([[1, 2, 3, 4], 'x']))->keys()->hasMaxCount(3),
+            'Key "[1, 2, 3, 4]" in iterable is expected to have a maximum count of 3.',
+        );
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Method hasMaxCount() cannot be called on keys of an array; array keys are constrained to int|string.');
+        Assert::that(['a' => 1])->keys()->hasMaxCount(3);
     }
 
     public function testHasMaxLength(): void
@@ -81,6 +107,19 @@ final class KeysIteratingExpectationTest extends AbstractExpectationTestCase
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Method hasMethod() cannot be called on keys of an array; array keys are constrained to int|string.');
         Assert::that(['a' => 1])->keys()->hasMethod('__toString');
+    }
+
+    public function testHasMinCount(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that(self::asGenerator([[1, 2], 'x']))->keys()->hasMinCount(1));
+        self::assertExpectationFails(
+            static fn() => Assert::that(self::asGenerator([[], 'x']))->keys()->hasMinCount(1),
+            'Key "[]" in iterable is expected to have a minimum count of 1.',
+        );
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Method hasMinCount() cannot be called on keys of an array; array keys are constrained to int|string.');
+        Assert::that(['a' => 1])->keys()->hasMinCount(1);
     }
 
     public function testHasMinLength(): void

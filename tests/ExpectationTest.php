@@ -77,6 +77,20 @@ final class ExpectationTest extends AbstractExpectationTestCase
         Assert::that('hello world')->endsWith('planet');
     }
 
+    public function testHasCount(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([1, 2, 3])->hasCount(3));
+        self::assertNoErrorsThrown(static fn() => Assert::that(new \ArrayIterator([1, 2]))->hasCount(2));
+        self::assertExpectationFails(
+            static fn() => Assert::that(42)->hasCount(3),
+            'Value "42" is expected to be countable but got int instead.',
+        );
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "[1, 2]" is expected to have a count of 3.');
+        Assert::that([1, 2])->hasCount(3);
+    }
+
     public function testHasLength(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that('abcde')->hasLength(5));
@@ -98,6 +112,16 @@ final class ExpectationTest extends AbstractExpectationTestCase
         Assert::that(42)->hasLength(5);
     }
 
+    public function testHasMaxCount(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([])->hasMaxCount(3));
+        self::assertNoErrorsThrown(static fn() => Assert::that([1, 2, 3])->hasMaxCount(3));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "[1, 2, 3, 4]" is expected to have a maximum count of 3.');
+        Assert::that([1, 2, 3, 4])->hasMaxCount(3);
+    }
+
     public function testHasMaxLength(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that('abc')->hasMaxLength(5));
@@ -115,6 +139,16 @@ final class ExpectationTest extends AbstractExpectationTestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Object of class "stdClass" is expected to have method "nonExistentMethod".');
         Assert::that(new \stdClass())->hasMethod('nonExistentMethod');
+    }
+
+    public function testHasMinCount(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([1, 2, 3])->hasMinCount(2));
+        self::assertNoErrorsThrown(static fn() => Assert::that([1, 2])->hasMinCount(2));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "[]" is expected to have a minimum count of 1.');
+        Assert::that([])->hasMinCount(1);
     }
 
     public function testHasMinLength(): void

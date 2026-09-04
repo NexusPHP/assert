@@ -56,6 +56,16 @@ final class NegatedExpectationTest extends AbstractExpectationTestCase
         Assert::that('hello world')->not()->endsWith('world');
     }
 
+    public function testHasCount(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([1, 2])->not()->hasCount(3));
+        self::assertNoErrorsThrown(static fn() => Assert::that(42)->not()->hasCount(3));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "[1, 2, 3]" is not expected to have a count of 3.');
+        Assert::that([1, 2, 3])->not()->hasCount(3);
+    }
+
     public function testHasLength(): void
     {
         self::assertNoErrorsThrown(static fn() => Assert::that('abcdef')->not()->hasLength(5));
@@ -64,6 +74,15 @@ final class NegatedExpectationTest extends AbstractExpectationTestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Value "\'abcde\'" is not expected to have a length of 5.');
         Assert::that('abcde')->not()->hasLength(5);
+    }
+
+    public function testHasMaxCount(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([1, 2, 3, 4])->not()->hasMaxCount(3));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "[1, 2]" is not expected to have a maximum count of 3.');
+        Assert::that([1, 2])->not()->hasMaxCount(3);
     }
 
     public function testHasMaxLength(): void
@@ -82,6 +101,15 @@ final class NegatedExpectationTest extends AbstractExpectationTestCase
         $this->expectException(ExpectationFailedException::class);
         $this->expectExceptionMessage('Object of class "Exception" is not expected to have method "__toString".');
         Assert::that(new \Exception('Test'))->not()->hasMethod('__toString');
+    }
+
+    public function testHasMinCount(): void
+    {
+        self::assertNoErrorsThrown(static fn() => Assert::that([])->not()->hasMinCount(1));
+
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Value "[1, 2]" is not expected to have a minimum count of 1.');
+        Assert::that([1, 2])->not()->hasMinCount(1);
     }
 
     public function testHasMinLength(): void

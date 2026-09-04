@@ -23,9 +23,12 @@ final readonly class Expectation implements Expectable, MutatingExpectable
 {
     private const MESSAGE_CONTAINS = 'Value "{value}" is expected to contain "{needle}".';
     private const MESSAGE_ENDS_WITH = 'Value "{value}" is expected to end with "{needle}".';
+    private const MESSAGE_HAS_COUNT = 'Value "{value}" is expected to have a count of {count}.';
     private const MESSAGE_HAS_LENGTH = 'Value "{value}" is expected to have a length of {length}.';
+    private const MESSAGE_HAS_MAX_COUNT = 'Value "{value}" is expected to have a maximum count of {max}.';
     private const MESSAGE_HAS_MAX_LENGTH = 'Value "{value}" is expected to have a maximum length of {max}.';
     private const MESSAGE_HAS_METHOD = 'Object of class "{value}" is expected to have method "{method}".';
+    private const MESSAGE_HAS_MIN_COUNT = 'Value "{value}" is expected to have a minimum count of {min}.';
     private const MESSAGE_HAS_MIN_LENGTH = 'Value "{value}" is expected to have a minimum length of {min}.';
     private const MESSAGE_HAS_OFFSET = 'Array "{value}" is expected to have offset "{key}".';
     private const MESSAGE_HAS_PROPERTY = 'Object of class "{value}" is expected to have property "{property}".';
@@ -155,6 +158,28 @@ final readonly class Expectation implements Expectable, MutatingExpectable
     }
 
     /**
+     * @param int<0, max> $count
+     *
+     * @return self<TValue>
+     */
+    public function hasCount(int $count, ?string $message = null): self
+    {
+        $this->isCountable($message);
+
+        if (\count($this->value) !== $count) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_HAS_COUNT,
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'count' => $this->exporter->exportValue($count),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
      * @param int<1, max> $length
      *
      * @return self<TValue>
@@ -168,6 +193,28 @@ final readonly class Expectation implements Expectable, MutatingExpectable
                     'value' => $this->exporter->exportValue($this->value),
                     'length' => $this->exporter->exportValue($length),
                     'actual' => \is_string($this->value) ? \strlen($this->value) : $this->exporter->exportType($this->value),
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param int<0, max> $max
+     *
+     * @return self<TValue>
+     */
+    public function hasMaxCount(int $max, ?string $message = null): self
+    {
+        $this->isCountable($message);
+
+        if (\count($this->value) > $max) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_HAS_MAX_COUNT,
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'max' => $this->exporter->exportValue($max),
                 ],
             );
         }
@@ -210,6 +257,28 @@ final readonly class Expectation implements Expectable, MutatingExpectable
                 [
                     'value' => $this->exporter->exportType($this->value),
                     'method' => $method,
+                ],
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param int<0, max> $min
+     *
+     * @return self<TValue>
+     */
+    public function hasMinCount(int $min, ?string $message = null): self
+    {
+        $this->isCountable($message);
+
+        if (\count($this->value) < $min) {
+            throw new ExpectationFailedException(
+                $message ?? self::MESSAGE_HAS_MIN_COUNT,
+                [
+                    'value' => $this->exporter->exportValue($this->value),
+                    'min' => $this->exporter->exportValue($min),
                 ],
             );
         }
