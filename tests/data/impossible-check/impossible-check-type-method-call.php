@@ -29,7 +29,7 @@ function test_is_instance_of(\stdClass $value): void
     Assert::that($value)->isInstanceOf($value);
 }
 
-function test_string_methods_using_faux_functions(string $a, string $b): void
+function test_string_methods_using_equality_narrowing(string $a, string $b): void
 {
     Assert::that($a)->matchesRegularExpression('/^test-/');
     Assert::that($a)->matchesRegularExpression('/^test-/'); // error

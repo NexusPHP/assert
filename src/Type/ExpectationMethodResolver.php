@@ -41,11 +41,9 @@ use PHPStan\Type\UnionType;
 final class ExpectationMethodResolver
 {
     /**
-     * Methods whose narrowing predicate must be paired with a synthetic
-     * `FAUX_FUNCTION_<method>` call so PHPStan threads them through the
-     * chained `storedExpr`.
+     * Methods whose narrowing holds only when they pass, so the negated form narrows nothing.
      */
-    private const METHODS_NEEDING_FAUX_WRAP = [
+    private const EQUALITY_METHODS = [
         'contains',
         'endsWith',
         'hasMaxLength',
@@ -97,18 +95,10 @@ final class ExpectationMethodResolver
 
         $expr = $this->resolvers[$methodName]->resolve($scope, $arg, ...$args);
 
-        if (\in_array($methodName, self::METHODS_NEEDING_FAUX_WRAP, true)) {
-            $expr = new Node\Expr\BinaryOp\BooleanAnd(
-                $expr,
-                new Node\Expr\FuncCall(
-                    new Node\Name(\sprintf('FAUX_FUNCTION_%s', $methodName)),
-                    isset($args[0]) ? [$arg, $args[0]] : [$arg],
-                ),
-            );
-        }
-
         if (NegatedExpectation::class === $expectationClass) {
-            $expr = new Node\Expr\BooleanNot($expr);
+            $expr = $this->isEqualityMethod($methodName)
+                ? new Node\Expr\ConstFetch(new Node\Name('true'))
+                : new Node\Expr\BooleanNot($expr);
         } elseif (NullableExpectation::class === $expectationClass) {
             $expr = new Node\Expr\BinaryOp\BooleanOr(
                 new Node\Expr\BinaryOp\Identical(
@@ -122,9 +112,9 @@ final class ExpectationMethodResolver
         return self::reduceExprWithStoredExpr($storedExpr, $expr);
     }
 
-    public function isFauxWrapped(string $methodName): bool
+    public function isEqualityMethod(string $methodName): bool
     {
-        return \in_array($methodName, self::METHODS_NEEDING_FAUX_WRAP, true);
+        return \in_array($methodName, self::EQUALITY_METHODS, true);
     }
 
     public function resolveType(

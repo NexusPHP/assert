@@ -62,7 +62,7 @@ final class ImpossibleCheckTypeMethodCallRuleTest extends RuleTestCase
             [
                 'Call to method Nexus\\Assert\\Expectation<string>::matchesRegularExpression() with \'/^test-/\' will always evaluate to true.',
                 35,
-                $tipBuilder(null),
+                $tipBuilder('Nexus\\Assert\\Expectation<string>::matchesRegularExpression()'),
             ],
             [
                 'Call to method Nexus\\Assert\\Expectation<string>::contains() with \'needle\' will always evaluate to true.',
@@ -77,7 +77,7 @@ final class ImpossibleCheckTypeMethodCallRuleTest extends RuleTestCase
             [
                 'Call to method Nexus\\Assert\\Expectation<string>::startsWith() with \'hello\' will always evaluate to true.',
                 44,
-                $tipBuilder(null),
+                $tipBuilder('Nexus\\Assert\\Expectation<string>::startsWith()'),
             ],
         ]);
     }
