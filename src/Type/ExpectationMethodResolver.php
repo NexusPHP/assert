@@ -156,10 +156,12 @@ final class ExpectationMethodResolver
         $iteratingClass = $calledOnType->getClassName();
         \assert(class_exists($iteratingClass));
 
-        // Faux variable: unknown to scope, so PHPStan's OR-specifier cannot prune
-        // disjuncts as impossible against the iterable's outer type. Returns the
-        // predicate's pure narrowing type (e.g. int|string for isArrayKey).
-        $fauxExpr = new Node\Expr\Variable('__faux_iterating_value__');
+        // A mixed-typed faux global keeps every disjunct alive: the iterable's outer type cannot prune one,
+        // and an undeclared variable collapses in the OR's left-falsey scope.
+        $fauxExpr = new Node\Expr\ArrayDimFetch(
+            new Node\Expr\Variable('GLOBALS'),
+            new Node\Scalar\String_('__faux_iterating_value__'),
+        );
         $fauxPredicate = $this->resolveExpr(
             $iteratingClass,
             $methodName,
