@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.5.1](https://github.com/NexusPHP/assert/compare/v1.5.0...v1.5.1) - 2026-10-08
+
+### Changed
+- The minimum PHPStan version is now 2.2.15. The side-effect narrowings of `contains()`, `startsWith()`, `endsWith()`, `matchesRegularExpression()`, `hasMinLength()`, `hasMaxLength()`, and `isUrl()` are flagged with `SpecifiedTypes::setEquality()` instead of a synthetic `FAUX_FUNCTION_*` call, following [phpstan/phpstan-src#5769](https://github.com/phpstan/phpstan-src/pull/5769). Narrowing, negation, and duplicate-call reporting are unchanged
+
+### Fixed
+- Restored the float arm of `keys()` / `values()` number comparisons on PHPStan 2.3.0. `values()->isGreaterThan(5)` narrows to `iterable<float|int<6, max>>` again instead of `iterable<int<6, max>>`, after PHPStan started typing the right side of `||` in the scope where the left side is false
+
 ## [v1.5.0](https://github.com/NexusPHP/assert/compare/v1.4.0...v1.5.0) - 2026-09-04
 
 ### Added
