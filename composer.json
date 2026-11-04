@@ -22,7 +22,7 @@
         "nexusphp/cs-config": "^3.26",
         "nexusphp/tachycardia": "^2.4",
         "phpstan/extension-installer": "^1.4",
-        "phpstan/phpstan": "^2.2.15",
+        "phpstan/phpstan": "^2.3.5",
         "phpstan/phpstan-phpunit": "^2.0",
         "phpstan/phpstan-strict-rules": "^2.0",
         "phpunit/phpunit": "^11.5 || ^12.5"
@@ -68,8 +68,9 @@
             "bin/generate --all",
             "bin/generate-readme"
         ],
-        "phpstan:baseline": "phpstan analyse --verbose --ansi --generate-baseline=phpstan-baseline.php",
+        "phpstan:baseline": "@phpstan:check -- --generate-baseline=phpstan-baseline.php",
         "phpstan:check": "phpstan analyse --verbose --ansi",
+        "phpstan:fix": "@phpstan:check -- --fix --fix-ignored",
         "test:all": [
             "@cs:check",
             "@phpstan:check",
@@ -87,6 +88,7 @@
         "generate:docs": "Generates documentation",
         "phpstan:baseline": "Runs PHPStan and dumps resulting errors to baseline",
         "phpstan:check": "Runs PHPStan with identifiers support",
+        "phpstan:fix": "Runs PHPStan with automatic fixing of errors and ignored errors",
         "test:all": "Runs all tests",
         "test:auto-review": "Runs the Auto Review Tests",
         "test:stan": "Runs the Static Analysis Tests",
