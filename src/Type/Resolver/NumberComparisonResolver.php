@@ -17,7 +17,7 @@ use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 
 /**
- * Narrows to the comparison-bounded int range OR'd with the unbounded float arm.
+ * Narrows to the comparison-bounded `float|int` range.
  */
 final class NumberComparisonResolver implements ResolverInterface
 {
@@ -35,17 +35,12 @@ final class NumberComparisonResolver implements ResolverInterface
     {
         \assert(isset($args[0]));
 
-        // Comparison is applied only to the int branch: PHPStan has no float
-        // range representation, and pairing `is_float()` with a numeric
-        // comparison produces a spurious constant-float intersection.
-        $intInRange = new Node\Expr\BinaryOp\BooleanAnd(
-            $this->isInt->resolve($scope, $arg, ...$args),
+        return new Node\Expr\BinaryOp\BooleanAnd(
+            new Node\Expr\BinaryOp\BooleanOr(
+                $this->isInt->resolve($scope, $arg, ...$args),
+                $this->isFloat->resolve($scope, $arg, ...$args),
+            ),
             new ($this->comparison)($arg->value, $args[0]->value),
-        );
-
-        return new Node\Expr\BinaryOp\BooleanOr(
-            $intInRange,
-            $this->isFloat->resolve($scope, $arg, ...$args),
         );
     }
 }

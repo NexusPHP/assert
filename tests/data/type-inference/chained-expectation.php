@@ -32,6 +32,34 @@ function test_is_array_not_has_offset(mixed $value): void
     assertType('array<mixed~\'id\', mixed>', $value);
 }
 
+function test_is_between_is_int(mixed $value): void
+{
+    $assert = Assert::that($value)->isBetween(0, 10)->isInt();
+    assertType('Nexus\\Assert\\Expectation<int<0, 10>>', $assert);
+    assertType('int<0, 10>', $value);
+}
+
+function test_is_between_is_float(mixed $value): void
+{
+    $assert = Assert::that($value)->isBetween(0, 10)->isFloat();
+    assertType('Nexus\\Assert\\Expectation<float<0.0, 10.0>>', $assert);
+    assertType('float<0.0, 10.0>', $value);
+}
+
+function test_is_greater_than_is_int(mixed $value): void
+{
+    $assert = Assert::that($value)->isGreaterThan(5)->isInt();
+    assertType('Nexus\\Assert\\Expectation<int<6, max>>', $assert);
+    assertType('int<6, max>', $value);
+}
+
+function test_is_less_than_or_equal_is_float(mixed $value): void
+{
+    $assert = Assert::that($value)->isLessThanOrEqual(5)->isFloat();
+    assertType('Nexus\\Assert\\Expectation<float<min, 5.0>>', $assert);
+    assertType('float<min, 5.0>', $value);
+}
+
 function test_is_countable_not_is_array(mixed $value): void
 {
     $assert = Assert::that($value)->isCountable()->not()->isArray();
@@ -42,15 +70,15 @@ function test_is_countable_not_is_array(mixed $value): void
 function test_is_greater_than_is_less_than(mixed $value): void
 {
     $assert = Assert::that($value)->isGreaterThan(0)->isLessThan(10);
-    assertType('Nexus\\Assert\\Expectation<float|int<1, 9>>', $assert);
-    assertType('float|int<1, 9>', $value);
+    assertType('Nexus\\Assert\\Expectation<float<5.0E-324, 9.999999999999998>|int<1, 9>>', $assert);
+    assertType('float<5.0E-324, 9.999999999999998>|int<1, 9>', $value);
 }
 
 function test_is_greater_than_or_equal_is_less_than_or_equal(mixed $value): void
 {
     $assert = Assert::that($value)->isGreaterThanOrEqual(0)->isLessThanOrEqual(10);
-    assertType('Nexus\\Assert\\Expectation<float|int<0, 10>>', $assert);
-    assertType('float|int<0, 10>', $value);
+    assertType('Nexus\\Assert\\Expectation<float<0.0, 10.0>|int<0, 10>>', $assert);
+    assertType('float<0.0, 10.0>|int<0, 10>', $value);
 }
 
 function test_is_int_is_between(mixed $value): void

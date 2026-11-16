@@ -17,7 +17,7 @@ use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 
 /**
- * Narrows to `float|int<min, max>` within the given bounds.
+ * Narrows to `float<min, max>|int<min, max>` within the given bounds.
  */
 final class IsBetweenResolver implements ResolverInterface
 {
@@ -40,17 +40,12 @@ final class IsBetweenResolver implements ResolverInterface
             ? new Node\Expr\BinaryOp\Smaller($arg->value, $args[1]->value)
             : new Node\Expr\BinaryOp\SmallerOrEqual($arg->value, $args[1]->value);
 
-        // Range check is applied only to the int branch: PHPStan has no float
-        // range representation, and pairing `is_float()` with a numeric
-        // comparison produces a spurious constant-float intersection.
-        $intInRange = new Node\Expr\BinaryOp\BooleanAnd(
-            $this->isInt->resolve($scope, $arg, ...$args),
+        return new Node\Expr\BinaryOp\BooleanAnd(
+            new Node\Expr\BinaryOp\BooleanOr(
+                $this->isInt->resolve($scope, $arg, ...$args),
+                $this->isFloat->resolve($scope, $arg, ...$args),
+            ),
             new Node\Expr\BinaryOp\BooleanAnd($lowerBound, $upperBound),
-        );
-
-        return new Node\Expr\BinaryOp\BooleanOr(
-            $intInRange,
-            $this->isFloat->resolve($scope, $arg, ...$args),
         );
     }
 }
