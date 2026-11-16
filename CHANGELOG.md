@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [v1.5.2](https://github.com/NexusPHP/assert/compare/v1.5.1...v1.5.2) - 2026-11-16
 
 ### Changed
 - The minimum PHPStan version is now 2.3.6. `isBetween()`, `isGreaterThan()`, `isGreaterThanOrEqual()`, `isLessThan()`, and `isLessThanOrEqual()` narrow the float arm to a float range, following PHPStan's float range support. `isBetween(0, 10)` gives `float<0.0, 10.0>|int<0, 10>` instead of `float|int<0, 10>`, and a chained `isInt()` or `isFloat()` narrows to the int range or the float range alone
